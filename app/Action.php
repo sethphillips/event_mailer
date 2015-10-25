@@ -17,4 +17,9 @@ class Action extends Model
     {
     	return $this->belongsTo('App\Contact');
     }
+
+    public function scopeForCampaign($query, $campaign)
+    {
+    	return $query->where('campaign_id','=',$campaign->id);
+    }
 }

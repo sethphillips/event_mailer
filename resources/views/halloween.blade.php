@@ -5,7 +5,7 @@
 
 <script>
 	var id = '{{ $id }}';
-	$.post('/action',{action:'website visit',id:id})
+	$.post('/action',{action:'opened',id:id})
 </script>
 
 <div class="container">

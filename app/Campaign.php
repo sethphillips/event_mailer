@@ -18,6 +18,14 @@ class Campaign extends Model
     	return $this->hasMany('App\Email');
     }
 
+    public function getSentEmailsAttribute()
+    {
+        
+        return $this->emails->filter(function($email){
+            return $email->sent;
+        });
+    }
+
     public function signups()
     {
     	return $this->hasMany('App\Signup');

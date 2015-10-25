@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Http\Requests\UserRequest;
-use App\Models\User;
+use App\User;
 use Illuminate\Http\Request;
 
 
@@ -50,6 +50,8 @@ class UserController extends Controller {
 		$user->name = $input['name'];
 		$user->email = $input['email'];
 		$user->password = bcrypt($input['password']);
+		$user->client_id = $input['client_id'];
+		$user->is_admin = $request->input('is_admin')?:false;
 		$user->save();
 
 		return redirect()->route('admin.users.index')->with('message',"$user->email successfully created");
@@ -104,6 +106,9 @@ class UserController extends Controller {
 		$user = User::find($id);
 		$user->email = $input['email'];
 		$user->name = $input['name'];
+		$user->client_id = $input['client_id'];
+		$user->is_admin = $request->input('is_admin')?:false;
+
 		if(isset($input['password'])){
 			$user->password = bcrypt($input['password']);
 		}

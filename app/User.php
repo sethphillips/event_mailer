@@ -36,4 +36,13 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
+    static function clientsByName()
+    {
+        $clients = Client::orderBy('name')->get(['id','name'])->getDictionary();
+
+        return array_map(function($client){
+            return $client->name;
+        }, $clients);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Action;
+use App\Campaign;
 use App\Contact;
 use App\Email;
 use Illuminate\Http\Request;
@@ -92,6 +93,27 @@ Route::post('unsubscribe',['as'=>'unsubscribe.submit',function(Request $request)
 }]);
 
 
+
+
+Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
+	Route::get('/',['as'=>'admin.index','uses'=>'DashboardController@index']);
+	Route::resource('users','UserController');
+});
+
+// Login Logout routes
+Route::get('login','AuthController@login');
+Route::get('logout','AuthController@destroy');
+Route::resource('auth', 'AuthController');
+// Password reset link request routes...
+Route::get('password/email', 'Auth\PasswordController@getEmail');
+Route::post('password/email', 'Auth\PasswordController@postEmail');
+
+// Password reset routes...
+Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
+Route::post('password/reset', 'Auth\PasswordController@postReset');
+
+
+
 Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 	if($request->input('email'))
 	{
@@ -105,6 +127,9 @@ Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 
 	return view('emails.halloween')->with(['id'=>$id,'email'=>false]);
 }]);
+
+
+
 
 
 

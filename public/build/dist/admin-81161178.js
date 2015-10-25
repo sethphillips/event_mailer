@@ -11216,348 +11216,1965 @@ if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery"
 
 }(jQuery);
 
-$(function() {
-    // Easy pie charts
-    var calendar = $('#calendar').fullCalendar({
-	header: {
-		left: 'prev,next',
-		center: 'title',
-		right: 'month,basicWeek,basicDay'
-	},
-	theme: true,
-    selectable: true,
-    selectHelper: true,
-    select: function(start, end, allDay) {
-        var title = prompt('Event Title:');
-        if (title) {
-            calendar.fullCalendar('renderEvent',
-                {
-                    title: title,
-                    start: start,
-                    end: end,
-                    allDay: allDay
-                },
-                true // make the event "stick"
-            );
-        }
-        calendar.fullCalendar('unselect');
-    },
-    droppable: true, // this allows things to be dropped onto the calendar !!!
-    drop: function(date, allDay) { // this function is called when something is dropped
-    
-        // retrieve the dropped element's stored Event Object
-        var originalEventObject = $(this).data('eventObject');
-        
-        // we need to copy it, so that multiple events don't have a reference to the same object
-        var copiedEventObject = $.extend({}, originalEventObject);
-        
-        // assign it the date that was reported
-        copiedEventObject.start = date;
-        copiedEventObject.allDay = allDay;
-        
-        // render the event on the calendar
-        // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-        $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
-        
-        // is the "remove after drop" checkbox checked?
-        if ($('#drop-remove').is(':checked')) {
-            // if so, remove the element from the "Draggable Events" list
-            $(this).remove();
-        }
-        
-    },
-	editable: true,
-	// US Holidays
-	events: 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
-	
-	});
-});
+(function() {
+  var $, Morris, minutesSpecHelper, secondsSpecHelper,
+    __slice = [].slice,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-$('#external-events div.external-event').each(function() {
+  Morris = window.Morris = {};
 
-    // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
-    // it doesn't need to have a start or end
-    var eventObject = {
-        title: $.trim($(this).text()) // use the element's text as the event title
+  $ = jQuery;
+
+  Morris.EventEmitter = (function() {
+
+    function EventEmitter() {}
+
+    EventEmitter.prototype.on = function(name, handler) {
+      if (this.handlers == null) {
+        this.handlers = {};
+      }
+      if (this.handlers[name] == null) {
+        this.handlers[name] = [];
+      }
+      this.handlers[name].push(handler);
+      return this;
     };
-    
-    // store the Event Object in the DOM element so we can get to it later
-    $(this).data('eventObject', eventObject);
-    
-    // make the event draggable using jQuery UI
-    $(this).draggable({
-        zIndex: 999999999,
-        revert: true,      // will cause the event to go back to its
-        revertDuration: 0  //  original position after the drag
-    });
-    
-});
+
+    EventEmitter.prototype.fire = function() {
+      var args, handler, name, _i, _len, _ref, _results;
+      name = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if ((this.handlers != null) && (this.handlers[name] != null)) {
+        _ref = this.handlers[name];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          handler = _ref[_i];
+          _results.push(handler.apply(null, args));
+        }
+        return _results;
+      }
+    };
+
+    return EventEmitter;
+
+  })();
+
+  Morris.commas = function(num) {
+    var absnum, intnum, ret, strabsnum;
+    if (num != null) {
+      ret = num < 0 ? "-" : "";
+      absnum = Math.abs(num);
+      intnum = Math.floor(absnum).toFixed(0);
+      ret += intnum.replace(/(?=(?:\d{3})+$)(?!^)/g, ',');
+      strabsnum = absnum.toString();
+      if (strabsnum.length > intnum.length) {
+        ret += strabsnum.slice(intnum.length);
+      }
+      return ret;
+    } else {
+      return '-';
+    }
+  };
+
+  Morris.pad2 = function(number) {
+    return (number < 10 ? '0' : '') + number;
+  };
+
+  Morris.Grid = (function(_super) {
+
+    __extends(Grid, _super);
+
+    function Grid(options) {
+      var _this = this;
+      if (typeof options.element === 'string') {
+        this.el = $(document.getElementById(options.element));
+      } else {
+        this.el = $(options.element);
+      }
+      if (!(this.el != null) || this.el.length === 0) {
+        throw new Error("Graph container element not found");
+      }
+      if (this.el.css('position') === 'static') {
+        this.el.css('position', 'relative');
+      }
+      this.options = $.extend({}, this.gridDefaults, this.defaults || {}, options);
+      if (typeof this.options.units === 'string') {
+        this.options.postUnits = options.units;
+      }
+      this.raphael = new Raphael(this.el[0]);
+      this.elementWidth = null;
+      this.elementHeight = null;
+      this.dirty = false;
+      if (this.init) {
+        this.init();
+      }
+      this.setData(this.options.data);
+      this.el.bind('mousemove', function(evt) {
+        var offset;
+        offset = _this.el.offset();
+        return _this.fire('hovermove', evt.pageX - offset.left, evt.pageY - offset.top);
+      });
+      this.el.bind('mouseout', function(evt) {
+        return _this.fire('hoverout');
+      });
+      this.el.bind('touchstart touchmove touchend', function(evt) {
+        var offset, touch;
+        touch = evt.originalEvent.touches[0] || evt.originalEvent.changedTouches[0];
+        offset = _this.el.offset();
+        _this.fire('hover', touch.pageX - offset.left, touch.pageY - offset.top);
+        return touch;
+      });
+      this.el.bind('click', function(evt) {
+        var offset;
+        offset = _this.el.offset();
+        return _this.fire('gridclick', evt.pageX - offset.left, evt.pageY - offset.top);
+      });
+      if (this.postInit) {
+        this.postInit();
+      }
+    }
+
+    Grid.prototype.gridDefaults = {
+      dateFormat: null,
+      axes: true,
+      grid: true,
+      gridLineColor: '#aaa',
+      gridStrokeWidth: 0.5,
+      gridTextColor: '#888',
+      gridTextSize: 12,
+      gridTextFamily: 'sans-serif',
+      gridTextWeight: 'normal',
+      hideHover: false,
+      yLabelFormat: null,
+      xLabelAngle: 0,
+      numLines: 5,
+      padding: 25,
+      parseTime: true,
+      postUnits: '',
+      preUnits: '',
+      ymax: 'auto',
+      ymin: 'auto 0',
+      goals: [],
+      goalStrokeWidth: 1.0,
+      goalLineColors: ['#666633', '#999966', '#cc6666', '#663333'],
+      events: [],
+      eventStrokeWidth: 1.0,
+      eventLineColors: ['#005a04', '#ccffbb', '#3a5f0b', '#005502']
+    };
+
+    Grid.prototype.setData = function(data, redraw) {
+      var e, idx, index, maxGoal, minGoal, ret, row, step, total, y, ykey, ymax, ymin, yval;
+      if (redraw == null) {
+        redraw = true;
+      }
+      this.options.data = data;
+      if (!(data != null) || data.length === 0) {
+        this.data = [];
+        this.raphael.clear();
+        if (this.hover != null) {
+          this.hover.hide();
+        }
+        return;
+      }
+      ymax = this.cumulative ? 0 : null;
+      ymin = this.cumulative ? 0 : null;
+      if (this.options.goals.length > 0) {
+        minGoal = Math.min.apply(null, this.options.goals);
+        maxGoal = Math.max.apply(null, this.options.goals);
+        ymin = ymin != null ? Math.min(ymin, minGoal) : minGoal;
+        ymax = ymax != null ? Math.max(ymax, maxGoal) : maxGoal;
+      }
+      this.data = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (index = _i = 0, _len = data.length; _i < _len; index = ++_i) {
+          row = data[index];
+          ret = {};
+          ret.label = row[this.options.xkey];
+          if (this.options.parseTime) {
+            ret.x = Morris.parseDate(ret.label);
+            if (this.options.dateFormat) {
+              ret.label = this.options.dateFormat(ret.x);
+            } else if (typeof ret.label === 'number') {
+              ret.label = new Date(ret.label).toString();
+            }
+          } else {
+            ret.x = index;
+            if (this.options.xLabelFormat) {
+              ret.label = this.options.xLabelFormat(ret);
+            }
+          }
+          total = 0;
+          ret.y = (function() {
+            var _j, _len1, _ref, _results1;
+            _ref = this.options.ykeys;
+            _results1 = [];
+            for (idx = _j = 0, _len1 = _ref.length; _j < _len1; idx = ++_j) {
+              ykey = _ref[idx];
+              yval = row[ykey];
+              if (typeof yval === 'string') {
+                yval = parseFloat(yval);
+              }
+              if ((yval != null) && typeof yval !== 'number') {
+                yval = null;
+              }
+              if (yval != null) {
+                if (this.cumulative) {
+                  total += yval;
+                } else {
+                  if (ymax != null) {
+                    ymax = Math.max(yval, ymax);
+                    ymin = Math.min(yval, ymin);
+                  } else {
+                    ymax = ymin = yval;
+                  }
+                }
+              }
+              if (this.cumulative && (total != null)) {
+                ymax = Math.max(total, ymax);
+                ymin = Math.min(total, ymin);
+              }
+              _results1.push(yval);
+            }
+            return _results1;
+          }).call(this);
+          _results.push(ret);
+        }
+        return _results;
+      }).call(this);
+      if (this.options.parseTime) {
+        this.data = this.data.sort(function(a, b) {
+          return (a.x > b.x) - (b.x > a.x);
+        });
+      }
+      this.xmin = this.data[0].x;
+      this.xmax = this.data[this.data.length - 1].x;
+      this.events = [];
+      if (this.options.parseTime && this.options.events.length > 0) {
+        this.events = (function() {
+          var _i, _len, _ref, _results;
+          _ref = this.options.events;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            e = _ref[_i];
+            _results.push(Morris.parseDate(e));
+          }
+          return _results;
+        }).call(this);
+        this.xmax = Math.max(this.xmax, Math.max.apply(null, this.events));
+        this.xmin = Math.min(this.xmin, Math.min.apply(null, this.events));
+      }
+      if (this.xmin === this.xmax) {
+        this.xmin -= 1;
+        this.xmax += 1;
+      }
+      this.ymin = this.yboundary('min', ymin);
+      this.ymax = this.yboundary('max', ymax);
+      if (this.ymin === this.ymax) {
+        if (ymin) {
+          this.ymin -= 1;
+        }
+        this.ymax += 1;
+      }
+      if (this.options.axes === true || this.options.grid === true) {
+        if (this.options.ymax === this.gridDefaults.ymax && this.options.ymin === this.gridDefaults.ymin) {
+          this.grid = this.autoGridLines(this.ymin, this.ymax, this.options.numLines);
+          this.ymin = Math.min(this.ymin, this.grid[0]);
+          this.ymax = Math.max(this.ymax, this.grid[this.grid.length - 1]);
+        } else {
+          step = (this.ymax - this.ymin) / (this.options.numLines - 1);
+          this.grid = (function() {
+            var _i, _ref, _ref1, _results;
+            _results = [];
+            for (y = _i = _ref = this.ymin, _ref1 = this.ymax; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; y = _i += step) {
+              _results.push(y);
+            }
+            return _results;
+          }).call(this);
+        }
+      }
+      this.dirty = true;
+      if (redraw) {
+        return this.redraw();
+      }
+    };
+
+    Grid.prototype.yboundary = function(boundaryType, currentValue) {
+      var boundaryOption, suggestedValue;
+      boundaryOption = this.options["y" + boundaryType];
+      if (typeof boundaryOption === 'string') {
+        if (boundaryOption.slice(0, 4) === 'auto') {
+          if (boundaryOption.length > 5) {
+            suggestedValue = parseInt(boundaryOption.slice(5), 10);
+            if (currentValue == null) {
+              return suggestedValue;
+            }
+            return Math[boundaryType](currentValue, suggestedValue);
+          } else {
+            if (currentValue != null) {
+              return currentValue;
+            } else {
+              return 0;
+            }
+          }
+        } else {
+          return parseInt(boundaryOption, 10);
+        }
+      } else {
+        return boundaryOption;
+      }
+    };
+
+    Grid.prototype.autoGridLines = function(ymin, ymax, nlines) {
+      var gmax, gmin, grid, smag, span, step, unit, y, ymag;
+      span = ymax - ymin;
+      ymag = Math.floor(Math.log(span) / Math.log(10));
+      unit = Math.pow(10, ymag);
+      gmin = Math.floor(ymin / unit) * unit;
+      gmax = Math.ceil(ymax / unit) * unit;
+      step = (gmax - gmin) / (nlines - 1);
+      if (unit === 1 && step > 1 && Math.ceil(step) !== step) {
+        step = Math.ceil(step);
+        gmax = gmin + step * (nlines - 1);
+      }
+      if (gmin < 0 && gmax > 0) {
+        gmin = Math.floor(ymin / step) * step;
+        gmax = Math.ceil(ymax / step) * step;
+      }
+      if (step < 1) {
+        smag = Math.floor(Math.log(step) / Math.log(10));
+        grid = (function() {
+          var _i, _results;
+          _results = [];
+          for (y = _i = gmin; gmin <= gmax ? _i <= gmax : _i >= gmax; y = _i += step) {
+            _results.push(parseFloat(y.toFixed(1 - smag)));
+          }
+          return _results;
+        })();
+      } else {
+        grid = (function() {
+          var _i, _results;
+          _results = [];
+          for (y = _i = gmin; gmin <= gmax ? _i <= gmax : _i >= gmax; y = _i += step) {
+            _results.push(y);
+          }
+          return _results;
+        })();
+      }
+      return grid;
+    };
+
+    Grid.prototype._calc = function() {
+      var bottomOffsets, gridLine, h, i, w, yLabelWidths;
+      w = this.el.width();
+      h = this.el.height();
+      if (this.elementWidth !== w || this.elementHeight !== h || this.dirty) {
+        this.elementWidth = w;
+        this.elementHeight = h;
+        this.dirty = false;
+        this.left = this.options.padding;
+        this.right = this.elementWidth - this.options.padding;
+        this.top = this.options.padding;
+        this.bottom = this.elementHeight - this.options.padding;
+        if (this.options.axes) {
+          yLabelWidths = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.grid;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              gridLine = _ref[_i];
+              _results.push(this.measureText(this.yAxisFormat(gridLine)).width);
+            }
+            return _results;
+          }).call(this);
+          this.left += Math.max.apply(Math, yLabelWidths);
+          bottomOffsets = (function() {
+            var _i, _ref, _results;
+            _results = [];
+            for (i = _i = 0, _ref = this.data.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+              _results.push(this.measureText(this.data[i].text, -this.options.xLabelAngle).height);
+            }
+            return _results;
+          }).call(this);
+          this.bottom -= Math.max.apply(Math, bottomOffsets);
+        }
+        this.width = Math.max(1, this.right - this.left);
+        this.height = Math.max(1, this.bottom - this.top);
+        this.dx = this.width / (this.xmax - this.xmin);
+        this.dy = this.height / (this.ymax - this.ymin);
+        if (this.calc) {
+          return this.calc();
+        }
+      }
+    };
+
+    Grid.prototype.transY = function(y) {
+      return this.bottom - (y - this.ymin) * this.dy;
+    };
+
+    Grid.prototype.transX = function(x) {
+      if (this.data.length === 1) {
+        return (this.left + this.right) / 2;
+      } else {
+        return this.left + (x - this.xmin) * this.dx;
+      }
+    };
+
+    Grid.prototype.redraw = function() {
+      this.raphael.clear();
+      this._calc();
+      this.drawGrid();
+      this.drawGoals();
+      this.drawEvents();
+      if (this.draw) {
+        return this.draw();
+      }
+    };
+
+    Grid.prototype.measureText = function(text, angle) {
+      var ret, tt;
+      if (angle == null) {
+        angle = 0;
+      }
+      tt = this.raphael.text(100, 100, text).attr('font-size', this.options.gridTextSize).attr('font-family', this.options.gridTextFamily).attr('font-weight', this.options.gridTextWeight).rotate(angle);
+      ret = tt.getBBox();
+      tt.remove();
+      return ret;
+    };
+
+    Grid.prototype.yAxisFormat = function(label) {
+      return this.yLabelFormat(label);
+    };
+
+    Grid.prototype.yLabelFormat = function(label) {
+      if (typeof this.options.yLabelFormat === 'function') {
+        return this.options.yLabelFormat(label);
+      } else {
+        return "" + this.options.preUnits + (Morris.commas(label)) + this.options.postUnits;
+      }
+    };
+
+    Grid.prototype.updateHover = function(x, y) {
+      var hit, _ref;
+      hit = this.hitTest(x, y);
+      if (hit != null) {
+        return (_ref = this.hover).update.apply(_ref, hit);
+      }
+    };
+
+    Grid.prototype.drawGrid = function() {
+      var lineY, y, _i, _len, _ref, _results;
+      if (this.options.grid === false && this.options.axes === false) {
+        return;
+      }
+      _ref = this.grid;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        lineY = _ref[_i];
+        y = this.transY(lineY);
+        if (this.options.axes) {
+          this.drawYAxisLabel(this.left - this.options.padding / 2, y, this.yAxisFormat(lineY));
+        }
+        if (this.options.grid) {
+          _results.push(this.drawGridLine("M" + this.left + "," + y + "H" + (this.left + this.width)));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Grid.prototype.drawGoals = function() {
+      var color, goal, i, _i, _len, _ref, _results;
+      _ref = this.options.goals;
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        goal = _ref[i];
+        color = this.options.goalLineColors[i % this.options.goalLineColors.length];
+        _results.push(this.drawGoal(goal, color));
+      }
+      return _results;
+    };
+
+    Grid.prototype.drawEvents = function() {
+      var color, event, i, _i, _len, _ref, _results;
+      _ref = this.events;
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        event = _ref[i];
+        color = this.options.eventLineColors[i % this.options.eventLineColors.length];
+        _results.push(this.drawEvent(event, color));
+      }
+      return _results;
+    };
+
+    Grid.prototype.drawGoal = function(goal, color) {
+      return this.raphael.path("M" + this.left + "," + (this.transY(goal)) + "H" + this.right).attr('stroke', color).attr('stroke-width', this.options.goalStrokeWidth);
+    };
+
+    Grid.prototype.drawEvent = function(event, color) {
+      return this.raphael.path("M" + (this.transX(event)) + "," + this.bottom + "V" + this.top).attr('stroke', color).attr('stroke-width', this.options.eventStrokeWidth);
+    };
+
+    Grid.prototype.drawYAxisLabel = function(xPos, yPos, text) {
+      return this.raphael.text(xPos, yPos, text).attr('font-size', this.options.gridTextSize).attr('font-family', this.options.gridTextFamily).attr('font-weight', this.options.gridTextWeight).attr('fill', this.options.gridTextColor).attr('text-anchor', 'end');
+    };
+
+    Grid.prototype.drawGridLine = function(path) {
+      return this.raphael.path(path).attr('stroke', this.options.gridLineColor).attr('stroke-width', this.options.gridStrokeWidth);
+    };
+
+    return Grid;
+
+  })(Morris.EventEmitter);
+
+  Morris.parseDate = function(date) {
+    var isecs, m, msecs, n, o, offsetmins, p, q, r, ret, secs;
+    if (typeof date === 'number') {
+      return date;
+    }
+    m = date.match(/^(\d+) Q(\d)$/);
+    n = date.match(/^(\d+)-(\d+)$/);
+    o = date.match(/^(\d+)-(\d+)-(\d+)$/);
+    p = date.match(/^(\d+) W(\d+)$/);
+    q = date.match(/^(\d+)-(\d+)-(\d+)[ T](\d+):(\d+)(Z|([+-])(\d\d):?(\d\d))?$/);
+    r = date.match(/^(\d+)-(\d+)-(\d+)[ T](\d+):(\d+):(\d+(\.\d+)?)(Z|([+-])(\d\d):?(\d\d))?$/);
+    if (m) {
+      return new Date(parseInt(m[1], 10), parseInt(m[2], 10) * 3 - 1, 1).getTime();
+    } else if (n) {
+      return new Date(parseInt(n[1], 10), parseInt(n[2], 10) - 1, 1).getTime();
+    } else if (o) {
+      return new Date(parseInt(o[1], 10), parseInt(o[2], 10) - 1, parseInt(o[3], 10)).getTime();
+    } else if (p) {
+      ret = new Date(parseInt(p[1], 10), 0, 1);
+      if (ret.getDay() !== 4) {
+        ret.setMonth(0, 1 + ((4 - ret.getDay()) + 7) % 7);
+      }
+      return ret.getTime() + parseInt(p[2], 10) * 604800000;
+    } else if (q) {
+      if (!q[6]) {
+        return new Date(parseInt(q[1], 10), parseInt(q[2], 10) - 1, parseInt(q[3], 10), parseInt(q[4], 10), parseInt(q[5], 10)).getTime();
+      } else {
+        offsetmins = 0;
+        if (q[6] !== 'Z') {
+          offsetmins = parseInt(q[8], 10) * 60 + parseInt(q[9], 10);
+          if (q[7] === '+') {
+            offsetmins = 0 - offsetmins;
+          }
+        }
+        return Date.UTC(parseInt(q[1], 10), parseInt(q[2], 10) - 1, parseInt(q[3], 10), parseInt(q[4], 10), parseInt(q[5], 10) + offsetmins);
+      }
+    } else if (r) {
+      secs = parseFloat(r[6]);
+      isecs = Math.floor(secs);
+      msecs = Math.round((secs - isecs) * 1000);
+      if (!r[8]) {
+        return new Date(parseInt(r[1], 10), parseInt(r[2], 10) - 1, parseInt(r[3], 10), parseInt(r[4], 10), parseInt(r[5], 10), isecs, msecs).getTime();
+      } else {
+        offsetmins = 0;
+        if (r[8] !== 'Z') {
+          offsetmins = parseInt(r[10], 10) * 60 + parseInt(r[11], 10);
+          if (r[9] === '+') {
+            offsetmins = 0 - offsetmins;
+          }
+        }
+        return Date.UTC(parseInt(r[1], 10), parseInt(r[2], 10) - 1, parseInt(r[3], 10), parseInt(r[4], 10), parseInt(r[5], 10) + offsetmins, isecs, msecs);
+      }
+    } else {
+      return new Date(parseInt(date, 10), 0, 1).getTime();
+    }
+  };
+
+  Morris.Hover = (function() {
+
+    Hover.defaults = {
+      "class": 'morris-hover morris-default-style'
+    };
+
+    function Hover(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.options = $.extend({}, Morris.Hover.defaults, options);
+      this.el = $("<div class='" + this.options["class"] + "'></div>");
+      this.el.hide();
+      this.options.parent.append(this.el);
+    }
+
+    Hover.prototype.update = function(html, x, y) {
+      this.html(html);
+      this.show();
+      return this.moveTo(x, y);
+    };
+
+    Hover.prototype.html = function(content) {
+      return this.el.html(content);
+    };
+
+    Hover.prototype.moveTo = function(x, y) {
+      var hoverHeight, hoverWidth, left, parentHeight, parentWidth, top;
+      parentWidth = this.options.parent.innerWidth();
+      parentHeight = this.options.parent.innerHeight();
+      hoverWidth = this.el.outerWidth();
+      hoverHeight = this.el.outerHeight();
+      left = Math.min(Math.max(0, x - hoverWidth / 2), parentWidth - hoverWidth);
+      if (y != null) {
+        top = y - hoverHeight - 10;
+        if (top < 0) {
+          top = y + 10;
+          if (top + hoverHeight > parentHeight) {
+            top = parentHeight / 2 - hoverHeight / 2;
+          }
+        }
+      } else {
+        top = parentHeight / 2 - hoverHeight / 2;
+      }
+      return this.el.css({
+        left: left + "px",
+        top: parseInt(top) + "px"
+      });
+    };
+
+    Hover.prototype.show = function() {
+      return this.el.show();
+    };
+
+    Hover.prototype.hide = function() {
+      return this.el.hide();
+    };
+
+    return Hover;
+
+  })();
+
+  Morris.Line = (function(_super) {
+
+    __extends(Line, _super);
+
+    function Line(options) {
+      this.hilight = __bind(this.hilight, this);
+
+      this.onHoverOut = __bind(this.onHoverOut, this);
+
+      this.onHoverMove = __bind(this.onHoverMove, this);
+
+      this.onGridClick = __bind(this.onGridClick, this);
+      if (!(this instanceof Morris.Line)) {
+        return new Morris.Line(options);
+      }
+      Line.__super__.constructor.call(this, options);
+    }
+
+    Line.prototype.init = function() {
+      this.pointGrow = Raphael.animation({
+        r: this.options.pointSize + 3
+      }, 25, 'linear');
+      this.pointShrink = Raphael.animation({
+        r: this.options.pointSize
+      }, 25, 'linear');
+      if (this.options.hideHover !== 'always') {
+        this.hover = new Morris.Hover({
+          parent: this.el
+        });
+        this.on('hovermove', this.onHoverMove);
+        this.on('hoverout', this.onHoverOut);
+        return this.on('gridclick', this.onGridClick);
+      }
+    };
+
+    Line.prototype.defaults = {
+      lineWidth: 3,
+      pointSize: 4,
+      lineColors: ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'],
+      pointWidths: [1],
+      pointStrokeColors: ['#ffffff'],
+      pointFillColors: [],
+      smooth: true,
+      xLabels: 'auto',
+      xLabelFormat: null,
+      xLabelMargin: 24,
+      continuousLine: true,
+      hideHover: false
+    };
+
+    Line.prototype.calc = function() {
+      this.calcPoints();
+      return this.generatePaths();
+    };
+
+    Line.prototype.calcPoints = function() {
+      var row, y, _i, _len, _ref, _results;
+      _ref = this.data;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        row._x = this.transX(row.x);
+        row._y = (function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = row.y;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            y = _ref1[_j];
+            if (y != null) {
+              _results1.push(this.transY(y));
+            } else {
+              _results1.push(y);
+            }
+          }
+          return _results1;
+        }).call(this);
+        _results.push(row._ymax = Math.min.apply(null, [this.bottom].concat((function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = row._y;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            y = _ref1[_j];
+            if (y != null) {
+              _results1.push(y);
+            }
+          }
+          return _results1;
+        })())));
+      }
+      return _results;
+    };
+
+    Line.prototype.hitTest = function(x, y) {
+      var index, r, _i, _len, _ref;
+      if (this.data.length === 0) {
+        return null;
+      }
+      _ref = this.data.slice(1);
+      for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+        r = _ref[index];
+        if (x < (r._x + this.data[index]._x) / 2) {
+          break;
+        }
+      }
+      return index;
+    };
+
+    Line.prototype.onGridClick = function(x, y) {
+      var index;
+      index = this.hitTest(x, y);
+      return this.fire('click', index, this.options.data[index], x, y);
+    };
+
+    Line.prototype.onHoverMove = function(x, y) {
+      var index;
+      index = this.hitTest(x, y);
+      return this.displayHoverForRow(index);
+    };
+
+    Line.prototype.onHoverOut = function() {
+      if (this.options.hideHover !== false) {
+        return this.displayHoverForRow(null);
+      }
+    };
+
+    Line.prototype.displayHoverForRow = function(index) {
+      var _ref;
+      if (index != null) {
+        (_ref = this.hover).update.apply(_ref, this.hoverContentForRow(index));
+        return this.hilight(index);
+      } else {
+        this.hover.hide();
+        return this.hilight();
+      }
+    };
+
+    Line.prototype.hoverContentForRow = function(index) {
+      var content, j, row, y, _i, _len, _ref;
+      row = this.data[index];
+      content = "<div class='morris-hover-row-label'>" + row.label + "</div>";
+      _ref = row.y;
+      for (j = _i = 0, _len = _ref.length; _i < _len; j = ++_i) {
+        y = _ref[j];
+        content += "<div class='morris-hover-point' style='color: " + (this.colorFor(row, j, 'label')) + "'>\n  " + this.options.labels[j] + ":\n  " + (this.yLabelFormat(y)) + "\n</div>";
+      }
+      if (typeof this.options.hoverCallback === 'function') {
+        content = this.options.hoverCallback(index, this.options, content);
+      }
+      return [content, row._x, row._ymax];
+    };
+
+    Line.prototype.generatePaths = function() {
+      var c, coords, i, r, smooth;
+      return this.paths = (function() {
+        var _i, _ref, _ref1, _results;
+        _results = [];
+        for (i = _i = 0, _ref = this.options.ykeys.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          smooth = this.options.smooth === true || (_ref1 = this.options.ykeys[i], __indexOf.call(this.options.smooth, _ref1) >= 0);
+          coords = (function() {
+            var _j, _len, _ref2, _results1;
+            _ref2 = this.data;
+            _results1 = [];
+            for (_j = 0, _len = _ref2.length; _j < _len; _j++) {
+              r = _ref2[_j];
+              if (r._y[i] !== void 0) {
+                _results1.push({
+                  x: r._x,
+                  y: r._y[i]
+                });
+              }
+            }
+            return _results1;
+          }).call(this);
+          if (this.options.continuousLine) {
+            coords = (function() {
+              var _j, _len, _results1;
+              _results1 = [];
+              for (_j = 0, _len = coords.length; _j < _len; _j++) {
+                c = coords[_j];
+                if (c.y !== null) {
+                  _results1.push(c);
+                }
+              }
+              return _results1;
+            })();
+          }
+          if (coords.length > 1) {
+            _results.push(Morris.Line.createPath(coords, smooth, this.bottom));
+          } else {
+            _results.push(null);
+          }
+        }
+        return _results;
+      }).call(this);
+    };
+
+    Line.prototype.draw = function() {
+      if (this.options.axes) {
+        this.drawXAxis();
+      }
+      this.drawSeries();
+      if (this.options.hideHover === false) {
+        return this.displayHoverForRow(this.data.length - 1);
+      }
+    };
+
+    Line.prototype.drawXAxis = function() {
+      var drawLabel, l, labels, prevAngleMargin, prevLabelMargin, row, ypos, _i, _len, _results,
+        _this = this;
+      ypos = this.bottom + this.options.padding / 2;
+      prevLabelMargin = null;
+      prevAngleMargin = null;
+      drawLabel = function(labelText, xpos) {
+        var label, labelBox, margin, offset, textBox;
+        label = _this.drawXAxisLabel(_this.transX(xpos), ypos, labelText);
+        textBox = label.getBBox();
+        label.transform("r" + (-_this.options.xLabelAngle));
+        labelBox = label.getBBox();
+        label.transform("t0," + (labelBox.height / 2) + "...");
+        if (_this.options.xLabelAngle !== 0) {
+          offset = -0.5 * textBox.width * Math.cos(_this.options.xLabelAngle * Math.PI / 180.0);
+          label.transform("t" + offset + ",0...");
+        }
+        labelBox = label.getBBox();
+        if ((!(prevLabelMargin != null) || prevLabelMargin >= labelBox.x + labelBox.width || (prevAngleMargin != null) && prevAngleMargin >= labelBox.x) && labelBox.x >= 0 && (labelBox.x + labelBox.width) < _this.el.width()) {
+          if (_this.options.xLabelAngle !== 0) {
+            margin = 1.25 * _this.options.gridTextSize / Math.sin(_this.options.xLabelAngle * Math.PI / 180.0);
+            prevAngleMargin = labelBox.x - margin;
+          }
+          return prevLabelMargin = labelBox.x - _this.options.xLabelMargin;
+        } else {
+          return label.remove();
+        }
+      };
+      if (this.options.parseTime) {
+        if (this.data.length === 1 && this.options.xLabels === 'auto') {
+          labels = [[this.data[0].label, this.data[0].x]];
+        } else {
+          labels = Morris.labelSeries(this.xmin, this.xmax, this.width, this.options.xLabels, this.options.xLabelFormat);
+        }
+      } else {
+        labels = (function() {
+          var _i, _len, _ref, _results;
+          _ref = this.data;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            row = _ref[_i];
+            _results.push([row.label, row.x]);
+          }
+          return _results;
+        }).call(this);
+      }
+      labels.reverse();
+      _results = [];
+      for (_i = 0, _len = labels.length; _i < _len; _i++) {
+        l = labels[_i];
+        _results.push(drawLabel(l[0], l[1]));
+      }
+      return _results;
+    };
+
+    Line.prototype.drawSeries = function() {
+      var i, _i, _j, _ref, _ref1, _results;
+      this.seriesPoints = [];
+      for (i = _i = _ref = this.options.ykeys.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
+        this._drawLineFor(i);
+      }
+      _results = [];
+      for (i = _j = _ref1 = this.options.ykeys.length - 1; _ref1 <= 0 ? _j <= 0 : _j >= 0; i = _ref1 <= 0 ? ++_j : --_j) {
+        _results.push(this._drawPointFor(i));
+      }
+      return _results;
+    };
+
+    Line.prototype._drawPointFor = function(index) {
+      var circle, row, _i, _len, _ref, _results;
+      this.seriesPoints[index] = [];
+      _ref = this.data;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        circle = null;
+        if (row._y[index] != null) {
+          circle = this.drawLinePoint(row._x, row._y[index], this.options.pointSize, this.colorFor(row, index, 'point'), index);
+        }
+        _results.push(this.seriesPoints[index].push(circle));
+      }
+      return _results;
+    };
+
+    Line.prototype._drawLineFor = function(index) {
+      var path;
+      path = this.paths[index];
+      if (path !== null) {
+        return this.drawLinePath(path, this.colorFor(null, index, 'line'));
+      }
+    };
+
+    Line.createPath = function(coords, smooth, bottom) {
+      var coord, g, grads, i, ix, lg, path, prevCoord, x1, x2, y1, y2, _i, _len;
+      path = "";
+      if (smooth) {
+        grads = Morris.Line.gradients(coords);
+      }
+      prevCoord = {
+        y: null
+      };
+      for (i = _i = 0, _len = coords.length; _i < _len; i = ++_i) {
+        coord = coords[i];
+        if (coord.y != null) {
+          if (prevCoord.y != null) {
+            if (smooth) {
+              g = grads[i];
+              lg = grads[i - 1];
+              ix = (coord.x - prevCoord.x) / 4;
+              x1 = prevCoord.x + ix;
+              y1 = Math.min(bottom, prevCoord.y + ix * lg);
+              x2 = coord.x - ix;
+              y2 = Math.min(bottom, coord.y - ix * g);
+              path += "C" + x1 + "," + y1 + "," + x2 + "," + y2 + "," + coord.x + "," + coord.y;
+            } else {
+              path += "L" + coord.x + "," + coord.y;
+            }
+          } else {
+            if (!smooth || (grads[i] != null)) {
+              path += "M" + coord.x + "," + coord.y;
+            }
+          }
+        }
+        prevCoord = coord;
+      }
+      return path;
+    };
+
+    Line.gradients = function(coords) {
+      var coord, grad, i, nextCoord, prevCoord, _i, _len, _results;
+      grad = function(a, b) {
+        return (a.y - b.y) / (a.x - b.x);
+      };
+      _results = [];
+      for (i = _i = 0, _len = coords.length; _i < _len; i = ++_i) {
+        coord = coords[i];
+        if (coord.y != null) {
+          nextCoord = coords[i + 1] || {
+            y: null
+          };
+          prevCoord = coords[i - 1] || {
+            y: null
+          };
+          if ((prevCoord.y != null) && (nextCoord.y != null)) {
+            _results.push(grad(prevCoord, nextCoord));
+          } else if (prevCoord.y != null) {
+            _results.push(grad(prevCoord, coord));
+          } else if (nextCoord.y != null) {
+            _results.push(grad(coord, nextCoord));
+          } else {
+            _results.push(null);
+          }
+        } else {
+          _results.push(null);
+        }
+      }
+      return _results;
+    };
+
+    Line.prototype.hilight = function(index) {
+      var i, _i, _j, _ref, _ref1;
+      if (this.prevHilight !== null && this.prevHilight !== index) {
+        for (i = _i = 0, _ref = this.seriesPoints.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+          if (this.seriesPoints[i][this.prevHilight]) {
+            this.seriesPoints[i][this.prevHilight].animate(this.pointShrink);
+          }
+        }
+      }
+      if (index !== null && this.prevHilight !== index) {
+        for (i = _j = 0, _ref1 = this.seriesPoints.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+          if (this.seriesPoints[i][index]) {
+            this.seriesPoints[i][index].animate(this.pointGrow);
+          }
+        }
+      }
+      return this.prevHilight = index;
+    };
+
+    Line.prototype.colorFor = function(row, sidx, type) {
+      if (typeof this.options.lineColors === 'function') {
+        return this.options.lineColors.call(this, row, sidx, type);
+      } else if (type === 'point') {
+        return this.options.pointFillColors[sidx % this.options.pointFillColors.length] || this.options.lineColors[sidx % this.options.lineColors.length];
+      } else {
+        return this.options.lineColors[sidx % this.options.lineColors.length];
+      }
+    };
+
+    Line.prototype.drawXAxisLabel = function(xPos, yPos, text) {
+      return this.raphael.text(xPos, yPos, text).attr('font-size', this.options.gridTextSize).attr('font-family', this.options.gridTextFamily).attr('font-weight', this.options.gridTextWeight).attr('fill', this.options.gridTextColor);
+    };
+
+    Line.prototype.drawLinePath = function(path, lineColor) {
+      return this.raphael.path(path).attr('stroke', lineColor).attr('stroke-width', this.options.lineWidth);
+    };
+
+    Line.prototype.drawLinePoint = function(xPos, yPos, size, pointColor, lineIndex) {
+      return this.raphael.circle(xPos, yPos, size).attr('fill', pointColor).attr('stroke-width', this.strokeWidthForSeries(lineIndex)).attr('stroke', this.strokeForSeries(lineIndex));
+    };
+
+    Line.prototype.strokeWidthForSeries = function(index) {
+      return this.options.pointWidths[index % this.options.pointWidths.length];
+    };
+
+    Line.prototype.strokeForSeries = function(index) {
+      return this.options.pointStrokeColors[index % this.options.pointStrokeColors.length];
+    };
+
+    return Line;
+
+  })(Morris.Grid);
+
+  Morris.labelSeries = function(dmin, dmax, pxwidth, specName, xLabelFormat) {
+    var d, d0, ddensity, name, ret, s, spec, t, _i, _len, _ref;
+    ddensity = 200 * (dmax - dmin) / pxwidth;
+    d0 = new Date(dmin);
+    spec = Morris.LABEL_SPECS[specName];
+    if (spec === void 0) {
+      _ref = Morris.AUTO_LABEL_ORDER;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        name = _ref[_i];
+        s = Morris.LABEL_SPECS[name];
+        if (ddensity >= s.span) {
+          spec = s;
+          break;
+        }
+      }
+    }
+    if (spec === void 0) {
+      spec = Morris.LABEL_SPECS["second"];
+    }
+    if (xLabelFormat) {
+      spec = $.extend({}, spec, {
+        fmt: xLabelFormat
+      });
+    }
+    d = spec.start(d0);
+    ret = [];
+    while ((t = d.getTime()) <= dmax) {
+      if (t >= dmin) {
+        ret.push([spec.fmt(d), t]);
+      }
+      spec.incr(d);
+    }
+    return ret;
+  };
+
+  minutesSpecHelper = function(interval) {
+    return {
+      span: interval * 60 * 1000,
+      start: function(d) {
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours());
+      },
+      fmt: function(d) {
+        return "" + (Morris.pad2(d.getHours())) + ":" + (Morris.pad2(d.getMinutes()));
+      },
+      incr: function(d) {
+        return d.setUTCMinutes(d.getUTCMinutes() + interval);
+      }
+    };
+  };
+
+  secondsSpecHelper = function(interval) {
+    return {
+      span: interval * 1000,
+      start: function(d) {
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes());
+      },
+      fmt: function(d) {
+        return "" + (Morris.pad2(d.getHours())) + ":" + (Morris.pad2(d.getMinutes())) + ":" + (Morris.pad2(d.getSeconds()));
+      },
+      incr: function(d) {
+        return d.setUTCSeconds(d.getUTCSeconds() + interval);
+      }
+    };
+  };
+
+  Morris.LABEL_SPECS = {
+    "decade": {
+      span: 172800000000,
+      start: function(d) {
+        return new Date(d.getFullYear() - d.getFullYear() % 10, 0, 1);
+      },
+      fmt: function(d) {
+        return "" + (d.getFullYear());
+      },
+      incr: function(d) {
+        return d.setFullYear(d.getFullYear() + 10);
+      }
+    },
+    "year": {
+      span: 17280000000,
+      start: function(d) {
+        return new Date(d.getFullYear(), 0, 1);
+      },
+      fmt: function(d) {
+        return "" + (d.getFullYear());
+      },
+      incr: function(d) {
+        return d.setFullYear(d.getFullYear() + 1);
+      }
+    },
+    "month": {
+      span: 2419200000,
+      start: function(d) {
+        return new Date(d.getFullYear(), d.getMonth(), 1);
+      },
+      fmt: function(d) {
+        return "" + (d.getFullYear()) + "-" + (Morris.pad2(d.getMonth() + 1));
+      },
+      incr: function(d) {
+        return d.setMonth(d.getMonth() + 1);
+      }
+    },
+    "day": {
+      span: 86400000,
+      start: function(d) {
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      },
+      fmt: function(d) {
+        return "" + (d.getFullYear()) + "-" + (Morris.pad2(d.getMonth() + 1)) + "-" + (Morris.pad2(d.getDate()));
+      },
+      incr: function(d) {
+        return d.setDate(d.getDate() + 1);
+      }
+    },
+    "hour": minutesSpecHelper(60),
+    "30min": minutesSpecHelper(30),
+    "15min": minutesSpecHelper(15),
+    "10min": minutesSpecHelper(10),
+    "5min": minutesSpecHelper(5),
+    "minute": minutesSpecHelper(1),
+    "30sec": secondsSpecHelper(30),
+    "15sec": secondsSpecHelper(15),
+    "10sec": secondsSpecHelper(10),
+    "5sec": secondsSpecHelper(5),
+    "second": secondsSpecHelper(1)
+  };
+
+  Morris.AUTO_LABEL_ORDER = ["decade", "year", "month", "day", "hour", "30min", "15min", "10min", "5min", "minute", "30sec", "15sec", "10sec", "5sec", "second"];
+
+  Morris.Area = (function(_super) {
+    var areaDefaults;
+
+    __extends(Area, _super);
+
+    areaDefaults = {
+      fillOpacity: 'auto',
+      behaveLikeLine: false
+    };
+
+    function Area(options) {
+      var areaOptions;
+      if (!(this instanceof Morris.Area)) {
+        return new Morris.Area(options);
+      }
+      areaOptions = $.extend({}, areaDefaults, options);
+      this.cumulative = !areaOptions.behaveLikeLine;
+      if (areaOptions.fillOpacity === 'auto') {
+        areaOptions.fillOpacity = areaOptions.behaveLikeLine ? .8 : 1;
+      }
+      Area.__super__.constructor.call(this, areaOptions);
+    }
+
+    Area.prototype.calcPoints = function() {
+      var row, total, y, _i, _len, _ref, _results;
+      _ref = this.data;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        row._x = this.transX(row.x);
+        total = 0;
+        row._y = (function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = row.y;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            y = _ref1[_j];
+            if (this.options.behaveLikeLine) {
+              _results1.push(this.transY(y));
+            } else {
+              total += y || 0;
+              _results1.push(this.transY(total));
+            }
+          }
+          return _results1;
+        }).call(this);
+        _results.push(row._ymax = Math.max.apply(Math, row._y));
+      }
+      return _results;
+    };
+
+    Area.prototype.drawSeries = function() {
+      var i, range, _i, _j, _k, _len, _ref, _ref1, _results, _results1, _results2;
+      this.seriesPoints = [];
+      if (this.options.behaveLikeLine) {
+        range = (function() {
+          _results = [];
+          for (var _i = 0, _ref = this.options.ykeys.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; 0 <= _ref ? _i++ : _i--){ _results.push(_i); }
+          return _results;
+        }).apply(this);
+      } else {
+        range = (function() {
+          _results1 = [];
+          for (var _j = _ref1 = this.options.ykeys.length - 1; _ref1 <= 0 ? _j <= 0 : _j >= 0; _ref1 <= 0 ? _j++ : _j--){ _results1.push(_j); }
+          return _results1;
+        }).apply(this);
+      }
+      _results2 = [];
+      for (_k = 0, _len = range.length; _k < _len; _k++) {
+        i = range[_k];
+        this._drawFillFor(i);
+        this._drawLineFor(i);
+        _results2.push(this._drawPointFor(i));
+      }
+      return _results2;
+    };
+
+    Area.prototype._drawFillFor = function(index) {
+      var path;
+      path = this.paths[index];
+      if (path !== null) {
+        path = path + ("L" + (this.transX(this.xmax)) + "," + this.bottom + "L" + (this.transX(this.xmin)) + "," + this.bottom + "Z");
+        return this.drawFilledPath(path, this.fillForSeries(index));
+      }
+    };
+
+    Area.prototype.fillForSeries = function(i) {
+      var color;
+      color = Raphael.rgb2hsl(this.colorFor(this.data[i], i, 'line'));
+      return Raphael.hsl(color.h, this.options.behaveLikeLine ? color.s * 0.9 : color.s * 0.75, Math.min(0.98, this.options.behaveLikeLine ? color.l * 1.2 : color.l * 1.25));
+    };
+
+    Area.prototype.drawFilledPath = function(path, fill) {
+      return this.raphael.path(path).attr('fill', fill).attr('fill-opacity', this.options.fillOpacity).attr('stroke-width', 0);
+    };
+
+    return Area;
+
+  })(Morris.Line);
+
+  Morris.Bar = (function(_super) {
+
+    __extends(Bar, _super);
+
+    function Bar(options) {
+      this.onHoverOut = __bind(this.onHoverOut, this);
+
+      this.onHoverMove = __bind(this.onHoverMove, this);
+
+      this.onGridClick = __bind(this.onGridClick, this);
+      if (!(this instanceof Morris.Bar)) {
+        return new Morris.Bar(options);
+      }
+      Bar.__super__.constructor.call(this, $.extend({}, options, {
+        parseTime: false
+      }));
+    }
+
+    Bar.prototype.init = function() {
+      this.cumulative = this.options.stacked;
+      if (this.options.hideHover !== 'always') {
+        this.hover = new Morris.Hover({
+          parent: this.el
+        });
+        this.on('hovermove', this.onHoverMove);
+        this.on('hoverout', this.onHoverOut);
+        return this.on('gridclick', this.onGridClick);
+      }
+    };
+
+    Bar.prototype.defaults = {
+      barSizeRatio: 0.75,
+      barGap: 3,
+      barColors: ['#0b62a4', '#7a92a3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'],
+      xLabelMargin: 50
+    };
+
+    Bar.prototype.calc = function() {
+      var _ref;
+      this.calcBars();
+      if (this.options.hideHover === false) {
+        return (_ref = this.hover).update.apply(_ref, this.hoverContentForRow(this.data.length - 1));
+      }
+    };
+
+    Bar.prototype.calcBars = function() {
+      var idx, row, y, _i, _len, _ref, _results;
+      _ref = this.data;
+      _results = [];
+      for (idx = _i = 0, _len = _ref.length; _i < _len; idx = ++_i) {
+        row = _ref[idx];
+        row._x = this.left + this.width * (idx + 0.5) / this.data.length;
+        _results.push(row._y = (function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = row.y;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            y = _ref1[_j];
+            if (y != null) {
+              _results1.push(this.transY(y));
+            } else {
+              _results1.push(null);
+            }
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
+    Bar.prototype.draw = function() {
+      if (this.options.axes) {
+        this.drawXAxis();
+      }
+      return this.drawSeries();
+    };
+
+    Bar.prototype.drawXAxis = function() {
+      var i, label, labelBox, margin, offset, prevAngleMargin, prevLabelMargin, row, textBox, ypos, _i, _ref, _results;
+      ypos = this.bottom + this.options.padding / 2;
+      prevLabelMargin = null;
+      prevAngleMargin = null;
+      _results = [];
+      for (i = _i = 0, _ref = this.data.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        row = this.data[this.data.length - 1 - i];
+        label = this.drawXAxisLabel(row._x, ypos, row.label);
+        textBox = label.getBBox();
+        label.transform("r" + (-this.options.xLabelAngle));
+        labelBox = label.getBBox();
+        label.transform("t0," + (labelBox.height / 2) + "...");
+        if (this.options.xLabelAngle !== 0) {
+          offset = -0.5 * textBox.width * Math.cos(this.options.xLabelAngle * Math.PI / 180.0);
+          label.transform("t" + offset + ",0...");
+        }
+        if ((!(prevLabelMargin != null) || prevLabelMargin >= labelBox.x + labelBox.width || (prevAngleMargin != null) && prevAngleMargin >= labelBox.x) && labelBox.x >= 0 && (labelBox.x + labelBox.width) < this.el.width()) {
+          if (this.options.xLabelAngle !== 0) {
+            margin = 1.25 * this.options.gridTextSize / Math.sin(this.options.xLabelAngle * Math.PI / 180.0);
+            prevAngleMargin = labelBox.x - margin;
+          }
+          _results.push(prevLabelMargin = labelBox.x - this.options.xLabelMargin);
+        } else {
+          _results.push(label.remove());
+        }
+      }
+      return _results;
+    };
+
+    Bar.prototype.drawSeries = function() {
+      var barWidth, bottom, groupWidth, idx, lastTop, left, leftPadding, numBars, row, sidx, size, top, ypos, zeroPos;
+      groupWidth = this.width / this.options.data.length;
+      numBars = this.options.stacked != null ? 1 : this.options.ykeys.length;
+      barWidth = (groupWidth * this.options.barSizeRatio - this.options.barGap * (numBars - 1)) / numBars;
+      leftPadding = groupWidth * (1 - this.options.barSizeRatio) / 2;
+      zeroPos = this.ymin <= 0 && this.ymax >= 0 ? this.transY(0) : null;
+      return this.bars = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.data;
+        _results = [];
+        for (idx = _i = 0, _len = _ref.length; _i < _len; idx = ++_i) {
+          row = _ref[idx];
+          lastTop = 0;
+          _results.push((function() {
+            var _j, _len1, _ref1, _results1;
+            _ref1 = row._y;
+            _results1 = [];
+            for (sidx = _j = 0, _len1 = _ref1.length; _j < _len1; sidx = ++_j) {
+              ypos = _ref1[sidx];
+              if (ypos !== null) {
+                if (zeroPos) {
+                  top = Math.min(ypos, zeroPos);
+                  bottom = Math.max(ypos, zeroPos);
+                } else {
+                  top = ypos;
+                  bottom = this.bottom;
+                }
+                left = this.left + idx * groupWidth + leftPadding;
+                if (!this.options.stacked) {
+                  left += sidx * (barWidth + this.options.barGap);
+                }
+                size = bottom - top;
+                if (this.options.stacked) {
+                  top -= lastTop;
+                }
+                this.drawBar(left, top, barWidth, size, this.colorFor(row, sidx, 'bar'));
+                _results1.push(lastTop += size);
+              } else {
+                _results1.push(null);
+              }
+            }
+            return _results1;
+          }).call(this));
+        }
+        return _results;
+      }).call(this);
+    };
+
+    Bar.prototype.colorFor = function(row, sidx, type) {
+      var r, s;
+      if (typeof this.options.barColors === 'function') {
+        r = {
+          x: row.x,
+          y: row.y[sidx],
+          label: row.label
+        };
+        s = {
+          index: sidx,
+          key: this.options.ykeys[sidx],
+          label: this.options.labels[sidx]
+        };
+        return this.options.barColors.call(this, r, s, type);
+      } else {
+        return this.options.barColors[sidx % this.options.barColors.length];
+      }
+    };
+
+    Bar.prototype.hitTest = function(x, y) {
+      if (this.data.length === 0) {
+        return null;
+      }
+      x = Math.max(Math.min(x, this.right), this.left);
+      return Math.min(this.data.length - 1, Math.floor((x - this.left) / (this.width / this.data.length)));
+    };
+
+    Bar.prototype.onGridClick = function(x, y) {
+      var index;
+      index = this.hitTest(x, y);
+      return this.fire('click', index, this.options.data[index], x, y);
+    };
+
+    Bar.prototype.onHoverMove = function(x, y) {
+      var index, _ref;
+      index = this.hitTest(x, y);
+      return (_ref = this.hover).update.apply(_ref, this.hoverContentForRow(index));
+    };
+
+    Bar.prototype.onHoverOut = function() {
+      if (this.options.hideHover !== false) {
+        return this.hover.hide();
+      }
+    };
+
+    Bar.prototype.hoverContentForRow = function(index) {
+      var content, j, row, x, y, _i, _len, _ref;
+      row = this.data[index];
+      content = "<div class='morris-hover-row-label'>" + row.label + "</div>";
+      _ref = row.y;
+      for (j = _i = 0, _len = _ref.length; _i < _len; j = ++_i) {
+        y = _ref[j];
+        content += "<div class='morris-hover-point' style='color: " + (this.colorFor(row, j, 'label')) + "'>\n  " + this.options.labels[j] + ":\n  " + (this.yLabelFormat(y)) + "\n</div>";
+      }
+      if (typeof this.options.hoverCallback === 'function') {
+        content = this.options.hoverCallback(index, this.options, content);
+      }
+      x = this.left + (index + 0.5) * this.width / this.data.length;
+      return [content, x];
+    };
+
+    Bar.prototype.drawXAxisLabel = function(xPos, yPos, text) {
+      var label;
+      return label = this.raphael.text(xPos, yPos, text).attr('font-size', this.options.gridTextSize).attr('font-family', this.options.gridTextFamily).attr('font-weight', this.options.gridTextWeight).attr('fill', this.options.gridTextColor);
+    };
+
+    Bar.prototype.drawBar = function(xPos, yPos, width, height, barColor) {
+      return this.raphael.rect(xPos, yPos, width, height).attr('fill', barColor).attr('stroke-width', 0);
+    };
+
+    return Bar;
+
+  })(Morris.Grid);
+
+  Morris.Donut = (function(_super) {
+
+    __extends(Donut, _super);
+
+    Donut.prototype.defaults = {
+      colors: ['#0B62A4', '#3980B5', '#679DC6', '#95BBD7', '#B0CCE1', '#095791', '#095085', '#083E67', '#052C48', '#042135'],
+      backgroundColor: '#FFFFFF',
+      labelColor: '#000000',
+      formatter: Morris.commas
+    };
+
+    function Donut(options) {
+      this.select = __bind(this.select, this);
+
+      this.click = __bind(this.click, this);
+
+      var row;
+      if (!(this instanceof Morris.Donut)) {
+        return new Morris.Donut(options);
+      }
+      if (typeof options.element === 'string') {
+        this.el = $(document.getElementById(options.element));
+      } else {
+        this.el = $(options.element);
+      }
+      this.options = $.extend({}, this.defaults, options);
+      if (this.el === null || this.el.length === 0) {
+        throw new Error("Graph placeholder not found.");
+      }
+      if (options.data === void 0 || options.data.length === 0) {
+        return;
+      }
+      this.data = options.data;
+      this.values = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.data;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          row = _ref[_i];
+          _results.push(parseFloat(row.value));
+        }
+        return _results;
+      }).call(this);
+      this.redraw();
+    }
+
+    Donut.prototype.redraw = function() {
+      var C, cx, cy, i, idx, last, max_value, min, next, seg, total, value, w, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
+      this.el.empty();
+      this.raphael = new Raphael(this.el[0]);
+      cx = this.el.width() / 2;
+      cy = this.el.height() / 2;
+      w = (Math.min(cx, cy) - 10) / 3;
+      total = 0;
+      _ref = this.values;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        value = _ref[_i];
+        total += value;
+      }
+      min = 5 / (2 * w);
+      C = 1.9999 * Math.PI - min * this.data.length;
+      last = 0;
+      idx = 0;
+      this.segments = [];
+      _ref1 = this.values;
+      for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+        value = _ref1[i];
+        next = last + min + C * (value / total);
+        seg = new Morris.DonutSegment(cx, cy, w * 2, w, last, next, this.options.colors[idx % this.options.colors.length], this.options.backgroundColor, idx, this.raphael);
+        seg.render();
+        this.segments.push(seg);
+        seg.on('hover', this.select);
+        seg.on('click', this.click);
+        last = next;
+        idx += 1;
+      }
+      this.text1 = this.drawEmptyDonutLabel(cx, cy - 10, this.options.labelColor, 15, 800);
+      this.text2 = this.drawEmptyDonutLabel(cx, cy + 10, this.options.labelColor, 14);
+      max_value = Math.max.apply(null, (function() {
+        var _k, _len2, _ref2, _results;
+        _ref2 = this.values;
+        _results = [];
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          value = _ref2[_k];
+          _results.push(value);
+        }
+        return _results;
+      }).call(this));
+      idx = 0;
+      _ref2 = this.values;
+      _results = [];
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        value = _ref2[_k];
+        if (value === max_value) {
+          this.select(idx);
+          break;
+        }
+        _results.push(idx += 1);
+      }
+      return _results;
+    };
+
+    Donut.prototype.click = function(idx) {
+      return this.fire('click', idx, this.data[idx]);
+    };
+
+    Donut.prototype.select = function(idx) {
+      var row, s, segment, _i, _len, _ref;
+      _ref = this.segments;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        s = _ref[_i];
+        s.deselect();
+      }
+      segment = this.segments[idx];
+      segment.select();
+      row = this.data[idx];
+      return this.setLabels(row.label, this.options.formatter(row.value, row));
+    };
+
+    Donut.prototype.setLabels = function(label1, label2) {
+      var inner, maxHeightBottom, maxHeightTop, maxWidth, text1bbox, text1scale, text2bbox, text2scale;
+      inner = (Math.min(this.el.width() / 2, this.el.height() / 2) - 10) * 2 / 3;
+      maxWidth = 1.8 * inner;
+      maxHeightTop = inner / 2;
+      maxHeightBottom = inner / 3;
+      this.text1.attr({
+        text: label1,
+        transform: ''
+      });
+      text1bbox = this.text1.getBBox();
+      text1scale = Math.min(maxWidth / text1bbox.width, maxHeightTop / text1bbox.height);
+      this.text1.attr({
+        transform: "S" + text1scale + "," + text1scale + "," + (text1bbox.x + text1bbox.width / 2) + "," + (text1bbox.y + text1bbox.height)
+      });
+      this.text2.attr({
+        text: label2,
+        transform: ''
+      });
+      text2bbox = this.text2.getBBox();
+      text2scale = Math.min(maxWidth / text2bbox.width, maxHeightBottom / text2bbox.height);
+      return this.text2.attr({
+        transform: "S" + text2scale + "," + text2scale + "," + (text2bbox.x + text2bbox.width / 2) + "," + text2bbox.y
+      });
+    };
+
+    Donut.prototype.drawEmptyDonutLabel = function(xPos, yPos, color, fontSize, fontWeight) {
+      var text;
+      text = this.raphael.text(xPos, yPos, '').attr('font-size', fontSize).attr('fill', color);
+      if (fontWeight != null) {
+        text.attr('font-weight', fontWeight);
+      }
+      return text;
+    };
+
+    return Donut;
+
+  })(Morris.EventEmitter);
+
+  Morris.DonutSegment = (function(_super) {
+
+    __extends(DonutSegment, _super);
+
+    function DonutSegment(cx, cy, inner, outer, p0, p1, color, backgroundColor, index, raphael) {
+      this.cx = cx;
+      this.cy = cy;
+      this.inner = inner;
+      this.outer = outer;
+      this.color = color;
+      this.backgroundColor = backgroundColor;
+      this.index = index;
+      this.raphael = raphael;
+      this.deselect = __bind(this.deselect, this);
+
+      this.select = __bind(this.select, this);
+
+      this.sin_p0 = Math.sin(p0);
+      this.cos_p0 = Math.cos(p0);
+      this.sin_p1 = Math.sin(p1);
+      this.cos_p1 = Math.cos(p1);
+      this.is_long = (p1 - p0) > Math.PI ? 1 : 0;
+      this.path = this.calcSegment(this.inner + 3, this.inner + this.outer - 5);
+      this.selectedPath = this.calcSegment(this.inner + 3, this.inner + this.outer);
+      this.hilight = this.calcArc(this.inner);
+    }
+
+    DonutSegment.prototype.calcArcPoints = function(r) {
+      return [this.cx + r * this.sin_p0, this.cy + r * this.cos_p0, this.cx + r * this.sin_p1, this.cy + r * this.cos_p1];
+    };
+
+    DonutSegment.prototype.calcSegment = function(r1, r2) {
+      var ix0, ix1, iy0, iy1, ox0, ox1, oy0, oy1, _ref, _ref1;
+      _ref = this.calcArcPoints(r1), ix0 = _ref[0], iy0 = _ref[1], ix1 = _ref[2], iy1 = _ref[3];
+      _ref1 = this.calcArcPoints(r2), ox0 = _ref1[0], oy0 = _ref1[1], ox1 = _ref1[2], oy1 = _ref1[3];
+      return ("M" + ix0 + "," + iy0) + ("A" + r1 + "," + r1 + ",0," + this.is_long + ",0," + ix1 + "," + iy1) + ("L" + ox1 + "," + oy1) + ("A" + r2 + "," + r2 + ",0," + this.is_long + ",1," + ox0 + "," + oy0) + "Z";
+    };
+
+    DonutSegment.prototype.calcArc = function(r) {
+      var ix0, ix1, iy0, iy1, _ref;
+      _ref = this.calcArcPoints(r), ix0 = _ref[0], iy0 = _ref[1], ix1 = _ref[2], iy1 = _ref[3];
+      return ("M" + ix0 + "," + iy0) + ("A" + r + "," + r + ",0," + this.is_long + ",0," + ix1 + "," + iy1);
+    };
+
+    DonutSegment.prototype.render = function() {
+      var _this = this;
+      this.arc = this.drawDonutArc(this.hilight, this.color);
+      return this.seg = this.drawDonutSegment(this.path, this.color, this.backgroundColor, function() {
+        return _this.fire('hover', _this.index);
+      }, function() {
+        return _this.fire('click', _this.index);
+      });
+    };
+
+    DonutSegment.prototype.drawDonutArc = function(path, color) {
+      return this.raphael.path(path).attr({
+        stroke: color,
+        'stroke-width': 2,
+        opacity: 0
+      });
+    };
+
+    DonutSegment.prototype.drawDonutSegment = function(path, fillColor, strokeColor, hoverFunction, clickFunction) {
+      return this.raphael.path(path).attr({
+        fill: fillColor,
+        stroke: strokeColor,
+        'stroke-width': 3
+      }).hover(hoverFunction).click(clickFunction);
+    };
+
+    DonutSegment.prototype.select = function() {
+      if (!this.selected) {
+        this.seg.animate({
+          path: this.selectedPath
+        }, 150, '<>');
+        this.arc.animate({
+          opacity: 1
+        }, 150, '<>');
+        return this.selected = true;
+      }
+    };
+
+    DonutSegment.prototype.deselect = function() {
+      if (this.selected) {
+        this.seg.animate({
+          path: this.path
+        }, 150, '<>');
+        this.arc.animate({
+          opacity: 0
+        }, 150, '<>');
+        return this.selected = false;
+      }
+    };
+
+    return DonutSegment;
+
+  })(Morris.EventEmitter);
+
+}).call(this);
+
+// Generated by CoffeeScript 1.4.0
+
+/*
+Easy pie chart is a jquery plugin to display simple animated pie charts for only one value
+
+Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
+
+Built on top of the jQuery library (http://jquery.com)
+
+@source: http://github.com/rendro/easy-pie-chart/
+@autor: Robert Fleischmann
+@version: 1.0.1
+
+Inspired by: http://dribbble.com/shots/631074-Simple-Pie-Charts-II?list=popular&offset=210
+Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
+*/
+
+
+(function() {
+
+  (function($) {
+    $.easyPieChart = function(el, options) {
+      var addScaleLine, animateLine, drawLine, easeInOutQuad, renderBackground, renderScale, renderTrack,
+        _this = this;
+      this.el = el;
+      this.$el = $(el);
+      this.$el.data("easyPieChart", this);
+      this.init = function() {
+        var percent;
+        _this.options = $.extend({}, $.easyPieChart.defaultOptions, options);
+        percent = parseInt(_this.$el.data('percent'), 10);
+        _this.percentage = 0;
+        _this.canvas = $("<canvas width='" + _this.options.size + "' height='" + _this.options.size + "'></canvas>").get(0);
+        _this.$el.append(_this.canvas);
+        if (typeof G_vmlCanvasManager !== "undefined" && G_vmlCanvasManager !== null) {
+          G_vmlCanvasManager.initElement(_this.canvas);
+        }
+        _this.ctx = _this.canvas.getContext('2d');
+        if (window.devicePixelRatio > 1.5) {
+          $(_this.canvas).css({
+            width: _this.options.size,
+            height: _this.options.size
+          });
+          _this.canvas.width *= 2;
+          _this.canvas.height *= 2;
+          _this.ctx.scale(2, 2);
+        }
+        _this.ctx.translate(_this.options.size / 2, _this.options.size / 2);
+        _this.$el.addClass('easyPieChart');
+        _this.$el.css({
+          width: _this.options.size,
+          height: _this.options.size,
+          lineHeight: "" + _this.options.size + "px"
+        });
+        _this.update(percent);
+        return _this;
+      };
+      this.update = function(percent) {
+        if (_this.options.animate === false) {
+          return drawLine(percent);
+        } else {
+          return animateLine(_this.percentage, percent);
+        }
+      };
+      renderScale = function() {
+        var i, _i, _results;
+        _this.ctx.fillStyle = _this.options.scaleColor;
+        _this.ctx.lineWidth = 1;
+        _results = [];
+        for (i = _i = 0; _i <= 24; i = ++_i) {
+          _results.push(addScaleLine(i));
+        }
+        return _results;
+      };
+      addScaleLine = function(i) {
+        var offset;
+        offset = i % 6 === 0 ? 0 : _this.options.size * 0.017;
+        _this.ctx.save();
+        _this.ctx.rotate(i * Math.PI / 12);
+        _this.ctx.fillRect(_this.options.size / 2 - offset, 0, -_this.options.size * 0.05 + offset, 1);
+        return _this.ctx.restore();
+      };
+      renderTrack = function() {
+        var offset;
+        offset = _this.options.size / 2 - _this.options.lineWidth / 2;
+        if (_this.options.scaleColor !== false) {
+          offset -= _this.options.size * 0.08;
+        }
+        _this.ctx.beginPath();
+        _this.ctx.arc(0, 0, offset, 0, Math.PI * 2, true);
+        _this.ctx.closePath();
+        _this.ctx.strokeStyle = _this.options.trackColor;
+        _this.ctx.lineWidth = _this.options.lineWidth;
+        return _this.ctx.stroke();
+      };
+      renderBackground = function() {
+        if (_this.options.scaleColor !== false) {
+          renderScale();
+        }
+        if (_this.options.trackColor !== false) {
+          return renderTrack();
+        }
+      };
+      drawLine = function(percent) {
+        var offset;
+        renderBackground();
+        _this.ctx.strokeStyle = $.isFunction(_this.options.barColor) ? _this.options.barColor(percent) : _this.options.barColor;
+        _this.ctx.lineCap = _this.options.lineCap;
+        _this.ctx.lineWidth = _this.options.lineWidth;
+        offset = _this.options.size / 2 - _this.options.lineWidth / 2;
+        if (_this.options.scaleColor !== false) {
+          offset -= _this.options.size * 0.08;
+        }
+        _this.ctx.save();
+        _this.ctx.rotate(-Math.PI / 2);
+        _this.ctx.beginPath();
+        _this.ctx.arc(0, 0, offset, 0, Math.PI * 2 * percent / 100, false);
+        _this.ctx.stroke();
+        return _this.ctx.restore();
+      };
+      animateLine = function(from, to) {
+        var currentStep, fps, steps;
+        fps = 30;
+        steps = fps * _this.options.animate / 1000;
+        currentStep = 0;
+        _this.options.onStart.call(_this);
+        _this.percentage = to;
+        if (_this.animation) {
+          clearInterval(_this.animation);
+          _this.animation = false;
+        }
+        return _this.animation = setInterval(function() {
+          _this.ctx.clearRect(-_this.options.size / 2, -_this.options.size / 2, _this.options.size, _this.options.size);
+          renderBackground.call(_this);
+          drawLine.call(_this, [easeInOutQuad(currentStep, from, to - from, steps)]);
+          currentStep++;
+          if ((currentStep / steps) > 1) {
+            clearInterval(_this.animation);
+            _this.animation = false;
+            return _this.options.onStop.call(_this);
+          }
+        }, 1000 / fps);
+      };
+      easeInOutQuad = function(t, b, c, d) {
+        var easeIn, easing;
+        easeIn = function(t) {
+          return Math.pow(t, 2);
+        };
+        easing = function(t) {
+          if (t < 1) {
+            return easeIn(t);
+          } else {
+            return 2 - easeIn((t / 2) * -2 + 2);
+          }
+        };
+        t /= d / 2;
+        return c / 2 * easing(t) + b;
+      };
+      return this.init();
+    };
+    $.easyPieChart.defaultOptions = {
+      barColor: '#ef1e25',
+      trackColor: '#f2f2f2',
+      scaleColor: '#dfe0e0',
+      lineCap: 'round',
+      size: 110,
+      lineWidth: 3,
+      animate: false,
+      onStart: $.noop,
+      onStop: $.noop
+    };
+    $.fn.easyPieChart = function(options) {
+      return $.each(this, function(i, el) {
+        var $el;
+        $el = $(el);
+        if (!$el.data('easyPieChart')) {
+          return $el.data('easyPieChart', new $.easyPieChart(el, options));
+        }
+      });
+    };
+    return void 0;
+  })(jQuery);
+
+}).call(this);
+
 $(document).ready(function(){
 
-
-  $(".submenu > a").click(function(e) {
-    e.preventDefault();
-    var $li = $(this).parent("li");
-    var $ul = $(this).next("ul");
-
-    if($li.hasClass("open")) {
-      $ul.slideUp(350);
-      $li.removeClass("open");
-    } else {
-      $(".nav > li > ul").slideUp(350);
-      $(".nav > li").removeClass("open");
-      $ul.slideDown(350);
-      $li.addClass("open");
-    }
-  });
-  
-});
-$(function() {
-    // Bootstrap
-    $('#bootstrap-editor').wysihtml5();
-
-    // Ckeditor standard
-    $( 'textarea#ckeditor_standard' ).ckeditor({width:'98%', height: '150px', toolbar: [
-		{ name: 'document', items: [ 'Source', '-', 'NewPage', 'Preview', '-', 'Templates' ] },	// Defines toolbar group with name (used to create voice label) and items in 3 subgroups.
-		[ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ],			// Defines toolbar group without name.
-		{ name: 'basicstyles', items: [ 'Bold', 'Italic' ] }
-	]});
-    $( 'textarea#ckeditor_full' ).ckeditor({width:'98%', height: '150px'});
-});
-
-// Tiny MCE
-tinymce.init({
-    selector: "#tinymce_basic",
-    plugins: [
-        "advlist autolink lists link image charmap print preview anchor",
-        "searchreplace visualblocks code fullscreen",
-        "insertdatetime media table contextmenu paste"
-    ],
-    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-});
-
-// Tiny MCE
-tinymce.init({
-    selector: "#tinymce_full",
-    plugins: [
-        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-        "searchreplace wordcount visualblocks visualchars code fullscreen",
-        "insertdatetime media nonbreaking save table contextmenu directionality",
-        "emoticons template paste textcolor"
-    ],
-    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
-    toolbar2: "print preview media | forecolor backcolor emoticons",
-    image_advtab: true,
-    templates: [
-        {title: 'Test template 1', content: 'Test 1'},
-        {title: 'Test template 2', content: 'Test 2'}
-    ]
-});
-$(document).ready(function() {
-        $('#example').dataTable();
-} );
-$(function() {
-    var data = [ ["January", 10], ["February", 8], ["March", 4], ["April", 13], ["May", 17], ["June", 9] ];
-
-    $.plot("#catchart", [ data ], {
-        series: {
-            bars: {
-                show: true,
-                barWidth: 0.6,
-                align: "center"
-            }
-        },
-        xaxis: {
-            mode: "categories",
-            tickLength: 0
-        }
+	$('.pie-chart').easyPieChart({
+        //your configuration goes here
     });
 
-    var data = [],
-    series = Math.floor(Math.random() * 6) + 3;
-
-    for (var i = 0; i < series; i++) {
-        data[i] = {
-            label: "Series" + (i + 1),
-            data: Math.floor(Math.random() * 100) + 1
-        }
-    }
-
-    $.plot('#piechart1', data, {
-        series: {
-            pie: { 
-                show: true,
-                radius: 1,
-                label: {
-                    show: true,
-                    radius: 3/4,
-                    formatter: labelFormatter,
-                    background: { 
-                        opacity: 0.5,
-                        color: '#000'
-                    }
-                }
-            }
-        },
-        legend: {
-            show: false
-        }
-    });
-
-    $.plot('#piechart2', data, {
-        series: {
-            pie: {
-                show: true,
-                radius: 1,
-                tilt: 0.5,
-                label: {
-                    show: true,
-                    radius: 1,
-                    formatter: labelFormatter,
-                    background: {
-                        opacity: 0.8
-                    }
-                },
-                combine: {
-                    color: '#999',
-                    threshold: 0.1
-                }
-            }
-        },
-        legend: {
-            show: false
-        }
-    });
-
-
-    var oilprices = [[1167692400000,61.05], [1167778800000,58.32], [1167865200000,57.35], [1167951600000,56.31], [1168210800000,55.55], [1168297200000,55.64], [1168383600000,54.02], [1168470000000,51.88], [1168556400000,52.99], [1168815600000,52.99], [1168902000000,51.21], [1168988400000,52.24], [1169074800000,50.48], [1169161200000,51.99], [1169420400000,51.13], [1169506800000,55.04], [1169593200000,55.37], [1169679600000,54.23], [1169766000000,55.42], [1170025200000,54.01], [1170111600000,56.97], [1170198000000,58.14], [1170284400000,58.14], [1170370800000,59.02], [1170630000000,58.74], [1170716400000,58.88], [1170802800000,57.71], [1170889200000,59.71], [1170975600000,59.89], [1171234800000,57.81], [1171321200000,59.06], [1171407600000,58.00], [1171494000000,57.99], [1171580400000,59.39], [1171839600000,59.39], [1171926000000,58.07], [1172012400000,60.07], [1172098800000,61.14], [1172444400000,61.39], [1172530800000,61.46], [1172617200000,61.79], [1172703600000,62.00], [1172790000000,60.07], [1173135600000,60.69], [1173222000000,61.82], [1173308400000,60.05], [1173654000000,58.91], [1173740400000,57.93], [1173826800000,58.16], [1173913200000,57.55], [1173999600000,57.11], [1174258800000,56.59], [1174345200000,59.61], [1174518000000,61.69], [1174604400000,62.28], [1174860000000,62.91], [1174946400000,62.93], [1175032800000,64.03], [1175119200000,66.03], [1175205600000,65.87], [1175464800000,64.64], [1175637600000,64.38], [1175724000000,64.28], [1175810400000,64.28], [1176069600000,61.51], [1176156000000,61.89], [1176242400000,62.01], [1176328800000,63.85], [1176415200000,63.63], [1176674400000,63.61], [1176760800000,63.10], [1176847200000,63.13], [1176933600000,61.83], [1177020000000,63.38], [1177279200000,64.58], [1177452000000,65.84], [1177538400000,65.06], [1177624800000,66.46], [1177884000000,64.40], [1178056800000,63.68], [1178143200000,63.19], [1178229600000,61.93], [1178488800000,61.47], [1178575200000,61.55], [1178748000000,61.81], [1178834400000,62.37], [1179093600000,62.46], [1179180000000,63.17], [1179266400000,62.55], [1179352800000,64.94], [1179698400000,66.27], [1179784800000,65.50], [1179871200000,65.77], [1179957600000,64.18], [1180044000000,65.20], [1180389600000,63.15], [1180476000000,63.49], [1180562400000,65.08], [1180908000000,66.30], [1180994400000,65.96], [1181167200000,66.93], [1181253600000,65.98], [1181599200000,65.35], [1181685600000,66.26], [1181858400000,68.00], [1182117600000,69.09], [1182204000000,69.10], [1182290400000,68.19], [1182376800000,68.19], [1182463200000,69.14], [1182722400000,68.19], [1182808800000,67.77], [1182895200000,68.97], [1182981600000,69.57], [1183068000000,70.68], [1183327200000,71.09], [1183413600000,70.92], [1183586400000,71.81], [1183672800000,72.81], [1183932000000,72.19], [1184018400000,72.56], [1184191200000,72.50], [1184277600000,74.15], [1184623200000,75.05], [1184796000000,75.92], [1184882400000,75.57], [1185141600000,74.89], [1185228000000,73.56], [1185314400000,75.57], [1185400800000,74.95], [1185487200000,76.83], [1185832800000,78.21], [1185919200000,76.53], [1186005600000,76.86], [1186092000000,76.00], [1186437600000,71.59], [1186696800000,71.47], [1186956000000,71.62], [1187042400000,71.00], [1187301600000,71.98], [1187560800000,71.12], [1187647200000,69.47], [1187733600000,69.26], [1187820000000,69.83], [1187906400000,71.09], [1188165600000,71.73], [1188338400000,73.36], [1188511200000,74.04], [1188856800000,76.30], [1189116000000,77.49], [1189461600000,78.23], [1189548000000,79.91], [1189634400000,80.09], [1189720800000,79.10], [1189980000000,80.57], [1190066400000,81.93], [1190239200000,83.32], [1190325600000,81.62], [1190584800000,80.95], [1190671200000,79.53], [1190757600000,80.30], [1190844000000,82.88], [1190930400000,81.66], [1191189600000,80.24], [1191276000000,80.05], [1191362400000,79.94], [1191448800000,81.44], [1191535200000,81.22], [1191794400000,79.02], [1191880800000,80.26], [1191967200000,80.30], [1192053600000,83.08], [1192140000000,83.69], [1192399200000,86.13], [1192485600000,87.61], [1192572000000,87.40], [1192658400000,89.47], [1192744800000,88.60], [1193004000000,87.56], [1193090400000,87.56], [1193176800000,87.10], [1193263200000,91.86], [1193612400000,93.53], [1193698800000,94.53], [1193871600000,95.93], [1194217200000,93.98], [1194303600000,96.37], [1194476400000,95.46], [1194562800000,96.32], [1195081200000,93.43], [1195167600000,95.10], [1195426800000,94.64], [1195513200000,95.10], [1196031600000,97.70], [1196118000000,94.42], [1196204400000,90.62], [1196290800000,91.01], [1196377200000,88.71], [1196636400000,88.32], [1196809200000,90.23], [1196982000000,88.28], [1197241200000,87.86], [1197327600000,90.02], [1197414000000,92.25], [1197586800000,90.63], [1197846000000,90.63], [1197932400000,90.49], [1198018800000,91.24], [1198105200000,91.06], [1198191600000,90.49], [1198710000000,96.62], [1198796400000,96.00], [1199142000000,99.62], [1199314800000,99.18], [1199401200000,95.09], [1199660400000,96.33], [1199833200000,95.67], [1200351600000,91.90], [1200438000000,90.84], [1200524400000,90.13], [1200610800000,90.57], [1200956400000,89.21], [1201042800000,86.99], [1201129200000,89.85], [1201474800000,90.99], [1201561200000,91.64], [1201647600000,92.33], [1201734000000,91.75], [1202079600000,90.02], [1202166000000,88.41], [1202252400000,87.14], [1202338800000,88.11], [1202425200000,91.77], [1202770800000,92.78], [1202857200000,93.27], [1202943600000,95.46], [1203030000000,95.46], [1203289200000,101.74], [1203462000000,98.81], [1203894000000,100.88], [1204066800000,99.64], [1204153200000,102.59], [1204239600000,101.84], [1204498800000,99.52], [1204585200000,99.52], [1204671600000,104.52], [1204758000000,105.47], [1204844400000,105.15], [1205103600000,108.75], [1205276400000,109.92], [1205362800000,110.33], [1205449200000,110.21], [1205708400000,105.68], [1205967600000,101.84], [1206313200000,100.86], [1206399600000,101.22], [1206486000000,105.90], [1206572400000,107.58], [1206658800000,105.62], [1206914400000,101.58], [1207000800000,100.98], [1207173600000,103.83], [1207260000000,106.23], [1207605600000,108.50], [1207778400000,110.11], [1207864800000,110.14], [1208210400000,113.79], [1208296800000,114.93], [1208383200000,114.86], [1208728800000,117.48], [1208815200000,118.30], [1208988000000,116.06], [1209074400000,118.52], [1209333600000,118.75], [1209420000000,113.46], [1209592800000,112.52], [1210024800000,121.84], [1210111200000,123.53], [1210197600000,123.69], [1210543200000,124.23], [1210629600000,125.80], [1210716000000,126.29], [1211148000000,127.05], [1211320800000,129.07], [1211493600000,132.19], [1211839200000,128.85], [1212357600000,127.76], [1212703200000,138.54], [1212962400000,136.80], [1213135200000,136.38], [1213308000000,134.86], [1213653600000,134.01], [1213740000000,136.68], [1213912800000,135.65], [1214172000000,134.62], [1214258400000,134.62], [1214344800000,134.62], [1214431200000,139.64], [1214517600000,140.21], [1214776800000,140.00], [1214863200000,140.97], [1214949600000,143.57], [1215036000000,145.29], [1215381600000,141.37], [1215468000000,136.04], [1215727200000,146.40], [1215986400000,145.18], [1216072800000,138.74], [1216159200000,134.60], [1216245600000,129.29], [1216332000000,130.65], [1216677600000,127.95], [1216850400000,127.95], [1217282400000,122.19], [1217455200000,124.08], [1217541600000,125.10], [1217800800000,121.41], [1217887200000,119.17], [1217973600000,118.58], [1218060000000,120.02], [1218405600000,114.45], [1218492000000,113.01], [1218578400000,116.00], [1218751200000,113.77], [1219010400000,112.87], [1219096800000,114.53], [1219269600000,114.98], [1219356000000,114.98], [1219701600000,116.27], [1219788000000,118.15], [1219874400000,115.59], [1219960800000,115.46], [1220306400000,109.71], [1220392800000,109.35], [1220565600000,106.23], [1220824800000,106.34]];
-
-var exchangerates = [[1167606000000,0.7580], [1167692400000,0.7580], [1167778800000,0.75470], [1167865200000,0.75490], [1167951600000,0.76130], [1168038000000,0.76550], [1168124400000,0.76930], [1168210800000,0.76940], [1168297200000,0.76880], [1168383600000,0.76780], [1168470000000,0.77080], [1168556400000,0.77270], [1168642800000,0.77490], [1168729200000,0.77410], [1168815600000,0.77410], [1168902000000,0.77320], [1168988400000,0.77270], [1169074800000,0.77370], [1169161200000,0.77240], [1169247600000,0.77120], [1169334000000,0.7720], [1169420400000,0.77210], [1169506800000,0.77170], [1169593200000,0.77040], [1169679600000,0.7690], [1169766000000,0.77110], [1169852400000,0.7740], [1169938800000,0.77450], [1170025200000,0.77450], [1170111600000,0.7740], [1170198000000,0.77160], [1170284400000,0.77130], [1170370800000,0.76780], [1170457200000,0.76880], [1170543600000,0.77180], [1170630000000,0.77180], [1170716400000,0.77280], [1170802800000,0.77290], [1170889200000,0.76980], [1170975600000,0.76850], [1171062000000,0.76810], [1171148400000,0.7690], [1171234800000,0.7690], [1171321200000,0.76980], [1171407600000,0.76990], [1171494000000,0.76510], [1171580400000,0.76130], [1171666800000,0.76160], [1171753200000,0.76140], [1171839600000,0.76140], [1171926000000,0.76070], [1172012400000,0.76020], [1172098800000,0.76110], [1172185200000,0.76220], [1172271600000,0.76150], [1172358000000,0.75980], [1172444400000,0.75980], [1172530800000,0.75920], [1172617200000,0.75730], [1172703600000,0.75660], [1172790000000,0.75670], [1172876400000,0.75910], [1172962800000,0.75820], [1173049200000,0.75850], [1173135600000,0.76130], [1173222000000,0.76310], [1173308400000,0.76150], [1173394800000,0.760], [1173481200000,0.76130], [1173567600000,0.76270], [1173654000000,0.76270], [1173740400000,0.76080], [1173826800000,0.75830], [1173913200000,0.75750], [1173999600000,0.75620], [1174086000000,0.7520], [1174172400000,0.75120], [1174258800000,0.75120], [1174345200000,0.75170], [1174431600000,0.7520], [1174518000000,0.75110], [1174604400000,0.7480], [1174690800000,0.75090], [1174777200000,0.75310], [1174860000000,0.75310], [1174946400000,0.75270], [1175032800000,0.74980], [1175119200000,0.74930], [1175205600000,0.75040], [1175292000000,0.750], [1175378400000,0.74910], [1175464800000,0.74910], [1175551200000,0.74850], [1175637600000,0.74840], [1175724000000,0.74920], [1175810400000,0.74710], [1175896800000,0.74590], [1175983200000,0.74770], [1176069600000,0.74770], [1176156000000,0.74830], [1176242400000,0.74580], [1176328800000,0.74480], [1176415200000,0.7430], [1176501600000,0.73990], [1176588000000,0.73950], [1176674400000,0.73950], [1176760800000,0.73780], [1176847200000,0.73820], [1176933600000,0.73620], [1177020000000,0.73550], [1177106400000,0.73480], [1177192800000,0.73610], [1177279200000,0.73610], [1177365600000,0.73650], [1177452000000,0.73620], [1177538400000,0.73310], [1177624800000,0.73390], [1177711200000,0.73440], [1177797600000,0.73270], [1177884000000,0.73270], [1177970400000,0.73360], [1178056800000,0.73330], [1178143200000,0.73590], [1178229600000,0.73590], [1178316000000,0.73720], [1178402400000,0.7360], [1178488800000,0.7360], [1178575200000,0.7350], [1178661600000,0.73650], [1178748000000,0.73840], [1178834400000,0.73950], [1178920800000,0.74130], [1179007200000,0.73970], [1179093600000,0.73960], [1179180000000,0.73850], [1179266400000,0.73780], [1179352800000,0.73660], [1179439200000,0.740], [1179525600000,0.74110], [1179612000000,0.74060], [1179698400000,0.74050], [1179784800000,0.74140], [1179871200000,0.74310], [1179957600000,0.74310], [1180044000000,0.74380], [1180130400000,0.74430], [1180216800000,0.74430], [1180303200000,0.74430], [1180389600000,0.74340], [1180476000000,0.74290], [1180562400000,0.74420], [1180648800000,0.7440], [1180735200000,0.74390], [1180821600000,0.74370], [1180908000000,0.74370], [1180994400000,0.74290], [1181080800000,0.74030], [1181167200000,0.73990], [1181253600000,0.74180], [1181340000000,0.74680], [1181426400000,0.7480], [1181512800000,0.7480], [1181599200000,0.7490], [1181685600000,0.74940], [1181772000000,0.75220], [1181858400000,0.75150], [1181944800000,0.75020], [1182031200000,0.74720], [1182117600000,0.74720], [1182204000000,0.74620], [1182290400000,0.74550], [1182376800000,0.74490], [1182463200000,0.74670], [1182549600000,0.74580], [1182636000000,0.74270], [1182722400000,0.74270], [1182808800000,0.7430], [1182895200000,0.74290], [1182981600000,0.7440], [1183068000000,0.7430], [1183154400000,0.74220], [1183240800000,0.73880], [1183327200000,0.73880], [1183413600000,0.73690], [1183500000000,0.73450], [1183586400000,0.73450], [1183672800000,0.73450], [1183759200000,0.73520], [1183845600000,0.73410], [1183932000000,0.73410], [1184018400000,0.7340], [1184104800000,0.73240], [1184191200000,0.72720], [1184277600000,0.72640], [1184364000000,0.72550], [1184450400000,0.72580], [1184536800000,0.72580], [1184623200000,0.72560], [1184709600000,0.72570], [1184796000000,0.72470], [1184882400000,0.72430], [1184968800000,0.72440], [1185055200000,0.72350], [1185141600000,0.72350], [1185228000000,0.72350], [1185314400000,0.72350], [1185400800000,0.72620], [1185487200000,0.72880], [1185573600000,0.73010], [1185660000000,0.73370], [1185746400000,0.73370], [1185832800000,0.73240], [1185919200000,0.72970], [1186005600000,0.73170], [1186092000000,0.73150], [1186178400000,0.72880], [1186264800000,0.72630], [1186351200000,0.72630], [1186437600000,0.72420], [1186524000000,0.72530], [1186610400000,0.72640], [1186696800000,0.7270], [1186783200000,0.73120], [1186869600000,0.73050], [1186956000000,0.73050], [1187042400000,0.73180], [1187128800000,0.73580], [1187215200000,0.74090], [1187301600000,0.74540], [1187388000000,0.74370], [1187474400000,0.74240], [1187560800000,0.74240], [1187647200000,0.74150], [1187733600000,0.74190], [1187820000000,0.74140], [1187906400000,0.73770], [1187992800000,0.73550], [1188079200000,0.73150], [1188165600000,0.73150], [1188252000000,0.7320], [1188338400000,0.73320], [1188424800000,0.73460], [1188511200000,0.73280], [1188597600000,0.73230], [1188684000000,0.7340], [1188770400000,0.7340], [1188856800000,0.73360], [1188943200000,0.73510], [1189029600000,0.73460], [1189116000000,0.73210], [1189202400000,0.72940], [1189288800000,0.72660], [1189375200000,0.72660], [1189461600000,0.72540], [1189548000000,0.72420], [1189634400000,0.72130], [1189720800000,0.71970], [1189807200000,0.72090], [1189893600000,0.7210], [1189980000000,0.7210], [1190066400000,0.7210], [1190152800000,0.72090], [1190239200000,0.71590], [1190325600000,0.71330], [1190412000000,0.71050], [1190498400000,0.70990], [1190584800000,0.70990], [1190671200000,0.70930], [1190757600000,0.70930], [1190844000000,0.70760], [1190930400000,0.7070], [1191016800000,0.70490], [1191103200000,0.70120], [1191189600000,0.70110], [1191276000000,0.70190], [1191362400000,0.70460], [1191448800000,0.70630], [1191535200000,0.70890], [1191621600000,0.70770], [1191708000000,0.70770], [1191794400000,0.70770], [1191880800000,0.70910], [1191967200000,0.71180], [1192053600000,0.70790], [1192140000000,0.70530], [1192226400000,0.7050], [1192312800000,0.70550], [1192399200000,0.70550], [1192485600000,0.70450], [1192572000000,0.70510], [1192658400000,0.70510], [1192744800000,0.70170], [1192831200000,0.70], [1192917600000,0.69950], [1193004000000,0.69940], [1193090400000,0.70140], [1193176800000,0.70360], [1193263200000,0.70210], [1193349600000,0.70020], [1193436000000,0.69670], [1193522400000,0.6950], [1193612400000,0.6950], [1193698800000,0.69390], [1193785200000,0.6940], [1193871600000,0.69220], [1193958000000,0.69190], [1194044400000,0.69140], [1194130800000,0.68940], [1194217200000,0.68910], [1194303600000,0.69040], [1194390000000,0.6890], [1194476400000,0.68340], [1194562800000,0.68230], [1194649200000,0.68070], [1194735600000,0.68150], [1194822000000,0.68150], [1194908400000,0.68470], [1194994800000,0.68590], [1195081200000,0.68220], [1195167600000,0.68270], [1195254000000,0.68370], [1195340400000,0.68230], [1195426800000,0.68220], [1195513200000,0.68220], [1195599600000,0.67920], [1195686000000,0.67460], [1195772400000,0.67350], [1195858800000,0.67310], [1195945200000,0.67420], [1196031600000,0.67440], [1196118000000,0.67390], [1196204400000,0.67310], [1196290800000,0.67610], [1196377200000,0.67610], [1196463600000,0.67850], [1196550000000,0.68180], [1196636400000,0.68360], [1196722800000,0.68230], [1196809200000,0.68050], [1196895600000,0.67930], [1196982000000,0.68490], [1197068400000,0.68330], [1197154800000,0.68250], [1197241200000,0.68250], [1197327600000,0.68160], [1197414000000,0.67990], [1197500400000,0.68130], [1197586800000,0.68090], [1197673200000,0.68680], [1197759600000,0.69330], [1197846000000,0.69330], [1197932400000,0.69450], [1198018800000,0.69440], [1198105200000,0.69460], [1198191600000,0.69640], [1198278000000,0.69650], [1198364400000,0.69560], [1198450800000,0.69560], [1198537200000,0.6950], [1198623600000,0.69480], [1198710000000,0.69280], [1198796400000,0.68870], [1198882800000,0.68240], [1198969200000,0.67940], [1199055600000,0.67940], [1199142000000,0.68030], [1199228400000,0.68550], [1199314800000,0.68240], [1199401200000,0.67910], [1199487600000,0.67830], [1199574000000,0.67850], [1199660400000,0.67850], [1199746800000,0.67970], [1199833200000,0.680], [1199919600000,0.68030], [1200006000000,0.68050], [1200092400000,0.6760], [1200178800000,0.6770], [1200265200000,0.6770], [1200351600000,0.67360], [1200438000000,0.67260], [1200524400000,0.67640], [1200610800000,0.68210], [1200697200000,0.68310], [1200783600000,0.68420], [1200870000000,0.68420], [1200956400000,0.68870], [1201042800000,0.69030], [1201129200000,0.68480], [1201215600000,0.68240], [1201302000000,0.67880], [1201388400000,0.68140], [1201474800000,0.68140], [1201561200000,0.67970], [1201647600000,0.67690], [1201734000000,0.67650], [1201820400000,0.67330], [1201906800000,0.67290], [1201993200000,0.67580], [1202079600000,0.67580], [1202166000000,0.6750], [1202252400000,0.6780], [1202338800000,0.68330], [1202425200000,0.68560], [1202511600000,0.69030], [1202598000000,0.68960], [1202684400000,0.68960], [1202770800000,0.68820], [1202857200000,0.68790], [1202943600000,0.68620], [1203030000000,0.68520], [1203116400000,0.68230], [1203202800000,0.68130], [1203289200000,0.68130], [1203375600000,0.68220], [1203462000000,0.68020], [1203548400000,0.68020], [1203634800000,0.67840], [1203721200000,0.67480], [1203807600000,0.67470], [1203894000000,0.67470], [1203980400000,0.67480], [1204066800000,0.67330], [1204153200000,0.6650], [1204239600000,0.66110], [1204326000000,0.65830], [1204412400000,0.6590], [1204498800000,0.6590], [1204585200000,0.65810], [1204671600000,0.65780], [1204758000000,0.65740], [1204844400000,0.65320], [1204930800000,0.65020], [1205017200000,0.65140], [1205103600000,0.65140], [1205190000000,0.65070], [1205276400000,0.6510], [1205362800000,0.64890], [1205449200000,0.64240], [1205535600000,0.64060], [1205622000000,0.63820], [1205708400000,0.63820], [1205794800000,0.63410], [1205881200000,0.63440], [1205967600000,0.63780], [1206054000000,0.64390], [1206140400000,0.64780], [1206226800000,0.64810], [1206313200000,0.64810], [1206399600000,0.64940], [1206486000000,0.64380], [1206572400000,0.63770], [1206658800000,0.63290], [1206745200000,0.63360], [1206831600000,0.63330], [1206914400000,0.63330], [1207000800000,0.6330], [1207087200000,0.63710], [1207173600000,0.64030], [1207260000000,0.63960], [1207346400000,0.63640], [1207432800000,0.63560], [1207519200000,0.63560], [1207605600000,0.63680], [1207692000000,0.63570], [1207778400000,0.63540], [1207864800000,0.6320], [1207951200000,0.63320], [1208037600000,0.63280], [1208124000000,0.63310], [1208210400000,0.63420], [1208296800000,0.63210], [1208383200000,0.63020], [1208469600000,0.62780], [1208556000000,0.63080], [1208642400000,0.63240], [1208728800000,0.63240], [1208815200000,0.63070], [1208901600000,0.62770], [1208988000000,0.62690], [1209074400000,0.63350], [1209160800000,0.63920], [1209247200000,0.640], [1209333600000,0.64010], [1209420000000,0.63960], [1209506400000,0.64070], [1209592800000,0.64230], [1209679200000,0.64290], [1209765600000,0.64720], [1209852000000,0.64850], [1209938400000,0.64860], [1210024800000,0.64670], [1210111200000,0.64440], [1210197600000,0.64670], [1210284000000,0.65090], [1210370400000,0.64780], [1210456800000,0.64610], [1210543200000,0.64610], [1210629600000,0.64680], [1210716000000,0.64490], [1210802400000,0.6470], [1210888800000,0.64610], [1210975200000,0.64520], [1211061600000,0.64220], [1211148000000,0.64220], [1211234400000,0.64250], [1211320800000,0.64140], [1211407200000,0.63660], [1211493600000,0.63460], [1211580000000,0.6350], [1211666400000,0.63460], [1211752800000,0.63460], [1211839200000,0.63430], [1211925600000,0.63460], [1212012000000,0.63790], [1212098400000,0.64160], [1212184800000,0.64420], [1212271200000,0.64310], [1212357600000,0.64310], [1212444000000,0.64350], [1212530400000,0.6440], [1212616800000,0.64730], [1212703200000,0.64690], [1212789600000,0.63860], [1212876000000,0.63560], [1212962400000,0.6340], [1213048800000,0.63460], [1213135200000,0.6430], [1213221600000,0.64520], [1213308000000,0.64670], [1213394400000,0.65060], [1213480800000,0.65040], [1213567200000,0.65030], [1213653600000,0.64810], [1213740000000,0.64510], [1213826400000,0.6450], [1213912800000,0.64410], [1213999200000,0.64140], [1214085600000,0.64090], [1214172000000,0.64090], [1214258400000,0.64280], [1214344800000,0.64310], [1214431200000,0.64180], [1214517600000,0.63710], [1214604000000,0.63490], [1214690400000,0.63330], [1214776800000,0.63340], [1214863200000,0.63380], [1214949600000,0.63420], [1215036000000,0.6320], [1215122400000,0.63180], [1215208800000,0.6370], [1215295200000,0.63680], [1215381600000,0.63680], [1215468000000,0.63830], [1215554400000,0.63710], [1215640800000,0.63710], [1215727200000,0.63550], [1215813600000,0.6320], [1215900000000,0.62770], [1215986400000,0.62760], [1216072800000,0.62910], [1216159200000,0.62740], [1216245600000,0.62930], [1216332000000,0.63110], [1216418400000,0.6310], [1216504800000,0.63120], [1216591200000,0.63120], [1216677600000,0.63040], [1216764000000,0.62940], [1216850400000,0.63480], [1216936800000,0.63780], [1217023200000,0.63680], [1217109600000,0.63680], [1217196000000,0.63680], [1217282400000,0.6360], [1217368800000,0.6370], [1217455200000,0.64180], [1217541600000,0.64110], [1217628000000,0.64350], [1217714400000,0.64270], [1217800800000,0.64270], [1217887200000,0.64190], [1217973600000,0.64460], [1218060000000,0.64680], [1218146400000,0.64870], [1218232800000,0.65940], [1218319200000,0.66660], [1218405600000,0.66660], [1218492000000,0.66780], [1218578400000,0.67120], [1218664800000,0.67050], [1218751200000,0.67180], [1218837600000,0.67840], [1218924000000,0.68110], [1219010400000,0.68110], [1219096800000,0.67940], [1219183200000,0.68040], [1219269600000,0.67810], [1219356000000,0.67560], [1219442400000,0.67350], [1219528800000,0.67630], [1219615200000,0.67620], [1219701600000,0.67770], [1219788000000,0.68150], [1219874400000,0.68020], [1219960800000,0.6780], [1220047200000,0.67960], [1220133600000,0.68170], [1220220000000,0.68170], [1220306400000,0.68320], [1220392800000,0.68770], [1220479200000,0.69120], [1220565600000,0.69140], [1220652000000,0.70090], [1220738400000,0.70120], [1220824800000,0.7010], [1220911200000,0.70050]];
-
-function euroFormatter(v, axis) {
-    return v.toFixed(axis.tickDecimals) + "€";
-}
-
-function doPlot(position) {
-    $.plot("#timechart", [
-        { data: oilprices, label: "Oil price ($)" },
-        { data: exchangerates, label: "USD/EUR exchange rate", yaxis: 2 }
-    ], {
-        xaxes: [ { mode: "time" } ],
-        yaxes: [ { min: 0 }, {
-            // align if we are to the right
-            alignTicksWithAxis: position == "right" ? 1 : null,
-            position: position,
-            tickFormatter: euroFormatter
-        } ],
-        legend: { position: "sw" }
-    });
-}
-
-doPlot("right");
-
 });
-
-// Morris Bar Chart
-Morris.Bar({
-    element: 'hero-bar',
-    data: [
-        {device: '1', sells: 136},
-        {device: '3G', sells: 1037},
-        {device: '3GS', sells: 275},
-        {device: '4', sells: 380},
-        {device: '4S', sells: 655},
-        {device: '5', sells: 1571}
-    ],
-    xkey: 'device',
-    ykeys: ['sells'],
-    labels: ['Sells'],
-    barRatio: 0.4,
-    xLabelMargin: 10,
-    hideHover: 'auto',
-    barColors: ["#3d88ba"]
-});
-
-
-// Morris Donut Chart
-Morris.Donut({
-    element: 'hero-donut',
-    data: [
-        {label: 'Direct', value: 25 },
-        {label: 'Referrals', value: 40 },
-        {label: 'Search engines', value: 25 },
-        {label: 'Unique visitors', value: 10 }
-    ],
-    colors: ["#30a1ec", "#76bdee", "#c4dafe"],
-    formatter: function (y) { return y + "%" }
-});
-
-// Morris Donut Chart
-Morris.Donut({
-    element: 'hero-donut2',
-    data: [
-        {label: 'Google', value: 25 },
-        {label: 'Yahoo', value: 40 },
-        {label: 'Bing', value: 25 },
-        {label: 'Yandex', value: 10 }
-    ],
-    colors: ["#30a1ec", "#76bdee", "#c4dafe"],
-    formatter: function (y) { return y + "%" }
-});
-
-
-// Morris Line Chart
-var tax_data = [
-    {"period": "2013-04", "visits": 2407, "signups": 660},
-    {"period": "2013-03", "visits": 3351, "signups": 729},
-    {"period": "2013-02", "visits": 2469, "signups": 1318},
-    {"period": "2013-01", "visits": 2246, "signups": 461},
-    {"period": "2012-12", "visits": 3171, "signups": 1676},
-    {"period": "2012-11", "visits": 2155, "signups": 681},
-    {"period": "2012-10", "visits": 1226, "signups": 620},
-    {"period": "2012-09", "visits": 2245, "signups": 500}
-];
-Morris.Line({
-    element: 'hero-graph',
-    data: tax_data,
-    xkey: 'period',
-    xLabels: "month",
-    ykeys: ['visits', 'signups'],
-    labels: ['Visits', 'User signups']
-});
-
-
-
-// Morris Area Chart
-Morris.Area({
-    element: 'hero-area',
-    data: [
-        {period: '2010 Q1', iphone: 2666, ipad: null, itouch: 2647},
-        {period: '2010 Q2', iphone: 2778, ipad: 2294, itouch: 2441},
-        {period: '2010 Q3', iphone: 4912, ipad: 1969, itouch: 2501},
-        {period: '2010 Q4', iphone: 3767, ipad: 3597, itouch: 5689},
-        {period: '2011 Q1', iphone: 6810, ipad: 1914, itouch: 2293},
-        {period: '2011 Q2', iphone: 5670, ipad: 4293, itouch: 1881},
-        {period: '2011 Q3', iphone: 4820, ipad: 3795, itouch: 1588},
-        {period: '2011 Q4', iphone: 15073, ipad: 5967, itouch: 5175},
-        {period: '2012 Q1', iphone: 10687, ipad: 4460, itouch: 2028},
-        {period: '2012 Q2', iphone: 8432, ipad: 5713, itouch: 1791}
-    ],
-    xkey: 'period',
-    ykeys: ['iphone', 'ipad', 'itouch'],
-    labels: ['iPhone', 'iPad', 'iPod Touch'],
-    lineWidth: 2,
-    hideHover: 'auto',
-    lineColors: ["#81d5d9", "#a6e182", "#67bdf8"]
-  });
-
-
-
-// Build jQuery Knobs
-$(".knob").knob();
-
-function labelFormatter(label, series) {
-    return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
-}
-
 //# sourceMappingURL=admin.js.map

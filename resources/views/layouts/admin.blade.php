@@ -53,7 +53,7 @@
         <div class="row">
           <div class="col-md-2">
             <div class="sidebar content-box" style="display: block;">
-                <p class="nav-collapser visible-sm visible-xs"><span class="glyphicon glyphicon-th-list" data-toggle="collapse" data-target=".nav.collapse" ></span></p>
+                <p class="nav-collapser visible-sm visible-xs"><i class="glyphicon glyphicon-th-list" data-toggle="collapse" data-target=".nav.collapse" ></i></p>
                 
                 <ul class="nav hidden-sm hidden-xs">
                     @include('includes.admin-nav')

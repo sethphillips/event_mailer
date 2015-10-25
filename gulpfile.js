@@ -37,16 +37,20 @@ elixir(function(mix) {
     	'../../../bower_components/Bootstrap-Admin-Theme-3/css/calendar.css',
     	'../../../bower_components/Bootstrap-Admin-Theme-3/css/forms.css',
     	'../../../bower_components/Bootstrap-Admin-Theme-3/css/stats.css',
+        '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/easypiechart/jquery.easy-pie-chart.css',
+        '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/morris/morris.css'
 
 	],'public/dist/admin.css');
 	mix.scripts([
 		'../../../bower_components/jquery/dist/jquery.js',
 		'../../../bower_components/Bootstrap-Admin-Theme-3/bootstrap/js/bootstrap.js',
-		'../../../bower_components/Bootstrap-Admin-Theme-3/js/calendar.js',
-		'../../../bower_components/Bootstrap-Admin-Theme-3/js/custom.js',
-		'../../../bower_components/Bootstrap-Admin-Theme-3/js/editors.js',
-		'../../../bower_components/Bootstrap-Admin-Theme-3/js/tables.js',
-		'../../../bower_components/Bootstrap-Admin-Theme-3/js/stats.js',
+        '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/morris/morris.js',
+        // '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/datatables/dataTables.bootstrap.js',
+        '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/easypiechart/jquery.easy-pie-chart.js',
+
+		// '../../../bower_components/Bootstrap-Admin-Theme-3/js/calendar.js',
+		// '../../../bower_components/Bootstrap-Admin-Theme-3/js/custom.js',
+		// '../../../bower_components/Bootstrap-Admin-Theme-3/js/tables.js',
 		'admin.js',
 	],'public/dist/admin.js');
 });

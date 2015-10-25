@@ -8007,4 +8007,7 @@ button.close {
 .fa-fonticons:before {
   content: ""; }
 
+.fa {
+  font-size: 2em; }
+
 /*# sourceMappingURL=admin.css.map */

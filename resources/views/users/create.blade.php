@@ -4,7 +4,9 @@
 Create a User
 @stop
 
-		
+@section('action')
+	{!! link_to_route('admin.users.index','back',[],['class'=>'btn btn-primary']) !!}
+@stop	
 
 @section('content')
 
@@ -13,6 +15,12 @@ Create a User
 		
 		
 		<!-- Form Input -->
+		<div class="checkbox">
+			<label>
+				{!! Form::checkbox('is_admin',true,false) !!}
+				Is an administrator
+			</label>
+		</div>
 		
 		<div class="form-group">
 			{!! Form::label('name','Name') !!}
@@ -24,6 +32,19 @@ Create a User
 			{!! Form::label('email','Email')!!}
 			{!! Form::text('email','',array('class'=>'form-control'))!!}
 		</div>
+
+
+
+		
+		<div class="form-group">
+			
+			{!! Form::label('client_id','Client Group') !!}
+			{!! Form::select('client_id',App\User::clientsByName(),'',['class' => 'form-control','placeholder'=>''] ) !!}
+		
+		</div>
+		
+		
+
 		<div class="form-group">
 			{!! Form::label('password','Password')!!}
 			{!! Form::password('password',array('class'=>'form-control'))!!}

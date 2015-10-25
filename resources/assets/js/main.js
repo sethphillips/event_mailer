@@ -73,16 +73,16 @@ $(document).ready(function(){
 
 
 	$('.website').click(function(){
-		$.post('/action',{action:'website visit',id:id})
+		$.post('/action',{action:'website',id:id})
 	});
 	$('.see-more').click(function(){
-		$.post('/action',{action:'you tube visit',id:id})
+		$.post('/action',{action:'youtube',id:id})
 	});
 	$('.work-with-us').click(function(){
-		$.post('/action',{action:'email Bill',id:id})
+		$.post('/action',{action:'email',id:id})
 	});
 	$('.skip-video').click(function(){
-		$.post('/action',{action:'skip video',id:id})
+		$.post('/action',{action:'skip',id:id})
 	});
 
 });
