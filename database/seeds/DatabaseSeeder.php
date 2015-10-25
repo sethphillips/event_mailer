@@ -36,7 +36,13 @@ class UserTableSeeder extends Seeder{
     public function run()
     {
 
-        $client = Client::create(['name'=>'Exhibit Partners']);
+        $client = Client::create([
+            'name'=>'Exhibit Partners',
+            'address' => '7700 68th Ave N',
+            'city' => 'Minneapolis',
+            'state' => 'MN',
+            'zip' => '55428',
+            ]);
 
         User::create([
             'name' => 'Bill Gench',
@@ -98,7 +104,7 @@ class ContactSeeder extends Seeder{
 
         Contact::create([
             'name' => 'Seth BlackKat',
-            'email' => 'black_kat_recording@trms.com',
+            'email' => 'black_kat_recording@yahoo.com',
             'client_id' => $client->id,
         ]);
 

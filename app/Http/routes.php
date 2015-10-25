@@ -1,5 +1,8 @@
 <?php
 
+use App\Action;
+use App\Contact;
+use App\Email;
 use Illuminate\Http\Request;
 
 /*
@@ -45,9 +48,49 @@ Route::get('moreinfo', ['as'=>'moreinfo',function(Request $request){
 	return view('halloween2')->with('id',$id);
 }]);
 
-Route::get('action',function(){
+
+Route::post('action',function(Request $request){
+
+	$id = $request->input('id');
+	if(!$id) return 'anonymous';
+	$action = $request->input('action');
+
+	$email = Email::find($id);
+
+	$action = Action::create([
+		'action' => $action,
+		'contact_id' => $email->contact->id,
+		'campaign_id' => $email->campaign->id,
+	]);
+	
 	return 'action captured';
 });
+
+
+Route::get('unsubscribe',['as'=>'unsubscribe.form',function(Request $request){
+
+	return view()->make('unsubscribe.form');
+
+}]);
+
+Route::post('unsubscribe',['as'=>'unsubscribe.submit',function(Request $request){
+
+	$email = $request->input('email');
+	
+	$contact = Contact::where('email','=',$email)->first();
+
+	if(!$contact) return view()->make('unsubscribe.form')->with('message',"Sorry, I dont think we ever sent anything to $email");
+
+	$contact->unsubscribe = true;
+	$contact->save();
+
+	return view()->make('unsubscribe.response')->with([
+		'message' => "$contact->email has been unsubscribed",
+	]);
+
+
+}]);
+
 
 Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 	if($request->input('email'))
@@ -62,6 +105,10 @@ Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 
 	return view('emails.halloween')->with(['id'=>$id,'email'=>false]);
 }]);
+
+
+
+
 
 Route::get('testmail',function(){
 

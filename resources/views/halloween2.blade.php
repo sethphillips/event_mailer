@@ -33,19 +33,19 @@
 				We tell your story through space, now let us bring it to life with motion graphics, interactive &amp; web-based content.
 			</p>
 			<div class="buttons">
-				<a class="work-with-us" href="mailto:bill.gench@exhibitpartners.com" >
+				<a href="mailto:bill.gench@exhibitpartners.com" >
 				<button class="btn work-with-us">Work With Us</button>
 				</a>
 				
-				<a class="see-more" href="https://www.youtube.com/channel/UC3m0m9RsklRWIGxu2Mb3ntw" target="_blank">
+				<a href="https://www.youtube.com/channel/UC3m0m9RsklRWIGxu2Mb3ntw" target="_blank">
 				<button class="btn see-more">See More</button>
 				</a>
 				
-				<a class="website" href="http://www.exhibitpartners.com" target="_blank">
+				<a href="http://www.exhibitpartners.com" target="_blank">
 				<button class="btn website">Website</button>
 				</a>
 
-				<a class="watch-again" href="{!! URL::route('video') !!}" >
+				<a href="{!! URL::route('video') !!}" >
 				<button class="btn watch-again">Watch Again</button>
 				</a>
 								

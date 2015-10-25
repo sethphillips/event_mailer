@@ -11234,6 +11234,12 @@ module.exports = exports["default"];
 },{}]},{},[37])
 (37)
 });
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 $(document).ready(function(){
 	
 	var config = {

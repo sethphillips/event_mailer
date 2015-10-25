@@ -78,6 +78,19 @@
 
 		</td>
 	</tr>
+	@if (isset($client))
+		<tr>
+			<td>
+				This email was sent from:<br>
+				{{ $client->name }}<br>
+				{{ $client->address }}<br>
+				{{ $client->city }}, {{ $client->state }} {{ $client->zip }}
+			</td>
+		</tr>
+	@endif
+	<tr>
+		<td>Want to <a href="{!! URL::route('unsubscribe.form') !!}">Unsubscribe</a>?</td>
+	</tr>
 </table>
 
 @stop

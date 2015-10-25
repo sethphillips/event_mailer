@@ -482,7 +482,7 @@ html {
 
 .content {
   width: 50%;
-  padding: 5em 3em 300px 3em;
+  padding: 10em 3em 300px 3em;
   margin: auto;
   background: url(../../img/halloween/content_bg.jpg);
   background-repeat: no-repeat;
@@ -564,6 +564,17 @@ html {
         width: 47%; } }
     .buttons .btn.skip-video {
       width: 50%; }
+
+.form {
+  margin-bottom: 10em; }
+  .form .form-control {
+    width: 100%;
+    border-radius: 5px;
+    padding: 4px;
+    line-height: 2em;
+    margin-bottom: 1em; }
+  .form .btn {
+    font-size: 1.3em; }
 
 /*# sourceMappingURL=app.css.map */
 

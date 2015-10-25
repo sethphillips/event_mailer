@@ -21,6 +21,11 @@ class Email extends Model
     	return $this->belongsTo('App\Contact');
     }
 
+    public function campaign()
+    {
+        return $this->belongsTo('App\Campaign');
+    }
+
     public function scopePublished($query)
     {	
     	return $query->where('draft','=',0);
@@ -42,7 +47,7 @@ class Email extends Model
     {
     	$email = $this;
 
-    	Mail::send($this->template,['email'=>true,'id'=>$this->id],function($mail) use ($email){
+    	Mail::send($this->template,['email'=>true,'id'=>$this->id,'client'=>$this->campaign->client],function($mail) use ($email){
 			$mail->to($email->contact->email,$email->contact->name)->subject($email->subject);
 		});
 
