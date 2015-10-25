@@ -1,0 +1,14 @@
+{
+  "watchers": {
+    "default": {
+      "watch-lr": [
+        "public/**/*.js",
+        "resources/**/*.php",
+        "resources/lang/**/*.php"
+      ],
+      "watch-lr-css": [
+        "public/build/**/*.css"
+      ]
+    }
+  }
+}

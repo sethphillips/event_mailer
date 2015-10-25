@@ -1,0 +1,177 @@
+// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+$shadow: 		rgba(0,0,0,.7);
+
+
+$md:            1199px;
+$tablet:     	   991px;
+$phone:     	     767px;
+
+
+
+@mixin media-query($device) {
+    @media screen and (max-width: $device) {
+        @content;
+    }
+}
+
+html{
+	background-color: black;
+	font-family: Verdana;
+	font-size:17px;
+	@include media-query($md)
+	{
+		font-size: 15px;
+	}
+	@include media-query($tablet){
+		font-size: 12px;
+	}
+
+	@include media-query($phone){
+		font-size: 11px;
+	}
+}
+
+.container{
+	
+	background-repeat:no-repeat;
+	position: relative;
+
+	.bg{
+		height: 100%;
+		width: 70%;
+		position: absolute;
+		top:0;
+		background: url(../../img/halloween/main_bg.jpg);
+		// background-size:cover;
+		background-repeat:no-repeat;
+		background-attachment: fixed;
+		z-index:-1;
+
+		
+
+		&.two{
+			background-image: url(../../img/halloween/second_bg.jpg);	
+		}
+		&.right{
+			right:0;
+			background-position:right bottom;
+		}
+		&.left{
+			left:0;
+			background-position:left bottom;
+		} 
+	}
+}
+
+.content{
+	width: 50%;
+	padding:5em 3em 300px 3em;
+	margin:auto;
+	background: url(../../img/halloween/content_bg.jpg);
+	background-repeat:no-repeat;
+	// background-attachment: fixed;
+	background-position:center bottom;
+	background-size:cover;
+	text-align: center;
+	&.two{
+		color:white;
+		background-image: url(../../img/halloween/secondary_content_bg.jpg);
+	}
+	@include media-query($md)
+	{
+		width: 65%;
+		padding-bottom:150px;
+	}
+	@include media-query($tablet)
+	{
+		width: 75%;
+		padding-bottom:150px;
+	}
+
+	@include media-query($phone)
+	{
+		width: 90%;
+	}
+}
+
+.title-bar{
+	position: fixed;
+	top:0;
+	width: 100%;
+	height: 7em;
+	background-color: white;
+	text-align: center;
+	padding:10px;
+	padding-top:1em;
+	box-shadow:1em 0 1em 5px $shadow;
+	.logo{
+		a{
+		display: inline-block;
+			height: 4em;
+		}
+		img{
+			height: 100%;
+		}
+	}
+
+}
+.video-container{
+	margin-bottom:1em;
+	video{
+		width: 100%;
+	}
+}
+
+.video-extras{
+	.social,.copyright{
+		display: inline-block;
+		width: 40%;
+		margin-bottom:1em;
+			text-align: center;
+		@include media-query($tablet){
+			width: 100%;
+		}
+	}
+}
+
+.message{
+	font-size:1.5em;
+	margin-top:3em;
+	*+*{
+		margin-bottom:1em;
+	}
+	h1{
+		font-size:1.2em;
+		font-weight: bold;
+	}
+}
+.buttons{
+	margin:1em;
+	a{
+		text-decoration: none;
+	}
+	.btn{
+		color:white;
+		font-size: 1em;
+		padding:.2em 0;
+		background-color: #48a842;
+		display: inline-block;
+		border:none;
+		width:35%;
+		margin:.2em .5%;
+		@include media-query($tablet){
+			width: 40%;
+		}
+		@include media-query($phone){
+			width: 47%;
+		}
+		&.skip-video{
+			width: 50%;
+		}
+	}
+}
+
+
+
+
