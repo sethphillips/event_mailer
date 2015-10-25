@@ -18,6 +18,9 @@ class CreateEmailsTable extends Migration
             $table->integer('contact_id')->unsigned();
             $table->dateTime('send_on');
             $table->string('template');
+            $table->string('subject');
+            $table->string('reply_to');
+            $table->string('from');
             $table->boolean('draft')->default(1);
             $table->boolean('sent')->default(0);
             $table->boolean('trackable')->default(1);

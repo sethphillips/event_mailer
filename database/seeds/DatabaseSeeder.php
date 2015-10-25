@@ -118,6 +118,7 @@ class EmailSeeder extends Seeder{
             Email::create([
                 'send_on' => Carbon::now()->addMinutes(5),
                 'template' => 'emails.halloween',
+                'subject' => 'Happy Halloween!',
                 'draft' => false,
                 'campaign_id' => $campaign->id,
                 'contact_id' => $contact->id,

@@ -14,13 +14,34 @@ use Illuminate\Http\Request;
 */
 
 Route::get('halloween', ['as'=>'video',function (Request $request) {
-	$id = $request->input('id')?:'anonymous';
+	
+	
+	if($request->input('email'))
+	{
+		$id = $request->input('email');
+		$request->session()->put('id',$id);
+	}
+	else
+	{
+		$id = $request->session()->get('id',null);
+	}
+
+
     return view('halloween')->with('id',$id);
 }]);
 
 
 Route::get('moreinfo', ['as'=>'moreinfo',function(Request $request){
-	$id = $request->input('id')?:'anonymous';
+	if($request->input('email'))
+	{
+		$id = $request->input('email');
+		$request->session()->put('id',$id);
+	}
+	else
+	{
+		$id = $request->session()->get('id',null);
+	}
+
 	return view('halloween2')->with('id',$id);
 }]);
 
@@ -29,7 +50,16 @@ Route::get('action',function(){
 });
 
 Route::get('halloween_email',['as'=>'halloween',function(Request $request){
-	$id = $request->input('id')?:'anonymous';
+	if($request->input('email'))
+	{
+		$id = $request->input('email');
+		$request->session()->put('id',$id);
+	}
+	else
+	{
+		$id = $request->session()->get('id',null);
+	}
+
 	return view('emails.halloween')->with(['id'=>$id,'email'=>false]);
 }]);
 
