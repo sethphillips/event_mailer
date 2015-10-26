@@ -520,7 +520,7 @@ html {
     height: 100%; }
 
 .video-container {
-  margin-bottom: 1em; }
+  margin: 2em 0; }
   .video-container video {
     width: 100%; }
 
@@ -532,6 +532,9 @@ html {
   @media screen and (max-width: 991px) {
     .video-extras .social, .video-extras .copyright {
       width: 100%; } }
+
+.video-extras .social {
+  text-decoration: underline; }
 
 .message {
   font-size: 1.5em;
