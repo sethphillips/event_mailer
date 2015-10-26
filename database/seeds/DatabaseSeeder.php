@@ -108,6 +108,24 @@ class ContactSeeder extends Seeder{
             'client_id' => $client->id,
         ]);
 
+        Contact::create([
+            'name' => 'Dane Giles',
+            'email' => 'dane@exhibitpartners.com',
+            'client_id' => $client->id,
+        ]);
+
+        Contact::create([
+            'name' => 'Bill Gench',
+            'email' => 'bill@exhibitpartners.com',
+            'client_id' => $client->id,
+        ]);
+
+        Contact::create([
+            'name' => 'Debs Holloway',
+            'email' => 'DebS@exhibitpartners.com',
+            'client_id' => $client->id,
+        ]);
+
     }
 }
 
