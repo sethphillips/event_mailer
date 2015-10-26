@@ -57,8 +57,15 @@
 										<img src="{!! asset('img/halloween/email_logo.jpg') !!}" alt="exhibit partners logo">
 									</a>
 								</td>
-								<td width="230">
+								<td width="330">
+								@if (isset($client))
+									<p style="font-size:11px;line-height:10px;">
+										{{ $client->name }}<br>
+										{{ $client->address }}, {{ $client->city }}, {{ $client->state }} {{ $client->zip }}
+									</p>
+								@else
 									&nbsp;
+								@endif
 								</td>
 								<td>
 									<a href="https://www.facebook.com/ExhibitPartners" style="color:white;text-decoration:none">
@@ -78,16 +85,6 @@
 
 		</td>
 	</tr>
-	@if (isset($client))
-		<tr>
-			<td>
-				This email was sent from:<br>
-				{{ $client->name }}<br>
-				{{ $client->address }}<br>
-				{{ $client->city }}, {{ $client->state }} {{ $client->zip }}
-			</td>
-		</tr>
-	@endif
 	<tr>
 		<td>Want to <a href="{!! URL::route('unsubscribe.form') !!}">Unsubscribe</a>?</td>
 	</tr>

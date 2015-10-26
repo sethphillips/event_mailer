@@ -65,8 +65,8 @@ html{
 }
 
 .content{
-	width: 50%;
-	padding:10em 3em 300px 3em;
+	width: 55%;
+	padding:5em 3em 300px 3em;
 	margin:auto;
 	background: url(../../img/halloween/content_bg.jpg);
 	background-repeat:no-repeat;
@@ -74,24 +74,29 @@ html{
 	background-position:center bottom;
 	background-size:cover;
 	text-align: center;
+	
+	&:not(.two){
+		padding-bottom:200px;
+	}
+
 	&.two{
 		color:white;
 		background-image: url(../../img/halloween/secondary_content_bg.jpg);
 	}
 	@include media-query($md)
 	{
-		width: 65%;
+		width: 50%;
 		padding-bottom:150px;
 	}
 	@include media-query($tablet)
 	{
-		width: 75%;
-		padding-bottom:150px;
+		width: 90%;
+		padding-bottom:250px;
 	}
 
 	@include media-query($phone)
 	{
-		width: 90%;
+		// width: 90%;
 	}
 }
 
@@ -99,7 +104,7 @@ html{
 	position: fixed;
 	top:0;
 	width: 100%;
-	height: 7em;
+	height: 5em;
 	background-color: white;
 	text-align: center;
 	padding:10px;
@@ -108,7 +113,7 @@ html{
 	.logo{
 		a{
 		display: inline-block;
-			height: 4em;
+			height: 3em;
 		}
 		img{
 			height: 100%;

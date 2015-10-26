@@ -33,7 +33,7 @@
 				We tell your story through space, now let us bring it to life with motion graphics, interactive &amp; web-based content.
 			</p>
 			<div class="buttons">
-				<a href="mailto:bill.gench@exhibitpartners.com" >
+				<a href="mailto:bill@exhibitpartners.com" >
 				<button class="btn work-with-us">Work With Us</button>
 				</a>
 				
@@ -50,7 +50,7 @@
 				</a>
 								
 			</div>
-			<h1>Look For More From EP<br>(YouTube Channel Link)</h1>
+			
 		</div>
 	</div>
 </div>
