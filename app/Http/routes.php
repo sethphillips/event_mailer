@@ -17,6 +17,10 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('/',function(){
+	return redirect()->route('video');
+});
+
 Route::get('halloween', ['as'=>'video',function (Request $request) {
 	
 	
