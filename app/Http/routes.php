@@ -101,6 +101,7 @@ Route::post('unsubscribe',['as'=>'unsubscribe.submit',function(Request $request)
 
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::get('/',['as'=>'admin.index','uses'=>'DashboardController@index']);
+	Route::get('/report/{id}',['as'=>'admin.report','uses'=>'DashboardController@report']);
 	Route::resource('users','UserController');
 });
 

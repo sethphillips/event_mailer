@@ -57,6 +57,7 @@ class DashboardController extends Controller
         $unsubscribedPercentage = $campaign->emails->count()? intval($unsubscribed->count()/$campaign->emails->count()*100): 0;
         $sentPercentage = $campaign->emails->count()? intval($campaign->sentEmails->count()/$campaign->emails->count()*100): 0;
 
+
         return view()->make('admin.index')->with([
             'campaign'=>$campaign,
             'actions'=>$actions,
@@ -71,6 +72,93 @@ class DashboardController extends Controller
 
         ]);
     
+    }
+
+    public function report($id)
+    {
+        $campaign = Campaign::find($id);
+
+        $summary = [];
+        $actions = Action::with('contact')->forCampaign($campaign)->orderBy('contact_id')->get();
+
+        $summary['total_sent'] = $campaign->emails->count();
+
+        $summary['opened'] = $actions->filter(function($action){
+            return $action->action === 'opened';
+        })->count();
+
+        $summary['more info'] = $actions->filter(function($action){
+            return $action->action === 'more info';
+        })->count();
+
+        $summary['website_visits'] = $actions->filter(function($action){
+            return $action->action === 'website';
+        })->count();
+
+        $summary['skipped_video'] = $actions->filter(function($action){
+            return $action->action === 'skipped';
+        })->count();
+
+        $summary['emailed_bill'] = $actions->filter(function($action){
+            return $action->action === 'email';
+        })->count();
+
+        $summary['youtube_channel'] = $actions->filter(function($action){
+            return $action->action === 'youtube';
+        })->count();
+
+        $summary['unsubscribed'] = Contact::where('unsubscribe','=',1)->count();
+
+
+        \Excel::create('Report',function($excel) use ($actions,$summary,$campaign){
+            $excel->setTitle("eMail Report for $campaign->name")
+                    ->setCreator('Exhibit Partners Mailer Service')
+                    ->setCompany('Exhibit Partners')
+                    ->setDescription("A detailed report of email recipients for the $campaign->name email campaign");
+            
+
+
+            $excel->sheet('Summary',function($sheet) use ($summary){
+                $sheet->row(1,[
+                    'Total',
+                    'Opened',
+                    'Went To Page 2',
+                    'Website Visits',
+                    'Skipped The Video',
+                    'Emailed Bill',
+                    'YouTube Channel',
+                    'Unsubscribed',
+                ]);
+
+                $sheet->row(2,[
+                    $summary['total_sent'],
+                    $summary['opened'],
+                    $summary['more info'],
+                    $summary['website_visits'],
+                    $summary['skipped_video'],
+                    $summary['emailed_bill'],
+                    $summary['youtube_channel'],
+                    $summary['unsubscribed'],
+                ]);
+            });
+
+            $excel->sheet('Recipient Actions', function($sheet) use ($actions) {
+                $sheet->row(1,[
+                    'Contact',
+                    'Email',
+                    'Action'
+                ]);
+                foreach ($actions as $key => $action) {
+                    
+                    $sheet->row($key+2,[
+                        $action->contact->name,
+                        $action->contact->email,
+                        $action->action,
+                    ]);
+                }
+            });
+
+        })->download('xlsx');
     }
 
     /**

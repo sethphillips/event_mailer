@@ -127,8 +127,11 @@
 	</div>
 
 	<div class="clearfix"></div>
-
-	
+	<div class="form-group">
+		
+		<a href="{!! URL::route('admin.report',$campaign->id) !!}" class="btn btn-success" download>Download Report</a>
+	</div>
+		
 </div>
 
 
