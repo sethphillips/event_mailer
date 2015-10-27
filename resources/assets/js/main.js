@@ -15,7 +15,7 @@ $(document).ready(function(){
 	  ui: {
 	    flyout: 'bottom center',       // change the flyout direction of the shares. chose from `top left`, `top center`, `top right`, `bottom left`, `bottom right`, `bottom center`, `middle left`, or `middle right` [Default: `top center`]
 	//     button_font:  // include the Lato font set from the Google Fonts API. [Default: `true`]
-	    buttonText:'Share this with others...'  // change the text of the button, [Default: `Share`]
+	    buttonText:'Share this...'  // change the text of the button, [Default: `Share`]
 	//     icon_font:    // include the minified Entypo font set. [Default: `true`]
 	  },
 	//   networks: {
