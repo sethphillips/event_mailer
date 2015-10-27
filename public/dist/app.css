@@ -501,7 +501,10 @@ html {
   @media screen and (max-width: 991px) {
     .content {
       width: 90%;
-      padding-bottom: 250px; } }
+      padding-bottom: 200px; } }
+  @media screen and (max-width: 767px) {
+    .content {
+      padding-bottom: 150px; } }
 
 .title-bar {
   position: fixed;
@@ -546,7 +549,7 @@ html {
     font-weight: bold; }
 
 .buttons {
-  margin: 1em; }
+  margin: 1em 0; }
   .buttons a {
     text-decoration: none; }
   .buttons .btn {
@@ -560,7 +563,7 @@ html {
     margin: .2em .5%; }
     @media screen and (max-width: 991px) {
       .buttons .btn {
-        width: 40%; } }
+        width: 47%; } }
     @media screen and (max-width: 767px) {
       .buttons .btn {
         width: 47%; } }

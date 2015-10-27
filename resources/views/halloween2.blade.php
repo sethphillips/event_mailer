@@ -34,7 +34,7 @@
 			</p>
 			<div class="buttons">
 				<a href="mailto:jeff@exhibitpartners.com" >
-				<button class="btn work-with-us">Work With Us</button>
+				<button class="btn work-with-us">Contact Us</button>
 				</a>
 				
 				<a href="https://www.youtube.com/channel/UC3m0m9RsklRWIGxu2Mb3ntw" target="_blank">

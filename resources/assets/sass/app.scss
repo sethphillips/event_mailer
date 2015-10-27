@@ -91,12 +91,12 @@ html{
 	@include media-query($tablet)
 	{
 		width: 90%;
-		padding-bottom:250px;
+		padding-bottom:200px;
 	}
 
 	@include media-query($phone)
 	{
-		// width: 90%;
+		padding-bottom:150px;
 	}
 }
 
@@ -156,7 +156,7 @@ html{
 	}
 }
 .buttons{
-	margin:1em;
+	margin:1em 0;
 	a{
 		text-decoration: none;
 	}
@@ -170,7 +170,7 @@ html{
 		width:35%;
 		margin:.2em .5%;
 		@include media-query($tablet){
-			width: 40%;
+			width: 47%;
 		}
 		@include media-query($phone){
 			width: 47%;
