@@ -11,7 +11,7 @@ $(document).ready(function(){
 	  // url:          // the url you'd like to share. [Default: `window.location.href`]
 	  title: 'A Little Treat for Halloween from Exhibit Partners',        // title to be shared alongside your link [Default: See below in defaults section]
 	  description: "We can't send candy, but we think this video will brighten your day.  We had a lot of fun making it and we hope you enjoy watching.",  // text to be shared alongside your link, [Default: See below in defaults section]   
-	  image: 'http://45.55.216.94/img/halloween/placeholder.jpg',       // image to be shared [Default: See below in defaults section]
+	  image: 'http://www.ep-productions.com/img/halloween/placeholder.jpg',       // image to be shared [Default: See below in defaults section]
 	  ui: {
 	    flyout: 'bottom center',       // change the flyout direction of the shares. chose from `top left`, `top center`, `top right`, `bottom left`, `bottom right`, `bottom center`, `middle left`, or `middle right` [Default: `top center`]
 	//     button_font:  // include the Lato font set from the Google Fonts API. [Default: `true`]

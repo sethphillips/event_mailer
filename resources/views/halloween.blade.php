@@ -46,8 +46,23 @@
 
 	function videoEnded()
 	{
-		window.location.href = '{{ URL::route('moreinfo') }}'
+		window.location.href = "{{ URL::route('moreinfo') }}"
 	}
 </script>
+
+@stop
+
+@section('social-tags')
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@ExhibitPartners">
+	<meta name="twitter:title" content="A Little Treat for Halloween from Exhibit Partners">
+	<meta name="twitter:description" content="We can't send candy, but we think this video will brighten your day.  We had a lot of fun making it and we hope you enjoy watching.">
+	<meta name="twitter:image" content="http://www.ep-productions.com/img/halloween/placeholder.jpg">
+
+	<meta property="og:url" content="{{ URL::route('halloween') }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A Little Treat for Halloween from Exhibit Partners}" />
+    <meta property="og:description" content="We can't send candy, but we think this video will brighten your day.  We had a lot of fun making it and we hope you enjoy watching." />
+    <meta property="og:image" content="http://www.ep-productions.com/img/halloween/placeholder.jpg" />
 
 @stop

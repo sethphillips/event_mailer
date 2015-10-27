@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="{!! elixir('dist/app.css') !!}">
     <script src="{!! elixir('dist/app.js') !!}"></script>
      
+     @yield('social-tags')
 </head>
 
 	<body>
