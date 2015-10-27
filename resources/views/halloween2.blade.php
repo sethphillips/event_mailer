@@ -33,7 +33,7 @@
 				We tell your story through space, now let us bring it to life with motion graphics, interactive &amp; web-based content.
 			</p>
 			<div class="buttons">
-				<a href="mailto:bill@exhibitpartners.com" >
+				<a href="mailto:jeff@exhibitpartners.com" >
 				<button class="btn work-with-us">Work With Us</button>
 				</a>
 				
