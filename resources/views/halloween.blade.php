@@ -59,7 +59,7 @@
 	<meta name="twitter:description" content="We can't send candy, but we think this video will brighten your day.  We had a lot of fun making it and we hope you enjoy watching.">
 	<meta name="twitter:image" content="http://www.ep-productions.com/img/halloween/placeholder.jpg">
 
-	<meta property="og:url" content="{{ URL::route('halloween') }}" />
+	<meta property="og:url" content="{{ URL::route('video') }}" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="A Little Treat for Halloween from Exhibit Partners}" />
     <meta property="og:description" content="We can't send candy, but we think this video will brighten your day.  We had a lot of fun making it and we hope you enjoy watching." />
