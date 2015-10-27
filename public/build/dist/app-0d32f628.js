@@ -11305,6 +11305,7 @@ $(document).ready(function(){
 	//     }
 	//   }
 	}
+	
 	new ShareButton(config);
 
 

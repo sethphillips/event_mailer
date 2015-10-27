@@ -38,7 +38,7 @@ elixir(function(mix) {
     	'../../../bower_components/Bootstrap-Admin-Theme-3/css/forms.css',
     	'../../../bower_components/Bootstrap-Admin-Theme-3/css/stats.css',
         '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/easypiechart/jquery.easy-pie-chart.css',
-        '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/morris/morris.css'
+        '../../../bower_components/Bootstrap-Admin-Theme-3/vendors/morris/morris.css',
 
 	],'public/dist/admin.css');
 	mix.scripts([

@@ -24,7 +24,7 @@
 		</div>
 		<div class="video-extras">
 			<div class="copyright">&copy; Copyright 2015 Exhibit Partners</div>
-			<div class="social"><share-button></share-button></div>
+			<div class="social" id="social"><share-button></share-button></div>
 		</div>
 
 		
