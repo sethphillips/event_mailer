@@ -24,13 +24,13 @@
 			<h1>Don’t Get Caught Empty-Handed</h1>
 			<hr>
 			<p>
-				We see it all the time, the scramble for quality content: The design is a knock-out, the messaging is on point, expectations are high... and you’re stuck with a few PowerPoint slides for your 10ft video wall.
+				We see it all the time, marketing teams are over-stretched and scramble for quality content.
 			</p>
 			<p>
-				Don’t sacrifice your story to an overstretched marketing team or a last-minute agency rush.
+				Don't miss the opportunity to connect.
 			</p>
 			<p>
-				We tell your story through space, now let us bring it to life with motion graphics, interactive &amp; web-based content.
+				Let us tell your story through space and bring it to life with motion graphics, interactive and web-based content.
 			</p>
 			<div class="buttons">
 				<a href="mailto:jeff@exhibitpartners.com" >
