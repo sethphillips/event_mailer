@@ -24,13 +24,14 @@
 			<h1>Don’t Get Caught Empty-Handed</h1>
 			<hr>
 			<p>
-				We see it all the time, marketing teams are over-stretched and scramble for quality content.
+				We see it all the time; Your marketing team is​ over-stretched and ​has to scramble for content - any content.
 			</p>
 			<p>
-				Don't miss the opportunity to connect.
+				Don't settle when the stakes are high - call us!
 			</p>
+			<p></p>
 			<p>
-				Let us tell your story through space and bring it to life with motion graphics, interactive and web-based content.
+				Let us bring your space to life with motion graphics, interactive and web-based content.
 			</p>
 			<div class="buttons">
 				<a href="mailto:jeff@exhibitpartners.com" >
