@@ -143,5 +143,7 @@ class CampaignController extends Controller
             ]);
         });
 
+        return redirect()->route('admin.index');
+
     }
 }
