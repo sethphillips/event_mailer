@@ -152,7 +152,7 @@ class CampaignController extends Controller
 
     }
 
-    public function emailPost()
+    public function emailPost(Request $request)
     {
         $date = \Carbon\Carbon::parse($request->input('dateTime'))->toDateTimeString();
 
