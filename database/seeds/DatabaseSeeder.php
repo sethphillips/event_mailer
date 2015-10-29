@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(UserTableSeeder::class);
         $this->call(CampaignSeeder::class);
-        $this->call(ContactSeeder::class);
-        $this->call(EmailSeeder::class);
+        // $this->call(ContactSeeder::class);
+        // $this->call(EmailSeeder::class);
 
         Model::reguard();
     }
@@ -91,31 +91,32 @@ class ContactSeeder extends Seeder{
         $client = Client::where('name','=','Exhibit Partners')->first();
 
         Contact::create([
-            'name' => 'Seth Cindra',
+            'first_name' => 'Seth Cindra',
+
             'email' => 'info@cindra.net',
             'client_id' => $client->id,
         ]);
 
         Contact::create([
-            'name' => 'Seth TRMS',
+            'first_name' => 'Seth TRMS',
             'email' => 'seth.phillips@trms.com',
             'client_id' => $client->id,
         ]);
 
         Contact::create([
-            'name' => 'Seth BlackKat',
+            'first_name' => 'Seth BlackKat',
             'email' => 'black_kat_recording@yahoo.com',
             'client_id' => $client->id,
         ]);
 
         Contact::create([
-            'name' => 'Dane Giles',
+            'first_name' => 'Dane Giles',
             'email' => 'dane@exhibitpartners.com',
             'client_id' => $client->id,
         ]);
 
         Contact::create([
-            'name' => 'Bill Gench',
+            'first_name' => 'Bill Gench',
             'email' => 'bill@exhibitpartners.com',
             'client_id' => $client->id,
         ]);

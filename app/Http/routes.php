@@ -103,6 +103,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::get('/',['as'=>'admin.index','uses'=>'DashboardController@index']);
 	Route::get('/report/{id}',['as'=>'admin.report','uses'=>'DashboardController@report']);
 	Route::resource('users','UserController');
+	Route::get('new-emails',['as'=>'admin.emails.new','uses'=>'CampaignController@emailsForm']);
+	Route::post('new-emails',['as'=>'admin.emails.post','uses'=>'CampaignController@emailsPost']);
 });
 
 // Login Logout routes

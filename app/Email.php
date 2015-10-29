@@ -38,8 +38,8 @@ class Email extends Model
 
     public function scopeReady($query)
     {	
-    	return $query->where('send_on','>=',Carbon::now()->subMinutes(5))
-    				->where('send_on','<=',Carbon::now()->addMinutes(5));
+    	return $query->where('send_on','>=',Carbon::now('America/Chicago')->subMinutes(5))
+    				->where('send_on','<=',Carbon::now('America/Chicago')->addMinutes(5));
     }
 
 
