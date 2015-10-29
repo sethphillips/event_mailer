@@ -96,7 +96,7 @@ class CampaignController extends Controller
 
     public function emailForm()
     {
-        return view()->make('admin.email-form-temp');
+        return view()->make('admin.email-single-form-temp');
     }
 
     public function emailsPost(Request $request)
