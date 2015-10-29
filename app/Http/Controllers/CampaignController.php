@@ -109,7 +109,7 @@ class CampaignController extends Controller
             $reader->ignoreEmpty();
 
             $reader->each(function($row) use ($EP){
-                if($row['email_address_work'])
+                if(isset($row['email_address_work']))
                 {
                     Contact::firstOrCreate([
                         'first_name' => $row['first_name'],
