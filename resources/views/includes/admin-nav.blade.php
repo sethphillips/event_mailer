@@ -8,6 +8,10 @@
 </li>
 
 <li>
+	<a href="{!! URL::route('admin.email.new') !!}"><i class="fa fa-envelope"></i> Single Email</a>
+</li>
+
+<li>
 	<a href="{!! URL::route('admin.users.index') !!}"><i class="fa fa-user"></i> Users</a>
 </li>
 

@@ -105,6 +105,9 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::resource('users','UserController');
 	Route::get('new-emails',['as'=>'admin.emails.new','uses'=>'CampaignController@emailsForm']);
 	Route::post('new-emails',['as'=>'admin.emails.post','uses'=>'CampaignController@emailsPost']);
+	Route::get('new-email',['as'=>'admin.email.new','uses'=>'CampaignController@emailForm']);
+	Route::post('new-email',['as'=>'admin.email.post','uses'=>'CampaignController@emailPost']);
+
 });
 
 // Login Logout routes
