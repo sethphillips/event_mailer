@@ -53,14 +53,14 @@ class DashboardController extends Controller
         $unsubscribed = Contact::where('unsubscribe','=',1);
 
         
-        $openedPercentage = $campaign->emails->count()? intval($opened->count()/$campaign->emails->count()*100): 0;
-        $moreinfoPercentage = $campaign->emails->count()? intval($moreinfo->count()/$campaign->emails->count()*100): 0;
-        $websitePercentage = $campaign->emails->count()? intval($website->count()/$campaign->emails->count()*100): 0;
-        $skippedPercentage = $campaign->emails->count()? intval($skipped->count()/$campaign->emails->count()*100): 0;
-        $emailedPercentage = $campaign->emails->count()? intval($emailed->count()/$campaign->emails->count()*100): 0;
-        $youtubePercentage = $campaign->emails->count()? intval($youtube->count()/$campaign->emails->count()*100): 0;
-        $unsubscribedPercentage = $campaign->emails->count()? intval($unsubscribed->count()/$campaign->emails->count()*100): 0;
-        $sentPercentage = $campaign->emails->count()? intval($campaign->sentEmails->count()/$campaign->emails->count()*100): 0;
+        $openedPercentage = $campaign->emails->count()? round($opened->count()/$campaign->emails->count()*100, 2): 0;
+        $moreinfoPercentage = $campaign->emails->count()? round($moreinfo->count()/$campaign->emails->count()*100, 2): 0;
+        $websitePercentage = $campaign->emails->count()? round($website->count()/$campaign->emails->count()*100, 2): 0;
+        $skippedPercentage = $campaign->emails->count()? round($skipped->count()/$campaign->emails->count()*100, 2): 0;
+        $emailedPercentage = $campaign->emails->count()? round($emailed->count()/$campaign->emails->count()*100, 2): 0;
+        $youtubePercentage = $campaign->emails->count()? round($youtube->count()/$campaign->emails->count()*100, 2): 0;
+        $unsubscribedPercentage = $campaign->emails->count()? round($unsubscribed->count()/$campaign->emails->count()*100, 2): 0;
+        $sentPercentage = $campaign->emails->count()? round($campaign->sentEmails->count()/$campaign->emails->count()*100, 2): 0;
 
 
         return view()->make('admin.index')->with([
