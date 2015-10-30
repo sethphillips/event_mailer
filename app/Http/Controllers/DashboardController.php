@@ -46,10 +46,15 @@ class DashboardController extends Controller
             return $action->action === 'youtube';
         })->groupBy('contact_id');
 
+        $moreinfo = $actions->filter(function($action){
+            return $action->action === 'moreinfo';
+        })->groupBy('contact_id');
+
         $unsubscribed = Contact::where('unsubscribe','=',1);
 
         
         $openedPercentage = $campaign->emails->count()? intval($opened->count()/$campaign->emails->count()*100): 0;
+        $moreinfoPercentage = $campaign->emails->count()? intval($moreinfo->count()/$campaign->emails->count()*100): 0;
         $websitePercentage = $campaign->emails->count()? intval($website->count()/$campaign->emails->count()*100): 0;
         $skippedPercentage = $campaign->emails->count()? intval($skipped->count()/$campaign->emails->count()*100): 0;
         $emailedPercentage = $campaign->emails->count()? intval($emailed->count()/$campaign->emails->count()*100): 0;
@@ -66,6 +71,7 @@ class DashboardController extends Controller
             'skippedPercentage'=>$skippedPercentage,
             'emailedPercentage'=>$emailedPercentage,
             'youtubePercentage'=>$youtubePercentage,
+            'moreinfoPercentage'=>$moreinfoPercentage,
             'unsubscribedPercentage'=>$unsubscribedPercentage,
             'sentPercentage'=>$sentPercentage,
 

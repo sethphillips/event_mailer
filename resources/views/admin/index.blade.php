@@ -94,6 +94,18 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-email"></i>
+				Went to Page 2
+			</div>
+			<div class="panel-body">
+				<div class="pie-chart" data-percent="{{ $moreinfoPercentage }}">{{ $moreinfoPercentage }}%</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-4">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<i class="fa fa-email"></i>
 				Visited Website
 			</div>
 			<div class="panel-body">
