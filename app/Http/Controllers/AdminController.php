@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Campaign;
-use App\Client;
-use App\Contact;
-use App\Email;
-use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 
-class CampaignController extends Controller
+class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,8 +15,7 @@ class CampaignController extends Controller
      */
     public function index()
     {
-        $campaigns = Campaign::orderBy('client_id')->orderBy('event_date','DESC')->get();
-        return view()->make('campaigns.index')->with('campaigns',$campaigns);
+        return redirect()->route('admin.campaigns.index');
     }
 
     /**
@@ -52,9 +47,7 @@ class CampaignController extends Controller
      */
     public function show($id)
     {
-        $campaign = Campaign::find($id);
-        
-        return view()->make('campaigns.show')->with('campaign',$campaign);
+        //
     }
 
     /**
@@ -88,11 +81,6 @@ class CampaignController extends Controller
      */
     public function destroy($id)
     {
-        $campaign = Campaign::find($id);
-        $campaign->delete();
-        return redirect()->back()->with('warning',"$campaign->name deleted");
+        //
     }
-
-
-    
 }

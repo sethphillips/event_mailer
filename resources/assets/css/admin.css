@@ -8010,4 +8010,9 @@ button.close {
 .fa {
   font-size: 2em; }
 
+.sub-nav {
+  text-align: center; }
+  .sub-nav li {
+    padding: 0.5em 2em; }
+
 /*# sourceMappingURL=admin.css.map */

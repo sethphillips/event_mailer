@@ -8,7 +8,7 @@ use \Mail;
 
 class Email extends Model
 {
-    protected $fillable = ['subject','reply_to','from','send_on','template','draft','trackable','campaign_id','contact_id'];
+    protected $fillable = ['salted_id','subject','reply_to','from','send_on','template','draft','trackable','campaign_id','contact_id'];
 
     protected $casts = [
     	'draft' => 'boolean',
@@ -38,17 +38,15 @@ class Email extends Model
 
     public function scopeReady($query)
     {	
-    	return $query->where('send_on','>=',Carbon::now('America/Chicago')->subMinutes(5))
-    				->where('send_on','<=',Carbon::now('America/Chicago')->addMinutes(5));
+    	return $query->where('send_on','<=',Carbon::now('America/Chicago')->addMinutes(5));
     }
 
 
     public function send()
     {
     	$email = $this;
-
-    	Mail::send($this->template,['email'=>true,'id'=>$this->id,'client'=>$this->campaign->client],function($mail) use ($email){
-			$mail->to($email->contact->email,$email->contact->name)->subject($email->subject);
+    	Mail::send($email->template,['email'=>true,'salted_id'=>$email->salted_id,'campaign'=>$email->campaign],function($mail) use ($email){
+			$mail->to($email->contact->email,$email->contact->first_name)->subject($email->subject)->from($email->campaign->client->reply_to,$email->campaign->client->name);
 		});
 
 		$this->sent = true;

@@ -6,7 +6,7 @@
 
 
 @section('title')
-	Schedule new emails from an Excel sheet
+	Schedule new emails from an Excel sheet for {{ $campaign->client->name }} | {{ $campaign->name }}
 @stop
 
 
@@ -27,7 +27,7 @@
 
 
 @section('action')
-	{!! link_to_route('admin.index','Back',[],['class'=>'btn btn-primary']) !!}
+	{!! link_to_route('admin.campaigns.show','Back',$campaign->id,['class'=>'btn btn-primary']) !!}
 @stop
 
 
@@ -40,12 +40,13 @@
 @section('content')
 	
 	
-	{!! Form::open(['route'=>'admin.emails.post','method'=>'POST','class'=>'form','files'=>'true']) !!}
+	{!! Form::open(['route'=>['admin.emails.post',$campaign->id],'method'=>'POST','class'=>'form','files'=>'true']) !!}
 	
 
 		
 		<!-- Form Input -->
-		
+		<p>This excel spreadsheet should have its first row as a title row and include at least a column titled 'email'.  Additional useful columns are 'first_name, last_name, address, city, state and zip'</p>
+
 		<div class="form-group">
 			
 			{!! Form::label('file','Excel Spreadsheet') !!}
@@ -54,6 +55,16 @@
 		
 		</div>
 
+
+		<!-- Form Input -->
+		
+		<div class="form-group">
+			
+			{!! Form::label('subject','Subject Line') !!}
+			
+			{!! Form::text('subject','',['class' => 'form-control','placeholder'=>'example: Save The Date!'] ) !!}
+		
+		</div>
 
 		
 		<!-- Form Input -->

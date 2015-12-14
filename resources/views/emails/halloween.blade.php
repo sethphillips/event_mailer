@@ -58,10 +58,10 @@
 									</a>
 								</td>
 								<td width="330">
-								@if (isset($client))
+								@if (isset($campaign))
 									<p style="font-size:11px;line-height:10px;">
-										{{ $client->name }}<br>
-										{{ $client->address }}, {{ $client->city }}, {{ $client->state }} {{ $client->zip }}
+										{{ $$campaign->client->name }}<br>
+										{{ $$campaign->client->address }}, {{ $$campaign->client->city }}, {{ $$campaign->client->state }} {{ $$campaign->client->zip }}
 									</p>
 								@else
 									&nbsp;

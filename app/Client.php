@@ -12,6 +12,7 @@ class Client extends Model
         'city',
         'state',
         'zip',
+        'reply_to',
     ];
 
     public function contacts()

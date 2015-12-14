@@ -1,14 +1,8 @@
-
 <li>
-	<a href="{!! URL::route('admin.index') !!}"><i class="fa fa-dashboard"></i> Dashboard</a>
+	<a href="{!! URL::route('admin.clients.index') !!}"><i class="fa fa-dashboard"></i> Clients</a>
 </li>
-
 <li>
-	<a href="{!! URL::route('admin.emails.new') !!}"><i class="fa fa-envelope"></i> Create Emails</a>
-</li>
-
-<li>
-	<a href="{!! URL::route('admin.email.new') !!}"><i class="fa fa-envelope"></i> Single Email</a>
+	<a href="{!! URL::route('admin.campaigns.index') !!}"><i class="fa fa-dashboard"></i> Campaigns</a>
 </li>
 
 <li>

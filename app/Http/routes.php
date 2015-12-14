@@ -39,6 +39,7 @@ Route::get('halloween', ['as'=>'video',function (Request $request) {
 }]);
 
 
+
 Route::get('moreinfo', ['as'=>'moreinfo',function(Request $request){
 	if($request->input('email'))
 	{
@@ -100,13 +101,19 @@ Route::post('unsubscribe',['as'=>'unsubscribe.submit',function(Request $request)
 
 
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
-	Route::get('/',['as'=>'admin.index','uses'=>'DashboardController@index']);
-	Route::get('/report/{id}',['as'=>'admin.report','uses'=>'DashboardController@report']);
+	Route::get('/',['as'=>'admin.index','uses'=>'AdminController@index']);
+	Route::get('dashboard/{id}',['as'=>'admin.dashboard','uses'=>'DashboardController@index']);
+	Route::get('report/{id}',['as'=>'admin.report','uses'=>'DashboardController@report']);
+	
 	Route::resource('users','UserController');
-	Route::get('new-emails',['as'=>'admin.emails.new','uses'=>'CampaignController@emailsForm']);
-	Route::post('new-emails',['as'=>'admin.emails.post','uses'=>'CampaignController@emailsPost']);
-	Route::get('new-email',['as'=>'admin.email.new','uses'=>'CampaignController@emailForm']);
-	Route::post('new-email',['as'=>'admin.email.post','uses'=>'CampaignController@emailPost']);
+	Route::resource('clients','ClientController');
+	Route::resource('campaigns','CampaignController');
+	
+	Route::get('new-emails/{campaign_id}',['as'=>'admin.emails.new','uses'=>'EmailController@createList']);
+	Route::post('new-emails/{campaign_id}',['as'=>'admin.emails.post','uses'=>'EmailController@storeList']);
+	Route::get('new-email/{campaign_id}',['as'=>'admin.email.new','uses'=>'EmailController@create']);
+	Route::post('new-email/{campaign_id}',['as'=>'admin.email.post','uses'=>'EmailController@store']);
+	Route::delete('emails/{id}',['as'=>'admin.emails.destroy','uses'=>'EmailController@destroy']);
 
 });
 
@@ -138,7 +145,44 @@ Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 	return view('emails.halloween')->with(['id'=>$id,'email'=>false]);
 }]);
 
+Route::get('tracking',['as'=>'tracking',function(Request $request){
+	if($request->input('email'))
+	{
+		$salted_id = $request->input('email');
+		$email = Email::where('salted_id','=',$salted_id)->first();
 
+		if($email)
+		{
+			$action = Action::create([
+				'action' => 'opened',
+				'contact_id' => $email->contact->id,
+				'campaign_id' => $email->campaign->id,
+			]);
+		}
+	}
+	return \Image::canvas(10,10)->encode('gif');
+}]);
+
+Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $request){
+	
+	$campaign = Campaign::where('title_slug','=',$title_slug)->first();
+
+	if($request->input('email'))
+	{
+		$salted_id = $request->input('email');
+		$request->session()->put('salted_id',$salted_id);
+	}
+	else
+	{
+		$salted_id = $request->session()->get('salted_id',null);
+	}
+
+	return view('emails.cwt.engage')->with([
+		'salted_id' => $salted_id,
+		'campaign' => $campaign,
+		'email' => false
+		]);
+}]);
 
 
 
@@ -146,9 +190,10 @@ Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 
 
 Route::get('testmail',function(){
+	$campaign = Campaign::find(2);
 
-	\Mail::send('emails.halloween',['email'=>true],function($mail){
-		$mail->to('seth.phillips@trms.com','Seth Phillips')->subject('Happy Halloween!');
+	\Mail::send('emails.cwt.engage',['email'=>true,'campaign'=>$campaign,'salted_id'=>'foo'],function($mail){
+		$mail->to('seth.phillips@trms.com','Seth Phillips')->subject('test email');
 	});
 
 	return 'tested';

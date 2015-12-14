@@ -42,7 +42,7 @@ class SendEmail extends Command
 
         foreach ($emails as $email) {
             $email->send();
-            $this->info("Sent email to ".$email->contact->name);
+            $this->info("Sent email to ".$email->contact->email);
         }
 
         $this->info('Done Sending Emails');
