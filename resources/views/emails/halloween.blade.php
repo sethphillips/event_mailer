@@ -6,7 +6,7 @@
 	@if($email)
 		<tr>
 			<td>
-				<a href="{{ URL::route('halloween') }}?email={{ $id }}" style="color:black;">Can't view this email?  Click Here</a>
+				<a href="{{ URL::route('halloween') }}?email={{ $salted_id }}" style="color:black;">Can't view this email?  Click Here</a>
 			</td>
 		</tr>
 	@endif
@@ -33,7 +33,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a href="{{ URL::route('video') }}?email={{ $id }}" style="color:white;text-decoration:none">
+						<a href="{{ URL::route('video') }}?email={{ $salted_id }}" style="color:white;text-decoration:none">
 							<img src="{!! asset('img/halloween/email_02.jpg') !!}" alt="a treat for you">
 						</a>
 					</td>
@@ -60,8 +60,8 @@
 								<td width="330">
 								@if (isset($campaign))
 									<p style="font-size:11px;line-height:10px;">
-										{{ $$campaign->client->name }}<br>
-										{{ $$campaign->client->address }}, {{ $$campaign->client->city }}, {{ $$campaign->client->state }} {{ $$campaign->client->zip }}
+										{{ $campaign->client->name }}<br>
+										{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}
 									</p>
 								@else
 									&nbsp;

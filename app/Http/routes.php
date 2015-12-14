@@ -134,15 +134,15 @@ Route::post('password/reset', 'Auth\PasswordController@postReset');
 Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 	if($request->input('email'))
 	{
-		$id = $request->input('email');
-		$request->session()->put('id',$id);
+		$salted_id = $request->input('email');
+		$request->session()->put('salted_id',$salted_id);
 	}
 	else
 	{
-		$id = $request->session()->get('id',null);
+		$salted_id = $request->session()->get('salted_id',null);
 	}
 
-	return view('emails.halloween')->with(['id'=>$id,'email'=>false]);
+	return view('emails.halloween')->with(['salted_id'=>$salted_id,'email'=>false]);
 }]);
 
 Route::get('tracking',['as'=>'tracking',function(Request $request){
