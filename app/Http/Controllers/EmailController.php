@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 
 class EmailController extends Controller
 {
+    private $contacts = [];
+
     public function createList($campaign_id)
     {
         $campaign = Campaign::find($campaign_id);
@@ -32,17 +34,16 @@ class EmailController extends Controller
 
         
         $campaign = Campaign::find($campaign_id);
-        $contacts = [];
 
-        $results = \Excel::load($file,function($reader) use ($campaign){
+        $results = \Excel::selectSheetsByIndex(0)->load($file,function($reader) use ($campaign){
 
             $reader->ignoreEmpty();
+            $reader->each(function($row) use ($campaign){
 
-            $reader->each(function($row) use ($EP){
-                if(isset($row['email_address']))
+                if(isset($row['email']) && $row['email'])
                 {
                     $contact = Contact::firstOrCreate([
-                        'email' => $row['email_address'],
+                        'email' => $row['email'],
                         'client_id' => $campaign->client->id,
                     ]);
 
@@ -54,21 +55,21 @@ class EmailController extends Controller
                     if(isset( $row['zip']) ) $contact->zip = $row['zip'];
 
                     $contact->save();
-                }
+                    array_push($this->contacts, $contact);
 
-                array_push($contacts, $contact);
+                }
             });
         });
         
         
-
-        $contacts->each(function($contact) use ($date,$campaign){
+        foreach ($this->contacts as $contact) {
+        
             $email = Email::create([
                 'subject' => $request->input('subject'),
                 'reply_to' => $campaign->client->reply_to,
                 'from' => $campaign->client->reply_to,
                 'send_on' => $date,
-                'template' => $campaign->template,
+                'template' => "emails.$campaign->template",
                 'draft' => false,
                 'trackable' => true,
                 'campaign_id' => $campaign->id,
@@ -76,9 +77,9 @@ class EmailController extends Controller
             ]);
             $email->salted_id = bcrypt($email->id);
             $email->save();
-        });
-
-        return redirect()->route('campaigns.show',$campaign->id)->with('message',"$contacts->count() emails queued");
+        }
+        $queuedEmails = count($this->contacts);
+        return redirect()->route('admin.campaigns.show',$campaign->id)->with('message',"$queuedEmails emails queued");
 
     }
 
