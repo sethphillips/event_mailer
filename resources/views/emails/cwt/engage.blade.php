@@ -36,32 +36,32 @@
 				</tr>
 				<tr>
 					<td>
-						<h2 style="color:#ede6ce;text-decoration:none;font-size:24px;margin:0;">
+						<p style="color:#ede6ce;text-decoration:none;font-size:22px;margin:0;margin-bottom:.5em;">
 							Your Data Works for You.
-						</h2>
+						</p>
 					</td>
 				</tr>
 				<tr>
 					<td style="padding:0 50px">
-						<p style="color:#ede6ce;text-decoration:none;font-size:18px;font-weight:lighter">
-							Smart data, big data, business intelligence the buzzwords abound.  Data only matters when it solves real problems. Join us to learn how your data can deliver results.
+						<p style="color:#ede6ce;text-decoration:none;font-size:22px;margin-bottom:0;">
+							Smart data, big data, business intelligence... the buzzwords abound.  Data only matters when it solves real problems. Join us to learn how your data can deliver results.
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<h2 style="font-size:18px;color:#00aaad;">
+						<p style="font-size:22px;color:#00aaad;">
 							WE’RE COMING TO YOUR CITY!<br>INVITATION COMING SOON!
-						</h2>
+						</p>
 					</td>
 				</tr>
 				
 				<tr>
 					<td>
-						<h2 style="font-size:20px;margin:0">
-							{!!  strtoupper( Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') )!!} AT
-						</h2>
-						<p style="font-size:20px;font-weight:lighter;margin:0;">
+						<p style="font-size:22px;margin:0">
+							{!!  strtoupper( Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') )!!}
+						</p>
+						<p style="font-size:22px;margin:0;">
 							{{ $campaign->venue }}<br>
 							{{ $campaign->address }}<br>
 							{{ $campaign->city }} {{ $campaign->state }},  {{ $campaign->zip }}
