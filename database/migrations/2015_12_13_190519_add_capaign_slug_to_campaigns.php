@@ -14,8 +14,11 @@ class AddCapaignSlugToCampaigns extends Migration
     {
         Schema::table('campaigns', function($table) {
             $table->string('title_slug')->unique();
-            $table->string('reply_to');
             $table->string('template');
+        });
+
+        Schema::table('clients', function($table) {
+            $table->string('reply_to');
         });
 
         Schema::table('emails', function($table) {
@@ -32,8 +35,11 @@ class AddCapaignSlugToCampaigns extends Migration
     {
         Schema::table('campaigns', function($table) {
             $table->dropColumn('title_slug');
-            $table->dropColumn('reply_to');
             $table->dropColumn('template');
+        });
+
+        Schema::table('clients', function($table) {
+            $table->dropColumn('reply_to');
         });
 
         Schema::table('emails', function($table) {
