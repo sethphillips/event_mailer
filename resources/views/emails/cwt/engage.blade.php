@@ -36,21 +36,33 @@
 				</tr>
 				<tr>
 					<td>
-						<p style="color:#ede6ce;text-decoration:none;font-size:22px;margin:0;margin-bottom:.5em;">
+						<p style="color:#ede6ce;text-decoration:none;font-size:20px;margin:0;margin-bottom:.5em;font-family:Verdana, Geneva, sans-serif;">
 							Your Data Works for You.
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<td style="padding:0 50px">
-						<p style="color:#ede6ce;text-decoration:none;font-size:22px;margin-bottom:0;">
-							Smart data, big data, business intelligence... the buzzwords abound.  Data only matters when it solves real problems. Join us to learn how your data can deliver results.
+						<p style="color:#ede6ce;text-decoration:none;font-size:20px;margin-bottom:0;font-family:Verdana, Geneva, sans-serif;">
+							Smart data, big data, business intelligence... the buzzwords abound.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding:0 50px">
+						<hr>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding:0 50px">
+						<p style="color:#ede6ce;text-decoration:none;font-size:20px;margin:0;font-family:Verdana, Geneva, sans-serif;">
+							Data only matters when it solves real problems. Join us to learn how your data can deliver results.
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<p style="font-size:22px;color:#00aaad;">
+						<p style="font-size:20px;color:#00aaad;font-family:Verdana, Geneva, sans-serif;">
 							WE’RE COMING TO YOUR CITY!<br>INVITATION COMING SOON!
 						</p>
 					</td>
@@ -58,10 +70,10 @@
 				
 				<tr>
 					<td>
-						<p style="font-size:22px;margin:0">
+						<p style="font-size:20px;margin:0;font-family:Verdana, Geneva, sans-serif;">
 							{!!  strtoupper( Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') )!!}
 						</p>
-						<p style="font-size:22px;margin:0;">
+						<p style="font-size:20px;margin:0;font-family:Verdana, Geneva, sans-serif;">
 							{{ $campaign->venue }}<br>
 							{{ $campaign->address }}<br>
 							{{ $campaign->city }} {{ $campaign->state }},  {{ $campaign->zip }}
