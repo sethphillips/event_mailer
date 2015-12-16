@@ -8,7 +8,7 @@
 	$.post('/action',{action:'opened',id:id})
 </script>
 
-<div class="container">
+<div class="non-container">
 	
 	<div class="left bg"></div>
 	<div class="right bg"></div>

@@ -1,0 +1,50 @@
+$brown: #353133;
+$blue: #00aaad;
+$white: #ede6ce;
+
+.engage{
+	background-color: $brown;
+	min-height: 100vh;
+	box-shadow: 0 0 20px 5px rgba(0,0,0,.6);
+	color:white;
+	padding-bottom:2em;
+
+	.header{
+		text-align: right;
+		padding:1em 3em;
+		border-bottom:2px solid $blue;
+		margin-bottom: 1em;
+		margin-left:-15px;
+		background: url('/img/cwt/engage/bg_circles.png');
+		background-repeat:no-repeat;
+		background-size:50%;
+		background-position: -37% -10%;
+		
+	}
+
+	.thank-you{
+		font-size:1.4em;
+		text-align: center;
+		h1{
+			font-size:1.3em;
+		}
+	}
+	.form{
+		background-color: white;
+		color: $blue;
+		padding:3em;
+		border-radius: 10px;
+		overflow: hidden;
+		padding-bottom:0;
+		.submit{
+			border:none;
+			background-color: transparent;
+			position: relative;
+			top:5px;
+			img{
+				cursor:pointer;
+				
+			}
+		}
+	}
+}

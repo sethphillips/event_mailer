@@ -14,9 +14,11 @@
     <script src="{!! elixir('dist/app.js') !!}"></script>
      
      @yield('social-tags')
+
+     
 </head>
 
-	<body>
+	<body class="halloween">
 
 		@yield('content')
 

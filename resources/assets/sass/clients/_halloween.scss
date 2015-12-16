@@ -1,0 +1,184 @@
+.halloween{
+
+
+		
+	background-color: black;
+	font-family: Verdana;
+	font-size:17px;
+	@include media-query($md)
+	{
+		font-size: 15px;
+	}
+	@include media-query($tablet){
+		font-size: 12px;
+	}
+
+	@include media-query($phone){
+		font-size: 11px;
+	}
+
+
+	.non-container{
+		
+		background-repeat:no-repeat;
+		position: relative;
+
+		.bg{
+			height: 100%;
+			width: 70%;
+			position: absolute;
+			top:0;
+			background: url(../../img/halloween/main_bg.jpg);
+			// background-size:cover;
+			background-repeat:no-repeat;
+			background-attachment: fixed;
+			z-index:-1;
+
+			
+
+			&.two{
+				background-image: url(../../img/halloween/second_bg.jpg);	
+			}
+			&.right{
+				right:0;
+				background-position:right bottom;
+			}
+			&.left{
+				left:0;
+				background-position:left bottom;
+			} 
+		}
+	}
+
+	.content{
+		width: 55%;
+		padding:5em 3em 300px 3em;
+		margin:auto;
+		background: url(../../img/halloween/content_bg.jpg);
+		background-repeat:no-repeat;
+		// background-attachment: fixed;
+		background-position:center bottom;
+		background-size:cover;
+		text-align: center;
+		
+		&:not(.two){
+			padding-bottom:200px;
+		}
+
+		&.two{
+			color:white;
+			background-image: url(../../img/halloween/secondary_content_bg.jpg);
+		}
+		@include media-query($md)
+		{
+			width: 50%;
+			padding-bottom:150px;
+		}
+		@include media-query($tablet)
+		{
+			width: 90%;
+			padding-bottom:200px;
+		}
+
+		@include media-query($phone)
+		{
+			padding-bottom:150px;
+		}
+	}
+
+	.title-bar{
+		position: fixed;
+		top:0;
+		width: 100%;
+		height: 5em;
+		background-color: white;
+		text-align: center;
+		padding:10px;
+		padding-top:1em;
+		box-shadow:1em 0 1em 5px $shadow;
+		.logo{
+			a{
+			display: inline-block;
+				height: 3em;
+			}
+			img{
+				height: 100%;
+			}
+		}
+
+	}
+	.video-container{
+		margin:2em 0;
+		video{
+			width: 100%;
+		}
+	}
+
+	.video-extras{
+		.social,.copyright{
+			display: inline-block;
+			width: 40%;
+			margin-bottom:1em;
+				text-align: center;
+			@include media-query($tablet){
+				width: 100%;
+			}
+		}
+
+		.social{
+			text-decoration: underline;
+		}
+	}
+
+	.message{
+		font-size:1.5em;
+		margin-top:3em;
+		*+*{
+			margin-bottom:1em;
+		}
+		h1{
+			font-size:1.2em;
+			font-weight: bold;
+		}
+	}
+	.buttons{
+		margin:1em 0;
+		a{
+			text-decoration: none;
+		}
+		.btn{
+			color:white;
+			font-size: 1em;
+			padding:.2em 0;
+			background-color: #48a842;
+			display: inline-block;
+			border:none;
+			width:35%;
+			margin:.2em .5%;
+			@include media-query($tablet){
+				width: 47%;
+			}
+			@include media-query($phone){
+				width: 47%;
+			}
+			&.skip-video{
+				width: 50%;
+			}
+		}
+	}
+
+	.form{
+		margin-bottom:10em;
+
+		.form-control{
+			width: 100%;
+			border-radius:5px;
+			padding:4px;
+			line-height:2em;
+			margin-bottom:1em;
+		}
+		.btn{
+			font-size: 1.3em;
+		}
+	}
+}

@@ -8,7 +8,7 @@
 	$.post('/action',{action:'more info',id:id})
 </script>
 
-<div class="container">
+<div class="non-container">
 	
 	<div class="left bg two"></div>
 	<div class="right bg two"></div>

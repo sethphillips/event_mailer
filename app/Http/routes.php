@@ -39,7 +39,6 @@ Route::get('halloween', ['as'=>'video',function (Request $request) {
 }]);
 
 
-
 Route::get('moreinfo', ['as'=>'moreinfo',function(Request $request){
 	if($request->input('email'))
 	{
@@ -63,7 +62,7 @@ Route::post('action',function(Request $request){
 
 	$email = Email::find($id);
 
-	$action = Action::create([
+	$action = Action::firstOrCreate([
 		'action' => $action,
 		'contact_id' => $email->contact->id,
 		'campaign_id' => $email->campaign->id,
@@ -185,7 +184,8 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 }]);
 
 
-
+Route::get('engage_signup/{name}',['as'=>'engage_signup','uses'=>'SignupController@engage']);
+Route::post('signup', ['as'=>'signup','uses'=>'SignupController@signup']);
 
 
 
