@@ -61,7 +61,7 @@ class SignupController extends Controller
 
         if($email)
         {
-            Action::create([
+            Action::firstOrCreate([
                 'action'=>'clicked register',
                 'contact_id'=>$email->contact->id,
                 'campaign_id'=>$email->campaign->id,
