@@ -8,6 +8,7 @@
 		body{
 			background-image: url('/img/vitality/holiday_bg.jpg');
 			background-position: top center;
+			background-repeat:no-repeat;
 		}
 		.video-container{
 			margin-top:200px;
