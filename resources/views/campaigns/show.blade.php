@@ -50,7 +50,7 @@
 				sent {{ $campaign->sentEmails->count() }} / {{ $campaign->emails->count() }}
 			</div>
 			<div class="panel-body">
-				<div class="pie-chart" data-percent="{{ ($campaign->sentEmails->count() / $campaign->emails->count())*100 }}">{{ ($campaign->sentEmails->count() / $campaign->emails->count())*100 }}%</div>
+				<div class="pie-chart" data-percent="{{ ($campaign->sentEmails->count() / $campaign->emails->count())*100 }}">{{ round( ($campaign->sentEmails->count() / $campaign->emails->count())*100,1 )}}%</div>
 			</div>
 		</div>
 	</div>
