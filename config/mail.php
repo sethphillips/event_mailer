@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'info@exhibitpartners.com', 'name' => 'Exhibit Partners'],
+    'from' => ['address' => 'mailer@ep-productions.com', 'name' => 'Exhibit Partners Mailer Service'],
 
     /*
     |--------------------------------------------------------------------------
