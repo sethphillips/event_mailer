@@ -45,7 +45,7 @@
 
 		
 		<!-- Form Input -->
-		<p>This excel spreadsheet should have its first row as a title row and include at least a column titled 'email'.  Additional useful columns are 'first_name, last_name, address, city, state and zip'</p>
+		<p>This excel spreadsheet should have its first row as a title row and include at least a column titled 'email'.  Additional useful columns are 'first_name, last_name, company, address, city, state and zip'</p>
 
 		<div class="form-group">
 			
