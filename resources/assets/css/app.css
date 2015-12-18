@@ -6154,4 +6154,10 @@ button.close {
     .halloween .form .btn {
       font-size: 1.3em; }
 
+.unsubscribe {
+  background-color: #efefef;
+  height: 100vh; }
+  .unsubscribe .logo {
+    margin: 2em 0; }
+
 /*# sourceMappingURL=app.css.map */
