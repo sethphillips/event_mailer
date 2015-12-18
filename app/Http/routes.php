@@ -21,6 +21,28 @@ Route::get('/',function(){
 	return redirect()->route('video');
 });
 
+Route::get('vitality_holidays',['as'=>'vitalityXmas',function(Request $request){
+
+	$id = $request->input('email');
+	if($id){
+		$action = $request->input('action');
+
+		$email = Email::where('salted_id','=',$id)->first();
+
+		if($email){
+			$action = Action::firstOrCreate([
+				'action' => 'opened',
+				'contact_id' => $email->contact->id,
+				'campaign_id' => $email->campaign->id,
+			]);
+		}
+	}
+
+
+	return view()->make('vitality.xmas-video');
+	
+}]);
+
 Route::get('halloween', ['as'=>'video',function (Request $request) {
 	
 	
@@ -56,11 +78,11 @@ Route::get('moreinfo', ['as'=>'moreinfo',function(Request $request){
 
 Route::post('action',function(Request $request){
 
-	$id = $request->input('id');
+	$id = $request->input('email');
 	if(!$id) return 'anonymous';
 	$action = $request->input('action');
 
-	$email = Email::find($id);
+	$email = Email::where('salted_id','=',$id)->first();
 
 	$action = Action::firstOrCreate([
 		'action' => $action,
@@ -165,6 +187,8 @@ Route::get('tracking',['as'=>'tracking',function(Request $request){
 Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $request){
 	
 	$campaign = Campaign::where('title_slug','=',$title_slug)->first();
+	
+	if(!$campaign) abort(404);
 
 	if($request->input('email'))
 	{
@@ -176,7 +200,7 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 		$salted_id = $request->session()->get('salted_id',null);
 	}
 
-	return view('emails.cwt.engage')->with([
+	return view("emails.$campaign->template")->with([
 		'salted_id' => $salted_id,
 		'campaign' => $campaign,
 		'email' => false

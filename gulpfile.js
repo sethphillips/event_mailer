@@ -27,6 +27,13 @@ elixir(function(mix) {
 	],'public/dist/app.js');
 });
 
+elixir(function(mix) {
+    mix.scripts([
+        '../../../bower_components/jquery/dist/jquery.js',
+        '../../../bower_components/gsap/src/uncompressed/TweenMax.js',
+    ],'public/dist/vitality_xmas.js');
+});
+
 
 elixir(function(mix) {
     mix.sass('admin.scss','resources/assets/css/admin.css');
