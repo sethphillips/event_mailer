@@ -44,16 +44,18 @@
 	
 	<h3 class="section-header">Email Metrics</h3>
 
-	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-		<div class="panel panel-success">
-			<div class="panel-heading">
-				sent {{ $campaign->sentEmails->count() }} / {{ $campaign->emails->count() }}
-			</div>
-			<div class="panel-body">
-				<div class="pie-chart" data-percent="{{ ($campaign->sentEmails->count() / $campaign->emails->count())*100 }}">{{ round( ($campaign->sentEmails->count() / $campaign->emails->count())*100,1 )}}%</div>
+	@if ($campaign->emails->count())
+		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					sent {{ $campaign->sentEmails->count() }} / {{ $campaign->emails->count() }}
+				</div>
+				<div class="panel-body">
+					<div class="pie-chart" data-percent="{{ ($campaign->sentEmails->count() / $campaign->emails->count())*100 }}">{{ round( ($campaign->sentEmails->count() / $campaign->emails->count())*100,1 )}}%</div>
+				</div>
 			</div>
 		</div>
-	</div>
+	@endif
 
 	@foreach ($actions as $action)
 		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
