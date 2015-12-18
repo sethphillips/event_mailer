@@ -177,7 +177,7 @@ Route::get('tracking',['as'=>'tracking',function(Request $request){
 
 		if($email)
 		{
-			$action = Action::create([
+			$action = Action::firstOrCreate([
 				'action' => 'opened',
 				'contact_id' => $email->contact->id,
 				'campaign_id' => $email->campaign->id,
