@@ -26,6 +26,14 @@ class Campaign extends Model
         });
     }
 
+    public function getUnsubscribesAttribute()
+    {
+        
+        return $this->emails->filter(function($email){
+            return $email->contact->unsubscribe;
+        });
+    }
+
     public function signups()
     {
     	return $this->hasMany('App\Signup');

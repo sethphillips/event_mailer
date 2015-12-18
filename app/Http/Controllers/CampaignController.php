@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Action;
 use App\Campaign;
 use App\Client;
 use App\Contact;
@@ -54,7 +55,16 @@ class CampaignController extends Controller
     {
         $campaign = Campaign::find($id);
         
-        return view()->make('campaigns.show')->with('campaign',$campaign);
+        $actions = Action::where('campaign_id','=',$campaign->id)
+            ->groupBy('action')
+            ->select(\DB::raw('count(contact_id) as count, action'))
+            ->orderBy('count','DESC')
+            ->get();
+
+        return view()->make('campaigns.show')->with([
+            'campaign'=>$campaign,
+            'actions'=>$actions,
+        ]);
     }
 
     /**

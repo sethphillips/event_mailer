@@ -8015,4 +8015,25 @@ button.close {
   .sub-nav li {
     padding: 0.5em 2em; }
 
+.panel {
+  text-align: center; }
+  .panel .panel-heading {
+    padding: 10px 0;
+    text-overflow: nowrap; }
+  .panel .pie-chart {
+    margin: auto; }
+
+.nav-collapser {
+  margin: 0;
+  font-size: 2em; }
+
+.section-header {
+  border-bottom: 1px solid #999999;
+  padding-bottom: .5em;
+  margin-bottom: 1em;
+  margin-top: 2em; }
+
+iframe {
+  width: 100%; }
+
 /*# sourceMappingURL=admin.css.map */

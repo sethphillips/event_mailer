@@ -19,11 +19,6 @@ class SignupController extends Controller
         if($request->input('salted_id'))
         {
             $originalEmail = Email::where('salted_id','=',$request->input('salted_id'))->first();
-            Action::firstOrCreate([
-                'action'=>'signed up',
-                'contact_id' => $originalEmail->contact->id,
-                'campaign_id' => $originalEmail->campaign->id,
-            ]);
         }
 
         $first_name = $request->input('first_name');
@@ -36,10 +31,17 @@ class SignupController extends Controller
             'email' => $email,
             'client_id' => $campaign->client->id,
         ]);
+        
         if($first_name) $contact->first_name = $first_name;
         if($last_name) $contact->last_name = $last_name;
         if($phone) $contact->phone = $phone;
         $contact->save();
+
+        Action::firstOrCreate([
+            'action'=>'signed up',
+            'contact_id' => $contact->id,
+            'campaign_id' => $campaign->id,
+        ]);
 
         Signup::firstOrCreate([
             'contact_id' => $contact->id,

@@ -136,6 +136,9 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::post('new-email/{campaign_id}',['as'=>'admin.email.post','uses'=>'EmailController@store']);
 	Route::delete('emails/{id}',['as'=>'admin.emails.destroy','uses'=>'EmailController@destroy']);
 
+	Route::get('reports/actions/{campaign_id}',['as'=>'admin.reports.actions','uses'=>'ReportController@actions']);
+	Route::get('reports/signups/{campaign_id}',['as'=>'admin.reports.signups','uses'=>'ReportController@signups']);
+
 });
 
 // Login Logout routes

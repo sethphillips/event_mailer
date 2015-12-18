@@ -31,6 +31,11 @@ class Email extends Model
     	return $query->where('draft','=',0);
     }
 
+    public function sent($query)
+    {
+        return $query->where('sent','=',1);
+    }
+
     public function scopeUnsent($query)
     {	
     	return $query->where('sent','=',0);
