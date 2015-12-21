@@ -55,20 +55,20 @@
 				</div>
 			</div>
 		</div>
-	@endif
 
-	@foreach ($actions as $action)
-		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					{{ $action->action }} {{ $action->count }} / {{ $campaign->emails->count() }}
-				</div>
-				<div class="panel-body">
-					<div class="pie-chart" data-percent="{{ ($action->count / $campaign->emails->count())*100 }}">{{ round( ($action->count / $campaign->emails->count())*100,1) }}%</div>
+		@foreach ($actions as $action)
+			<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						{{ $action->action }} {{ $action->count }} / {{ $campaign->emails->count() }}
+					</div>
+					<div class="panel-body">
+						<div class="pie-chart" data-percent="{{ ($action->count / $campaign->emails->count())*100 }}">{{ round( ($action->count / $campaign->emails->count())*100,1) }}%</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	@endforeach
+		@endforeach
+	@endif
 
 	@if ($campaign->unsubscribes->count())
 		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
