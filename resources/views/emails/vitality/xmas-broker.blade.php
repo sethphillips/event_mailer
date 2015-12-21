@@ -48,10 +48,10 @@
 				</tr>
 				<tr>
 					<td style="padding:0 50px 30px;">
-						<p style="color:#6e6e6e;text-decoration:none;font-size:16px;margin-bottom:10px;margin-top:25px;line-height:2em;">
+						<p style="color:#6e6e6e;text-decoration:none;font-size:17px;margin-bottom:10px;margin-top:25px;line-height:2em;">
 							In the spirit of the season, and in support of our mission to create real change in the health and well-being of America’s workforce, Vitality has made a contribution to the American Heart Association for their efforts in supporting workplace health promotion and prevention. 
 						</p>
-						<p style="color:#6e6e6e;text-decoration:none;font-size:16px;margin-bottom:10px;margin-top:25px;line-height:2em;">
+						<p style="color:#6e6e6e;text-decoration:none;font-size:17px;margin-bottom:10px;margin-top:25px;line-height:2em;">
 							We look forward to even more healthy results in making people healthier and enhancing their lives in 2016.
 						</p>
 
