@@ -48,14 +48,10 @@
 						</p>
 					</td>
 				</tr>
+				
 				<tr>
-					<td style="padding:0 30px">
-						<hr style="border-color:#00aaad;">
-					</td>
-				</tr>
-				<tr>
-					<td style="padding:0 30px">
-						<p style="color:#ede6ce;text-decoration:none;font-size:18px;margin:5px;font-family:Verdana, Geneva, sans-serif;">
+					<td style="padding:0 40px">
+						<p style="color:#ede6ce;text-decoration:none;font-size:18px;margin-bottom:5px;margin-top:10px;font-family:Verdana, Geneva, sans-serif;background-color:#00aaad;color:white;padding:15px;">
 							Join us at <b>ENGAGE</b>, an exclusive interactive event designed to show you exactly how to make your data work for you and deliver results.
 						</p>
 					</td>
