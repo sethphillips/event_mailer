@@ -60,7 +60,7 @@
 								
 				<tr>
 					<td>
-						<a href='{{ URL::route("vitalityXmas") }}?email={{ $salted_id }}'>
+						<a href='{{ URL::route("vitalityXmasBroker") }}?email={{ $salted_id }}'>
 							<img src="{!! asset('img/vitality/xmas_gift.jpg') !!}" alt="CWT Footer" style="width:100%;vertical-align:bottom;">
 						</a>
 					</td>

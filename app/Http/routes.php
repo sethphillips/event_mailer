@@ -43,6 +43,28 @@ Route::get('vitality_holidays',['as'=>'vitalityXmas',function(Request $request){
 	
 }]);
 
+Route::get('vitality_holidays_broker',['as'=>'vitalityXmasBroker',function(Request $request){
+
+	$id = $request->input('email');
+	if($id){
+		$action = $request->input('action');
+
+		$email = Email::where('salted_id','=',$id)->first();
+
+		if($email){
+			$action = Action::firstOrCreate([
+				'action' => 'video',
+				'contact_id' => $email->contact->id,
+				'campaign_id' => $email->campaign->id,
+			]);
+		}
+	}
+
+
+	return view()->make('vitality.xmas-video-broker');
+	
+}]);
+
 Route::get('halloween', ['as'=>'video',function (Request $request) {
 	
 	
