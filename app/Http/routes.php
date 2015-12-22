@@ -31,7 +31,7 @@ Route::get('vitality_holidays',['as'=>'vitalityXmas',function(Request $request){
 
 		if($email){
 			$action = Action::firstOrCreate([
-				'action' => 'opened',
+				'action' => 'video',
 				'contact_id' => $email->contact->id,
 				'campaign_id' => $email->campaign->id,
 			]);
