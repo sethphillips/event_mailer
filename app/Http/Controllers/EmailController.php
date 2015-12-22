@@ -28,6 +28,7 @@ class EmailController extends Controller
 
     public function storeList($campaign_id, Request $request)
     {
+        set_time_limit(0);
         $date = \Carbon\Carbon::parse($request->input('dateTime'))->toDateTimeString();
 
         $file = $request->file('file');
