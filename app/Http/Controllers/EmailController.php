@@ -50,6 +50,7 @@ class EmailController extends Controller
                     if(isset( $row['first_name']) ) $contact->first_name = $row['first_name'];
                     if(isset( $row['last_name']) ) $contact->last_name = $row['last_name'];
                     if(isset( $row['company']) ) $contact->company = $row['company'];
+                    if(isset( $row['title']) ) $contact->title = $row['title'];
                     if(isset( $row['address']) ) $contact->address = trim(str_replace("\n", ' ', $row['address']) );
                     if(isset( $row['city']) ) $contact->city = $row['city'];
                     if(isset( $row['state']) ) $contact->state = $row['state'];
