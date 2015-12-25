@@ -26,7 +26,7 @@ class ReportController extends Controller
             foreach ($action['contact'] as $key => $value) {
                     $action[$key] = $value;
             }
-            unset($action['contact_id'],$action['id'],$action['contact'],$action['unsubscribe'],$action['client_id'],$action['updated_at'],$action['created_at']);
+            unset($action['contact_id'],$action['id'],$action['contact'],$action['unsubscribe'],$action['client_id'],$action['updated_at'],$action['created_at'],$action['bounced']);
             return $action;
         }, $actions->toArray());
         
@@ -38,6 +38,24 @@ class ReportController extends Controller
 
             $excel->sheet('Metrics',function($sheet) use($actions){
                 $sheet->fromArray($actions);
+            });
+
+            $excel->sheet('Bounces', function($sheet) use ($campaign){
+                $bounces = $campaign->bounces->toArray();
+                $bounces = array_map(function($contact){
+                    unset($contact['id'],$contact['client_id'],$contact['bounced'],$contact['unsubscribe'],$contact['updated_at'],$contact['created_at']);
+                    return $contact;
+                }, $bounces);
+                $sheet->fromArray($bounces);
+            });
+
+            $excel->sheet('Unsubscribes', function($sheet) use ($campaign){
+                $unsubscribes = $campaign->unsubscribes->toArray();
+                $unsubscribes = array_map(function($contact){
+                    unset($contact['id'],$contact['client_id'],$contact['bounced'],$contact['unsubscribe'],$contact['updated_at'],$contact['created_at']);
+                    return $contact;
+                }, $unsubscribes);
+                $sheet->fromArray($unsubscribes);
             });
 
         })->download('xlsx');

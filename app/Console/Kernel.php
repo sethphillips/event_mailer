@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\SendEmail::class,
+        \App\Console\Commands\CheckBounces::class,
 
     ];
 
@@ -30,5 +31,6 @@ class Kernel extends ConsoleKernel
                  ->hourly();
 
         $schedule->command('emails:send')->everyMinute();
+        $schedule->command('emails:bounced')->hourly();
     }
 }

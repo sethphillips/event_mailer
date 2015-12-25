@@ -29,9 +29,28 @@ class Campaign extends Model
     public function getUnsubscribesAttribute()
     {
         
-        return $this->emails->filter(function($email){
+        $emails = $this->emails->filter(function($email){
             return $email->contact->unsubscribe;
         });
+
+        foreach ($emails as $key => $value) {
+            $emails[$key] = $value->contact;
+        };
+        return $emails;
+    }
+
+    public function getBouncesAttribute()
+    {
+        
+        $emails = $this->emails->filter(function($email){
+            return $email->contact->bounced;
+        });
+
+        foreach ($emails as $key => $value) {
+            $emails[$key] = $value->contact;
+        };
+
+        return $emails;
     }
 
     public function signups()
