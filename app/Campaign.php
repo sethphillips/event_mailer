@@ -22,7 +22,14 @@ class Campaign extends Model
     {
         
         return $this->emails->filter(function($email){
-            return $email->sent;
+            return $email->sent && $email->trackable;
+        });
+    }
+
+    public function getTrackableEmailsAttribute()
+    {
+        return $this->emails->filter(function($email){
+            return $email->trackable;
         });
     }
 

@@ -61,7 +61,7 @@ class SignupController extends Controller
             ? $email->campaign
             : Campaign::where('title_slug','=',$name)->first();
 
-        if($email)
+        if($email && $email->trackable)
         {
             Action::firstOrCreate([
                 'action'=>'clicked register',

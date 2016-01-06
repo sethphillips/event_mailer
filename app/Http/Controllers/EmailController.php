@@ -64,24 +64,31 @@ class EmailController extends Controller
             });
         });
         
-        
+        $queuedEmails = 0;
         foreach ($this->contacts as $contact) {
-        
-            $email = Email::create([
-                'subject' => $request->input('subject'),
-                'reply_to' => $campaign->client->reply_to,
-                'from' => $campaign->client->reply_to,
-                'send_on' => $date,
-                'template' => "emails.$campaign->template",
-                'draft' => false,
-                'trackable' => true,
-                'campaign_id' => $campaign->id,
-                'contact_id' => $contact->id,
-            ]);
-            $email->salted_id = bcrypt($email->id);
-            $email->save();
+            if(!$contact->unsubscribe && !$contact->bounced)
+            {
+                $email = Email::create([
+                    'subject' => $request->input('subject'),
+                    'reply_to' => $campaign->client->reply_to,
+                    'from' => $campaign->client->reply_to,
+                    'send_on' => $date,
+                    'template' => "emails.$campaign->template",
+                    'draft' => false,
+                    'trackable' => true,
+                    'campaign_id' => $campaign->id,
+                    'contact_id' => $contact->id,
+                ]);
+                if($request->input('dont_track'))
+                {
+                    $email->trackable = false;
+                }
+                $email->salted_id = bcrypt($email->id);
+                $email->save();
+                $queuedEmails++;
+            }
         }
-        $queuedEmails = count($this->contacts);
+
         return redirect()->route('admin.campaigns.show',$campaign->id)->with('message',"$queuedEmails emails queued");
 
     }
@@ -99,7 +106,12 @@ class EmailController extends Controller
             'email' => $send_to,
             'client_id' => $campaign->client->id,
         ]);
-     
+        
+        if($contact->unsubscribe || $contact->bounced)
+        {
+            return redirect()->back()->with('message',"$contact->email is unreachable or has unsubscribed");
+        }  
+
         $email = Email::create([
             'subject' => $request->subject,
             'reply_to' => $campaign->client->reply_to,
@@ -111,6 +123,11 @@ class EmailController extends Controller
             'campaign_id' => $campaign->id,
             'contact_id' => $contact->id,
         ]);
+
+        if($request->input('dont_track'))
+        {
+            $email->trackable = false;
+        }
 
         $email->salted_id = bcrypt($email->id);
         $email->save();

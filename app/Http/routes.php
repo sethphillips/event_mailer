@@ -106,11 +106,14 @@ Route::post('action',function(Request $request){
 
 	$email = Email::where('salted_id','=',$id)->first();
 
-	$action = Action::firstOrCreate([
-		'action' => $action,
-		'contact_id' => $email->contact->id,
-		'campaign_id' => $email->campaign->id,
-	]);
+	if($email && $email->trackable)
+	{
+		$action = Action::firstOrCreate([
+			'action' => $action,
+			'contact_id' => $email->contact->id,
+			'campaign_id' => $email->campaign->id,
+		]);
+	}
 	
 	return 'action captured';
 });
@@ -197,7 +200,7 @@ Route::get('tracking',['as'=>'tracking',function(Request $request){
 		$salted_id = $request->input('email');
 		$email = Email::where('salted_id','=',$salted_id)->first();
 
-		if($email)
+		if($email && $email->trackable)
 		{
 			$action = Action::firstOrCreate([
 				'action' => 'opened',

@@ -87,7 +87,11 @@
 		
 		</div>
 		
+		<div class="form-group">
+			
+			<div class="checkbox"><label for="dont_track"><input name="dont_track" type="checkbox">Don't Track</label></div>
 		
+		</div>
 		
 		
 		

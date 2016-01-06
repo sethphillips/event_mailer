@@ -44,14 +44,14 @@
 	
 	<h3 class="section-header">Email Metrics</h3>
 
-	@if ($campaign->emails->count())
+	@if ($campaign->trackableEmails->count())
 		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
 			<div class="panel panel-success">
 				<div class="panel-heading">
-					sent {{ $campaign->sentEmails->count() }} / {{ $campaign->emails->count() }}
+					sent {{ $campaign->sentEmails->count() }} / {{ $campaign->trackableEmails->count() }}
 				</div>
 				<div class="panel-body">
-					<div class="pie-chart" data-percent="{{ ($campaign->sentEmails->count() / $campaign->emails->count())*100 }}">{{ round( ($campaign->sentEmails->count() / $campaign->emails->count())*100,1 )}}%</div>
+					<div class="pie-chart" data-percent="{{ ($campaign->sentEmails->count() / $campaign->trackableEmails->count())*100 }}">{{ round( ($campaign->sentEmails->count() / $campaign->trackableEmails->count())*100,1 )}}%</div>
 				</div>
 			</div>
 		</div>
@@ -60,37 +60,37 @@
 			<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						{{ $action->action }} {{ $action->count }} / {{ $campaign->emails->count() }}
+						{{ $action->action }} {{ $action->count }} / {{ $campaign->trackableEmails->count() }}
 					</div>
 					<div class="panel-body">
-						<div class="pie-chart" data-percent="{{ ($action->count / $campaign->emails->count())*100 }}">{{ round( ($action->count / $campaign->emails->count())*100,1) }}%</div>
+						<div class="pie-chart" data-percent="{{ ($action->count / $campaign->trackableEmails->count())*100 }}">{{ round( ($action->count / $campaign->trackableEmails->count())*100,1) }}%</div>
 					</div>
 				</div>
 			</div>
 		@endforeach
 	@endif
 
-	@if ($campaign->bounces->count())
+	@if ($campaign->bounces->count() && $campaign->trackableEmails->count())
 		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
 			<div class="panel panel-danger">
 				<div class="panel-heading">
-					Bounced {{ $campaign->bounces->count() }} / {{ $campaign->emails->count() }}
+					Bounced {{ $campaign->bounces->count() }} / {{ $campaign->trackableEmails->count() }}
 				</div>
 				<div class="panel-body">
-					<div class="pie-chart" data-percent="{{ ($campaign->bounces->count() / $campaign->emails->count())*100 }}">{{ round( ($campaign->bounces->count() / $campaign->emails->count())*100,1)}}%</div>
+					<div class="pie-chart" data-percent="{{ ($campaign->bounces->count() / $campaign->trackableEmails->count())*100 }}">{{ round( ($campaign->bounces->count() / $campaign->trackableEmails->count())*100,1)}}%</div>
 				</div>
 			</div>
 		</div>
 	@endif
 
-	@if ($campaign->unsubscribes->count())
+	@if ($campaign->unsubscribes->count() && $campaign->trackableEmails->count())
 		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
 			<div class="panel panel-danger">
 				<div class="panel-heading">
-					Unsubscribed {{ $campaign->unsubscribes->count() }} / {{ $campaign->emails->count() }}
+					Unsubscribed {{ $campaign->unsubscribes->count() }} / {{ $campaign->trackableEmails->count() }}
 				</div>
 				<div class="panel-body">
-					<div class="pie-chart" data-percent="{{ ($campaign->unsubscribes->count() / $campaign->emails->count())*100 }}">{{ round( ($campaign->unsubscribes->count() / $campaign->emails->count())*100,1)}}%</div>
+					<div class="pie-chart" data-percent="{{ ($campaign->unsubscribes->count() / $campaign->trackableEmails->count())*100 }}">{{ round( ($campaign->unsubscribes->count() / $campaign->trackableEmails->count())*100,1)}}%</div>
 				</div>
 			</div>
 		</div>

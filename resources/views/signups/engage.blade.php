@@ -22,7 +22,7 @@
 
 		<div class="body row">
 			<div class="col-sm-10 col-md-8 col col-md-offset-2 col-sm-offset-1 thank-you">
-				<h1>Thanks for your interest in {{ $campaign->name }}</h1>
+				<h1>Thanks for your interest in ENGAGE</h1>
 				<p>
 					The event will be held {!! Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!}<br>
 					-at-<br>

@@ -46,6 +46,10 @@ class Email extends Model
     	return $query->where('send_on','<=',Carbon::now('America/Chicago')->addMinutes(5));
     }
 
+    public function scopeTrackable($query)
+    {
+        return $query->where('trackable','=',1);
+    }
 
     public function send()
     {
