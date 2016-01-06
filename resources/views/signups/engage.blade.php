@@ -30,6 +30,25 @@
 					{!! $campaign->address !!}<br>
 					{!! $campaign->city !!} {!! $campaign->state !!},  {!! $campaign->zip !!}
 				</p>
+				<p>
+					@if($campaign->title_slug === 'engage_boston_invite_c')
+						<a href="{{ asset('ical/engage_boston_pm.ics') }}" download>
+							Add to calendar
+						</a>
+					@elseif($campaign->title_slug === 'engage_boston_invite_p')
+						<a href="{{ asset('ical/engage_boston_am.ics') }}" download>
+							Add to calendar
+						</a>
+					@elseif($campaign->title_slug === 'engage_new_york_invite_c')
+						<a href="{{ asset('ical/engage_new_york_pm.ics') }}" download>
+							Add to calendar
+						</a>
+					@elseif($campaign->title_slug === 'engage_new_york_invite_p')
+						<a href="{{ asset('ical/engage_new_york_am.ics') }}" download>
+							Add to calendar
+						</a>
+					@endif
+				</p>
 			</div>
 			<div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
 			

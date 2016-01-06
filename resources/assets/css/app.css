@@ -6012,6 +6012,9 @@ button.close {
     text-align: center; }
     .engage .thank-you h1 {
       font-size: 1.3em; }
+    .engage .thank-you a {
+      color: white;
+      text-decoration: underline; }
   .engage .form {
     background-color: white;
     color: #00aaad;
