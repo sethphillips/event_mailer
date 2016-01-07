@@ -44,9 +44,7 @@
 				<tr>
 					<td style="padding:0 40px">
 						<p style="color:#ede6ce;text-decoration:none;font-size:17px;margin-bottom:10px;margin-top:10px;font-family:Verdana, Geneva, sans-serif;">
-							Smart data, big data, business intelligence … <br>
-							The business travel world is driven by data. <br>
-							Are you maximizing yours?
+							Smart data, big data, business intelligence … The business travel world is driven by data. Are you maximizing yours?
 						</p>
 					</td>
 				</tr>
@@ -80,7 +78,7 @@
 				<tr>
 					<td style="padding:0 40px">
 						<p style="font-size:15px;font-family:Verdana, Geneva, sans-serif;text-align:left;font-weight:light;margin:0;">
-							4:00 - 7:30 p.m.<sup style=”line-height:1; vertical-align:baseline;_vertical-align: bottom;position: relative;bottom: 1ex;font-size:11px !important;”>*</sup>
+							7:30 - 11:00 a.m.<sup style=”line-height:1; vertical-align:baseline;_vertical-align: bottom;position: relative;bottom: 1ex;font-size:11px !important;”>*</sup>
 						</p>
 					</td>
 				</tr>
@@ -88,7 +86,7 @@
 				<tr>
 					<td style="padding:0 40px">
 						<p style="font-size:12px;font-family:Verdana, Geneva, sans-serif;text-align:left;font-weight:light;margin:0 0 15px 0;">
-							<i><sup style=”line-height:1; vertical-align:baseline;_vertical-align: bottom;position: relative;bottom: 1ex;font-size:11px !important;”>*</sup>Complimentary cocktails and hors d'oeuvres will be provided</i> 
+							<i><sup style=”line-height:1; vertical-align:baseline;_vertical-align: bottom;position: relative;bottom: 1ex;font-size:11px !important;”>*</sup>Complimentary breakfast will be provided</i> 
 						</p>
 					</td>
 				</tr>
