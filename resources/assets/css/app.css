@@ -6009,9 +6009,11 @@ button.close {
     background-position: -37% -10%; }
   .engage .thank-you {
     font-size: 1.4em;
-    text-align: center; }
+    text-align: center;
+    padding: 0 2em; }
     .engage .thank-you h1 {
-      font-size: 1.3em; }
+      text-align: left;
+      font-size: 1.2em; }
     .engage .thank-you a {
       color: white;
       text-decoration: underline; }

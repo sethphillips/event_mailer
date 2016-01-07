@@ -21,11 +21,23 @@
 		</div>
 
 		<div class="body row">
-			<div class="col-sm-10 col-md-8 col col-md-offset-2 col-sm-offset-1 thank-you">
-				<h1>Thanks for your interest in ENGAGE</h1>
+			<div class="col-sm-10 col-sm-offset-1 thank-you">
+				<p style="text-align:justify">
+					Thanks for your interest in ENGAGE. At this exclusive interactive event, you’ll hear from industry experts about how to make your data work for YOU. You’ll also enjoy networking and excellent food and beverage in beautiful surroundings. 
 				<p>
-					The event will be held {!! Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!}<br>
-					-at-<br>
+				<p>
+					Join us on {!! Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!} from 
+					@if($campaign->title_slug === 'engage_boston_invite_c')
+						4:00 - 7:30 p.m.
+					@elseif($campaign->title_slug === 'engage_boston_invite_p')
+						7:30 - 11:00 a.m.
+					@elseif($campaign->title_slug === 'engage_new_york_invite_c')
+						4:00 - 7:30 p.m.
+					@elseif($campaign->title_slug === 'engage_new_york_invite_p')
+						7:30 - 11:00 a.m.
+					@endif
+				</p>
+				<p>
 					{!! $campaign->venue !!}<br>
 					{!! $campaign->address !!}<br>
 					{!! $campaign->city !!} {!! $campaign->state !!},  {!! $campaign->zip !!}

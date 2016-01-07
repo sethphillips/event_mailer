@@ -44,14 +44,16 @@
 				<tr>
 					<td style="padding:0 40px">
 						<p style="color:#ede6ce;text-decoration:none;font-size:17px;margin-bottom:10px;margin-top:10px;font-family:Verdana, Geneva, sans-serif;">
-							Smart data, big data, business intelligence … The business travel world is driven by data. Are you maximizing yours?
+							Smart data, big data, business intelligence … <br>
+							The business travel world is driven by data. <br>
+							Are you maximizing yours?
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<td style="padding:0 40px">
 						<p style="color:#ede6ce;text-decoration:none;font-size:17px;margin-bottom:10px;margin-top:10px;font-family:Verdana, Geneva, sans-serif;">
-							Join us at ENGAGE, an exclusive interactive event designed to show you exactly how to make your data work for you and deliver results.
+							Join us at ENGAGE, an exclusive interactive event designed to spark conversation and show you exactly how to make your data work for you and deliver results.
 						</p>
 					</td>
 				</tr>
@@ -78,7 +80,7 @@
 				<tr>
 					<td style="padding:0 40px">
 						<p style="font-size:15px;font-family:Verdana, Geneva, sans-serif;text-align:left;font-weight:light;margin:0;">
-							4:00 PM- 7:30 PM<sup style=”line-height:1; vertical-align:baseline;_vertical-align: bottom;position: relative;bottom: 1ex;font-size:11px !important;”>*</sup>
+							4:00 - 7:30 p.m.<sup style=”line-height:1; vertical-align:baseline;_vertical-align: bottom;position: relative;bottom: 1ex;font-size:11px !important;”>*</sup>
 						</p>
 					</td>
 				</tr>
@@ -110,11 +112,17 @@
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td style="padding:0 20%">
 			@if (isset($campaign))
-				<p style="font-size:11px;line-height:10px;">
-					{{ $campaign->client->name }}<br>
+				<p style="font-size:13px;text-align:justify">
+					With offices in more than 150 countries and territories, Carlson Wagonlit Travel deploys the right people, processes, technologies and skills to consistently deliver effective travel management and bottom-line results.<br>
+				</p>
+				<p style="font-size:13px;line-height:12px;">
+					<a href="http://www.carlsonwagonlit.com" style="color:black;">Carlson Wagonlit Travel</a><br>
 					{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}
+				</p>
+				<p style="font-size:13px;text-align:center;">
+					<a href="mailto:CWTNORAMmarketingevents@carlsonwagonlit.com " style="color:black;">Questions?</a><br>
 				</p>
 			@else
 				&nbsp;
@@ -122,7 +130,7 @@
 			</td>
 		</tr>
 	<tr>
-		<td>Want to <a href="{!! URL::route('unsubscribe.form') !!}">Unsubscribe</a>?</td>
+		<td style="font-size:12px;"><a href="{!! URL::route('unsubscribe.form') !!}">Unsubscribe</a>?</td>
 	</tr>
 </table>
 
