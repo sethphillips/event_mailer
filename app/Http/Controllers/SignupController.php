@@ -51,6 +51,36 @@ class SignupController extends Controller
         return redirect()->back()->with('message',"Thanks for signing up $first_name!");
     }
 
+    public function engageGeneric()
+    {
+        return view()->make('signups.engage-generic');
+    }
+
+    public function engageRedirect(Request $request)
+    {
+        $city = $request->input('city');
+        $customer = $request->input('customer');
+        if(!$city || !$customer) return redirect()->back()->withInput()->with('error',"Please let us know what city you're in and if you're currently working with us.");
+        
+        if($city === 'boston')
+        {
+            if($customer === 'yes') 
+            {
+                return redirect()->route('engage_signup',['name'=>'engage_boston_invite_c']);
+            }
+            return redirect()->route('engage_signup',['name'=>'engage_boston_invite_p']);
+        }
+        if($city === 'new_york')
+        {
+            if($customer === 'yes') 
+            {
+                return redirect()->route('engage_signup',['name'=>'engage_new_york_invite_c']);
+            }
+            return redirect()->route('engage_signup',['name'=>'engage_new_york_invite_p']);
+        }
+        return redirect()->back()->with('error',"Sorry, something seems to have gone wrong with your request");
+    }
+
     public function engage($name, Request $request)
     {
         $email = $request->input('email')

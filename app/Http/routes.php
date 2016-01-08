@@ -236,6 +236,8 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 }]);
 
 
+Route::get('engage_signup',['as'=>'engage_signup_generic','uses'=>'SignupController@engageGeneric']);
+Route::post('engage_signup',['as'=>'engage_signup_redirect','uses'=>'SignupController@engageRedirect']);
 Route::get('engage_signup/{name}',['as'=>'engage_signup','uses'=>'SignupController@engage']);
 Route::post('signup', ['as'=>'signup','uses'=>'SignupController@signup']);
 
