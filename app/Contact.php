@@ -16,6 +16,8 @@ class Contact extends Model
             'zip',
             'unsubscribe',
             'client_id',
+            'company',
+            'phone',
     ];
 
     public function client()
