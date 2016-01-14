@@ -27,7 +27,7 @@
 
 
 @section('action')
-
+	
 @stop
 
 
@@ -39,7 +39,7 @@
 
 @section('content')
 
-	@include('includes.admin-sub-nav',['campaign'=>$campaign])
+	@include('includes.campaign-sub-nav',['campaign'=>$campaign])
 
 	
 	<h3 class="section-header">Email Metrics</h3>
@@ -100,42 +100,85 @@
 
 
 	<h3 class="section-header reports">Reports</h3>
-	{!! link_to_route('admin.reports.actions','Email Metrics',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name metrics"]) !!}
+	{!! link_to_route('admin.reports.actions.campaign','Email Metrics',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name metrics"]) !!}
 	@if ($campaign->signups->count())
-		{!! link_to_route('admin.reports.signups','Event Signups',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name signups"]) !!}
+		{!! link_to_route('admin.reports.signups.campaign','Event Signups',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name signups"]) !!}
 	@endif
 
-	<h3 class="section-header">Email Preview</h3>
-	<iframe src="{{ route('emails',$campaign->title_slug) }}" frameborder="0" scrolling="no" onload="resizeIframe(this)"></iframe>
+	<h3 class="section-header touches">Touches</h3>
 
-	<h3 class="section-header">Unsent Emails</h3>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Subject Line</th>
+				<th>Emails/Contacts</th>
+				<th>Send On</th>
+				<th>Title Slug</th>
+				<th></th>
+				<th>{!! link_to_route('admin.touches.create','Create New Touch',['campaign'=>$campaign->id],['class'=>'btn btn-success']) !!}</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach ($campaign->touchs as $touch)
+				<tr>
+					<td>{!! link_to_route('admin.touches.show',$touch->title,$touch->id) !!}</td>
+					<td>{{ $touch->subject }}</td>
+					<td>{{ $touch->trackableEmails->count() }}/{{ $campaign->validContacts->count() }}</td>
+					<td>{!! Carbon\Carbon::parse($touch->send_on)->format('F jS Y h:i a') !!}</td>
+					<td>{{ $touch->title_slug }}</td>
+					<td>
+						{!! link_to_route('admin.touches.edit','edit',$touch->id,['class'=>'btn btn-primary']) !!}
+					</td>
+					<td>
+
+						{!! Form::open(['route'=>['admin.touches.destroy',$touch->id],'method'=>'DELETE','class'=>'form','onsubmit'=>'return deleteSubmit()']) !!}
+	
+							<div class="form-group">
+							
+								{!! Form::submit('Delete',['class'=> 'btn btn-danger form-control']) !!}
+							
+							</div>
+							
+						{!! Form::close() !!}
+
+					</td>
+				</tr>
+			@endforeach
+		</tbody>
+	</table>
+
+
+
+	<h3 class="section-header">Contacts</h3>
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th>Recipient</th>
+				<th>Name</th>
 				<th>Email Address</th>
-				<th>Send On</th>
+				<th>Company</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach ($campaign->emails as $email)
-				@if (!$email->sent)
-				<tr>
-					<td>
-						{{ $email->contact->first_name }} {{ $email->contact->last_name }}
-					</td>
-					<td>{{ $email->contact->email }}</td>
-					<td>
-						{!! Carbon\Carbon::parse($email->send_on)->format('M jS, ga') !!}
-					</td>
-					<td>
-						{!! Form::open( array( 'route'=>array('admin.emails.destroy',$email->id),'method'=>'delete','onsubmit'=>'return deleteSubmit();' ) ) !!}
-						{!! Form::submit('delete',array('class'=>'btn btn-danger'))!!}
-						{!! Form::close()!!}
-					</td>
-				</tr>
+			@foreach ($campaign->validContacts as $contact)
+				@if (!$contact->bounced && !$contact->unsubscribed)
+					<tr>
+						<td>
+							{{ $contact->first_name }} {{ $contact->last_name }}
+						</td>
+						<td>{{ $contact->email }}</td>
+						<td>
+							{{ $contact->company }}
+						</td>
+						<td>
+							{!! Form::open( array( 'route'=>array('admin.campaign.contact.remove',$campaign->id,$contact->id),'method'=>'delete','onsubmit'=>'return deleteSubmit();' ) ) !!}
+							{!! Form::submit('remove',array('class'=>'btn btn-danger'))!!}
+							{!! Form::close()!!}
+						</td>
+					</tr>
 				@endif
+				
 			@endforeach
 		</tbody>
 	</table>

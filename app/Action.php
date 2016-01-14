@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Action extends Model
 {
-    protected $fillable = ['action','contact_id','campaign_id'];
+    protected $fillable = ['action','contact_id','campaign_id','touch_id'];
 
     public function campaign()
     {

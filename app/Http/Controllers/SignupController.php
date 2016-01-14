@@ -87,6 +87,7 @@ class SignupController extends Controller
             ? Email::where('salted_id','=',$request->input('email'))->first()
             : null;
 
+            
         $campaign = $email
             ? $email->campaign
             : Campaign::where('title_slug','=',$name)->first();
@@ -97,6 +98,7 @@ class SignupController extends Controller
                 'action'=>'clicked register',
                 'contact_id'=>$email->contact->id,
                 'campaign_id'=>$email->campaign->id,
+                'touch_id' => $email->touch_id
             ]);
         }
 

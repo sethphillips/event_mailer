@@ -6,7 +6,7 @@
 
 
 @section('title')
-	Send a single email for {{ $touch->campaign->name }} | {{ $touch->title }}
+	Send a single email for {{ $campaign->client->name }} | {{ $campaign->name }}
 @stop
 
 
@@ -27,7 +27,7 @@
 
 
 @section('action')
-	{!! link_to_route('admin.touches.show','Back',$touch->id,['class'=>'btn btn-primary']) !!}
+	{!! link_to_route('admin.campaigns.show','Back',$campaign->id,['class'=>'btn btn-primary']) !!}
 @stop
 
 
@@ -40,13 +40,8 @@
 @section('content')
 	
 	
-	{!! Form::open(['route'=>['admin.email.post',$touch->id],'method'=>'POST','class'=>'form']) !!}
+	{!! Form::open(['route'=>['admin.campaign.contact.post',$campaign->id],'method'=>'POST','class'=>'form']) !!}
 	
-
-		
-		<!-- Form Input -->
-		
-		
 		
 		<!-- Form Input -->
 		
@@ -58,16 +53,7 @@
 		
 		</div>
 
-		<!-- Form Input -->
 		
-		<div class="form-group">
-			
-			{!! Form::label('subject','Subject Line') !!}
-			
-			{!! Form::text('subject','',['class' => 'form-control','placeholder'=>'example: Save The Date!'] ) !!}
-		
-		</div>
-	
 		
 		<!-- Submit Button -->
 		<div class="form-group">

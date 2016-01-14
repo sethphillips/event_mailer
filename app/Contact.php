@@ -23,6 +23,11 @@ class Contact extends Model
     	return $this->belongsTo('App\Client');
     }
 
+    public function campaigns()
+    {
+        return $this->belongsToMany('App\Campaign')->withTimestamps();
+    }
+
     public function emails()
     {
     	return $this->hasMany('App\Email');
@@ -41,6 +46,11 @@ class Contact extends Model
     public function actions()
     {
     	return $this->hasMany('App\Action');
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = trim($value);
     }
     
 }

@@ -8,7 +8,7 @@ use \Mail;
 
 class Email extends Model
 {
-    protected $fillable = ['salted_id','subject','reply_to','from','send_on','template','draft','trackable','campaign_id','contact_id'];
+    protected $fillable = ['salted_id','subject','reply_to','from','send_on','template','draft','trackable','campaign_id','contact_id','touch_id'];
 
     protected $casts = [
     	'draft' => 'boolean',

@@ -4,6 +4,7 @@ use App\Action;
 use App\Campaign;
 use App\Contact;
 use App\Email;
+use App\Touch;
 use Illuminate\Http\Request;
 
 /*
@@ -34,6 +35,7 @@ Route::get('vitality_holidays',['as'=>'vitalityXmas',function(Request $request){
 				'action' => 'video',
 				'contact_id' => $email->contact->id,
 				'campaign_id' => $email->campaign->id,
+				'touch_id' => $email->touch_id
 			]);
 		}
 	}
@@ -56,6 +58,7 @@ Route::get('vitality_holidays_broker',['as'=>'vitalityXmasBroker',function(Reque
 				'action' => 'video',
 				'contact_id' => $email->contact->id,
 				'campaign_id' => $email->campaign->id,
+				'touch_id' => $email->touch_id
 			]);
 		}
 	}
@@ -112,6 +115,7 @@ Route::post('action',function(Request $request){
 			'action' => $action,
 			'contact_id' => $email->contact->id,
 			'campaign_id' => $email->campaign->id,
+			'touch_id' => $email->touch_id
 		]);
 	}
 	
@@ -154,6 +158,16 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::resource('users','UserController');
 	Route::resource('clients','ClientController');
 	Route::resource('campaigns','CampaignController');
+	Route::resource('touches','TouchesController');
+
+	Route::post('touches/{touch_id}/queueEmails',['as'=>'admin.touch.queueEmails','uses'=>'TouchesController@queueEmails']);
+
+	Route::get('add_contacts/{campaign_id}',['as'=>'admin.campaign.contacts.new','uses'=>'CampaignController@addContacts']);
+	Route::post('add_contacts/{campaign_id}',['as'=>'admin.campaign.contacts.post','uses'=>'CampaignController@storeContacts']);
+	Route::get('add_contact/{campaign_id}',['as'=>'admin.campaign.contact.new','uses'=>'CampaignController@addContact']);
+	Route::post('add_contact/{campaign_id}',['as'=>'admin.campaign.contact.post','uses'=>'CampaignController@storeContact']);
+	Route::delete('campaign/{campaign_id}/contact/{contact_id}',['as'=>'admin.campaign.contact.remove','uses'=>'CampaignController@removeContact']);
+
 	
 	Route::get('new-emails/{campaign_id}',['as'=>'admin.emails.new','uses'=>'EmailController@createList']);
 	Route::post('new-emails/{campaign_id}',['as'=>'admin.emails.post','uses'=>'EmailController@storeList']);
@@ -161,8 +175,9 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::post('new-email/{campaign_id}',['as'=>'admin.email.post','uses'=>'EmailController@store']);
 	Route::delete('emails/{id}',['as'=>'admin.emails.destroy','uses'=>'EmailController@destroy']);
 
-	Route::get('reports/actions/{campaign_id}',['as'=>'admin.reports.actions','uses'=>'ReportController@actions']);
-	Route::get('reports/signups/{campaign_id}',['as'=>'admin.reports.signups','uses'=>'ReportController@signups']);
+	Route::get('reports/campaign/actions/{campaign_id}',['as'=>'admin.reports.actions.campaign','uses'=>'ReportController@campaignActions']);
+	Route::get('reports/campaign/signups/{campaign_id}',['as'=>'admin.reports.signups.campaign','uses'=>'ReportController@campaignSignups']);
+	Route::get('reports/touch/actions/{touch_id}',['as'=>'admin.reports.actions.touch','uses'=>'ReportController@touchActions']);
 
 });
 
@@ -206,6 +221,7 @@ Route::get('tracking',['as'=>'tracking',function(Request $request){
 				'action' => 'opened',
 				'contact_id' => $email->contact->id,
 				'campaign_id' => $email->campaign->id,
+				'touch_id' => $email->touch_id
 			]);
 		}
 	}
@@ -214,9 +230,9 @@ Route::get('tracking',['as'=>'tracking',function(Request $request){
 
 Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $request){
 	
-	$campaign = Campaign::where('title_slug','=',$title_slug)->first();
+	$touch = Touch::where('title_slug','=',$title_slug)->first();
 	
-	if(!$campaign) abort(404);
+	if(!$touch) abort(404);
 
 	if($request->input('email'))
 	{
@@ -228,9 +244,9 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 		$salted_id = $request->session()->get('salted_id',null);
 	}
 
-	return view("emails.$campaign->template")->with([
+	return view("emails.$touch->template")->with([
 		'salted_id' => $salted_id,
-		'campaign' => $campaign,
+		'campaign' => $touch->campaign,
 		'email' => false
 		]);
 }]);

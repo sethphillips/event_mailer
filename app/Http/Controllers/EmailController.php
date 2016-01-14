@@ -8,44 +8,53 @@ use App\Contact;
 use App\Email;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Touch;
 use Illuminate\Http\Request;
 
 class EmailController extends Controller
 {
     private $contacts = [];
 
-    public function createList($campaign_id)
+    public function checkEmail($email)
     {
-        $campaign = Campaign::find($campaign_id);
-        return view()->make('email.create-list')->with('campaign',$campaign);
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
-    public function create($campaign_id)
+    public function createList($touch_id)
     {
-        $campaign = Campaign::find($campaign_id);
-        return view()->make('email.create-single')->with('campaign',$campaign);
+        $touch = Touch::find($touch_id);
+        return view()->make('email.create-list')->with('touch',$touch);
     }
 
-    public function storeList($campaign_id, Request $request)
+    public function create($touch_id)
     {
-        set_time_limit(0);
-        $date = \Carbon\Carbon::parse($request->input('dateTime'))->toDateTimeString();
+        $touch = Touch::find($touch_id);
+        return view()->make('email.create-single')->with('touch',$touch);
+    }
+
+    public function storeList($touch_id, Request $request)
+    {
+        
+        $date = \Carbon\Carbon::now()->toDateTimeString();
 
         $file = $request->file('file');
 
-        
-        $campaign = Campaign::find($campaign_id);
+        $touch = Touch::find($touch_id);
 
-        $results = \Excel::selectSheetsByIndex(0)->load($file,function($reader) use ($campaign){
+        $results = \Excel::selectSheetsByIndex(0)->load($file,function($reader) use ($touch){
 
             $reader->ignoreEmpty();
-            $reader->each(function($row) use ($campaign){
+            $reader->each(function($row) use ($touch){
+
+                $email = $row['email'];
+                $email = trim($email);
+                if(!$this->checkEmail($email)) return false;
 
                 if(isset($row['email']) && $row['email'])
                 {
                     $contact = Contact::firstOrCreate([
-                        'email' => $row['email'],
-                        'client_id' => $campaign->client->id,
+                        'email' => $email,
+                        'client_id' => $touch->campaign->client->id,
                     ]);
 
                     if(isset( $row['first_name']) ) $contact->first_name = $row['first_name'];
@@ -70,41 +79,40 @@ class EmailController extends Controller
             {
                 $email = Email::create([
                     'subject' => $request->input('subject'),
-                    'reply_to' => $campaign->client->reply_to,
-                    'from' => $campaign->client->reply_to,
+                    'reply_to' => $touch->campaign->client->reply_to,
+                    'from' => $touch->campaign->client->reply_to,
                     'send_on' => $date,
-                    'template' => "emails.$campaign->template",
+                    'template' => "emails.$touch->template",
                     'draft' => false,
-                    'trackable' => true,
-                    'campaign_id' => $campaign->id,
+                    'trackable' => false,
+                    'campaign_id' => $touch->campaign->id,
                     'contact_id' => $contact->id,
+                    'touch_id' => $touch->id,
                 ]);
-                if($request->input('dont_track'))
-                {
-                    $email->trackable = false;
-                }
+                
                 $email->salted_id = bcrypt($email->id);
                 $email->save();
                 $queuedEmails++;
             }
         }
 
-        return redirect()->route('admin.campaigns.show',$campaign->id)->with('message',"$queuedEmails emails queued");
+        return redirect()->route('admin.touches.show',$touch->id)->with('message',"$queuedEmails test emails sent");
 
     }
 
-    public function store($campaign_id, Request $request)
+    public function store($touch_id, Request $request)
     {
-        $date = \Carbon\Carbon::parse($request->input('dateTime'))->toDateTimeString();
+        $date = \Carbon\Carbon::now()->toDateTimeString();
 
-        $send_to = $request->input('email');
-        if(!$send_to || !$date) return redirect()->back()->with('error','the email address or date you entered was not able to be parsed');
+        $email = $request->input('email');
+        $email = trim($email);
+        if(!$this->checkEmail($email)) return redirect()->back()->with('error','the email address you entered was not able to be parsed');
 
-        $campaign = Campaign::find($campaign_id);
+        $touch = Touch::find($touch_id);
 
         $contact = Contact::firstOrCreate([
-            'email' => $send_to,
-            'client_id' => $campaign->client->id,
+            'email' => $email,
+            'client_id' => $touch->campaign->client->id,
         ]);
         
         if($contact->unsubscribe || $contact->bounced)
@@ -113,27 +121,23 @@ class EmailController extends Controller
         }  
 
         $email = Email::create([
-            'subject' => $request->subject,
-            'reply_to' => $campaign->client->reply_to,
-            'from' => $campaign->client->reply_to,
+            'subject' => $request->input('subject'),
+            'reply_to' => $touch->campaign->client->reply_to,
+            'from' => $touch->campaign->client->reply_to,
             'send_on' => $date,
-            'template' => "emails.$campaign->template",
+            'template' => "emails.$touch->template",
             'draft' => false,
-            'trackable' => true,
-            'campaign_id' => $campaign->id,
+            'trackable' => false,
+            'campaign_id' => $touch->campaign->id,
             'contact_id' => $contact->id,
+            'touch_id' => $touch->id,
         ]);
-
-        if($request->input('dont_track'))
-        {
-            $email->trackable = false;
-        }
 
         $email->salted_id = bcrypt($email->id);
         $email->save();
         
 
-        return redirect()->back()->with('message',"email queued for $contact->email");
+        return redirect()->back()->with('message',"test email sent to $contact->email");
     }
 
     public function destroy($id)

@@ -6,7 +6,7 @@
 
 
 @section('title')
-	Schedule new emails from an Excel sheet for {{ $touch->campaign->name }} | {{ $touch->title }}
+	Add contacts to {{ $campaign->client->name }} | {{ $campaign->name }}
 @stop
 
 
@@ -27,7 +27,7 @@
 
 
 @section('action')
-	{!! link_to_route('admin.touches.show','Back',$touch->id,['class'=>'btn btn-primary']) !!}
+	{!! link_to_route('admin.campaigns.show','Back',$campaign->id,['class'=>'btn btn-primary']) !!}
 @stop
 
 
@@ -40,7 +40,7 @@
 @section('content')
 	
 	
-	{!! Form::open(['route'=>['admin.emails.post',$touch->id],'method'=>'POST','class'=>'form','files'=>'true']) !!}
+	{!! Form::open(['route'=>['admin.campaign.contacts.post',$campaign->id],'method'=>'POST','class'=>'form','files'=>'true']) !!}
 	
 
 		
@@ -54,19 +54,7 @@
 			{!! Form::file('file',['class' => 'form-control','placeholder'=>''] ) !!}
 		
 		</div>
-
-
-		<!-- Form Input -->
 		
-		<div class="form-group">
-			
-			{!! Form::label('subject','Subject Line') !!}
-			
-			{!! Form::text('subject','',['class' => 'form-control','placeholder'=>'example: Save The Date!'] ) !!}
-		
-		</div>
-
-			
 		<!-- Submit Button -->
 		<div class="form-group">
 		

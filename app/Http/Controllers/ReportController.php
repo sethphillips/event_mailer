@@ -7,13 +7,14 @@ use App\Campaign;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Signup;
+use App\Touch;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use \Excel;
 
 class ReportController extends Controller
 {
-    public function actions($id)
+    public function campaignActions($id)
     {
         $campaign = Campaign::find($id);
 
@@ -63,7 +64,7 @@ class ReportController extends Controller
         return $metrics;
     }
 
-    public function signups($id)
+    public function campaignSignups($id)
     {
         $campaign = Campaign::find($id);
 
@@ -95,12 +96,55 @@ class ReportController extends Controller
         return $metrics;
     }
 
-    private function arrayFlatten($array) { 
-        $flattern = array(); 
-        foreach ($array as $key => $value){ 
-            $new_key = array_keys($value); 
-            $flattern[] = $value[$new_key[0]]; 
-        } 
-        return $flattern; 
-    } 
+    public function touchActions($id)
+    {
+        $touch = Touch::find($id);
+
+        $actions = Action::with('contact')->where('touch_id','=',$touch->id)
+            ->orderBy('action')
+            ->orderBy('contact_id','DESC')
+            ->get(['action','contact_id']);
+
+        $actions = array_map(function($action){
+            foreach ($action['contact'] as $key => $value) {
+                    $action[$key] = $value;
+            }
+            unset($action['contact_id'],$action['id'],$action['contact'],$action['unsubscribe'],$action['client_id'],$action['updated_at'],$action['created_at'],$action['bounced']);
+            return $action;
+        }, $actions->toArray());
+        
+        $metrics = Excel::create("$touch->title Metrics",function($excel) use($touch, $actions){
+            $excel->setTitle("Email Metrics for $touch->title");
+            $excel->setCreator("EP-Productions");
+            $excel->setCompany('Exhibit Partners');
+            $excel->setDescription("Email metrics from an email campaign for $touch->campaign->client->name by Exhibit Partners");
+
+            $excel->sheet('Metrics',function($sheet) use($actions){
+                $sheet->fromArray($actions);
+            });
+
+            $excel->sheet('Bounces', function($sheet) use ($touch){
+                $bounces = $touch->bounces->toArray();
+                $bounces = array_map(function($contact){
+                    unset($contact['id'],$contact['client_id'],$contact['bounced'],$contact['unsubscribe'],$contact['updated_at'],$contact['created_at']);
+                    return $contact;
+                }, $bounces);
+                $sheet->fromArray($bounces);
+            });
+
+            $excel->sheet('Unsubscribes', function($sheet) use ($touch){
+                $unsubscribes = $touch->unsubscribes->toArray();
+                $unsubscribes = array_map(function($contact){
+                    unset($contact['id'],$contact['client_id'],$contact['bounced'],$contact['unsubscribe'],$contact['updated_at'],$contact['created_at']);
+                    return $contact;
+                }, $unsubscribes);
+                $sheet->fromArray($unsubscribes);
+            });
+
+        })->download('xlsx');
+
+        return $metrics;
+    }
+
+    
 }

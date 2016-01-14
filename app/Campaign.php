@@ -13,9 +13,19 @@ class Campaign extends Model
     	return $this->belongsTo('App\Client');
     }
 
+    public function contacts()
+    {
+        return $this->belongsToMany('App\Contact')->withTimestamps();
+    }
+
     public function emails()
     {
     	return $this->hasMany('App\Email');
+    }
+
+    public function touchs()
+    {
+        return $this->hasMany('App\Touch');
     }
 
     public function getSentEmailsAttribute()
@@ -30,6 +40,13 @@ class Campaign extends Model
     {
         return $this->emails->filter(function($email){
             return $email->trackable;
+        });
+    }
+
+    public function getValidContactsAttribute()
+    {
+        return $this->contacts->filter(function($contact){
+            return !$contact->unsubscribe && !$contact->bounced;
         });
     }
 

@@ -13181,4 +13181,8 @@ $(document).ready(function(){
 function resizeIframe(obj) {
     obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
   }
+
+  function deleteSubmit(){
+  	return confirm('Are you sure?  This cannot be undone.')
+  }
 //# sourceMappingURL=admin.js.map
