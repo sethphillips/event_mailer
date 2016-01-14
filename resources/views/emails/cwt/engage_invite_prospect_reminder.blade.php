@@ -121,15 +121,7 @@
 				
 				
 
-				<tr>
-					<td style="padding:0 40px">
-						<p style="font-size:15px;font-family:Verdana, Geneva, sans-serif;text-align:left;font-weight:bold;margin:10px 0 0 0;">
-							
-							{!!  Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!} 
-							
-						</p>
-					</td>
-				</tr>
+				
 
 				
 
