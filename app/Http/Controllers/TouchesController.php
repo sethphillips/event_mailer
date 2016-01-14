@@ -132,9 +132,11 @@ class TouchesController extends Controller
     {
         $touch = Touch::find($id);
 
+
+        $signups = array_column($touch->campaign->signups->toArray(),'contact_id');
         $contactIds = array_column($touch->campaign->contacts->toArray(),'id');
         $sentContactIds = Email::where('touch_id',$touch->id)->where('trackable',true)->groupBy('contact_id')->lists('contact_id')->toArray();
-        $unsentContactIds = array_diff($contactIds,$sentContactIds);
+        $unsentContactIds = array_diff($contactIds,$sentContactIds,$signups);
 
         $queuedEmails = 0;
 
