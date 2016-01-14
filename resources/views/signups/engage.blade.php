@@ -27,13 +27,13 @@
 				<p>
 				<p>
 					Join us on {!! Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!} from 
-					@if($campaign->title_slug === 'engage_boston_invite_c')
+					@if($campaign->title_slug === 'engage_boston_c')
 						4:00 - 7:30 p.m.
-					@elseif($campaign->title_slug === 'engage_boston_invite_p')
+					@elseif($campaign->title_slug === 'engage_boston_p')
 						7:30 - 11:00 a.m.
-					@elseif($campaign->title_slug === 'engage_new_york_invite_c')
+					@elseif($campaign->title_slug === 'engage_new_york_c')
 						4:00 - 7:30 p.m.
-					@elseif($campaign->title_slug === 'engage_new_york_invite_p')
+					@elseif($campaign->title_slug === 'engage_new_york_p')
 						7:30 - 11:00 a.m.
 					@endif
 				</p>
@@ -43,19 +43,19 @@
 					{!! $campaign->city !!} {!! $campaign->state !!},  {!! $campaign->zip !!}
 				</p>
 				<p>
-					@if($campaign->title_slug === 'engage_boston_invite_c')
+					@if($campaign->title_slug === 'engage_boston_c')
 						<a href="{{ asset('ical/engage_boston_pm.ics') }}" download>
 							Add to calendar
 						</a>
-					@elseif($campaign->title_slug === 'engage_boston_invite_p')
+					@elseif($campaign->title_slug === 'engage_boston_p')
 						<a href="{{ asset('ical/engage_boston_am.ics') }}" download>
 							Add to calendar
 						</a>
-					@elseif($campaign->title_slug === 'engage_new_york_invite_c')
+					@elseif($campaign->title_slug === 'engage_new_york_c')
 						<a href="{{ asset('ical/engage_new_york_pm.ics') }}" download>
 							Add to calendar
 						</a>
-					@elseif($campaign->title_slug === 'engage_new_york_invite_p')
+					@elseif($campaign->title_slug === 'engage_new_york_p')
 						<a href="{{ asset('ical/engage_new_york_am.ics') }}" download>
 							Add to calendar
 						</a>
