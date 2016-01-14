@@ -66,17 +66,17 @@ class SignupController extends Controller
         {
             if($customer === 'yes') 
             {
-                return redirect()->route('engage_signup',['name'=>'engage_boston_invite_c']);
+                return redirect()->route('engage_signup',['name'=>'engage_boston_c']);
             }
-            return redirect()->route('engage_signup',['name'=>'engage_boston_invite_p']);
+            return redirect()->route('engage_signup',['name'=>'engage_boston_p']);
         }
         if($city === 'new_york')
         {
             if($customer === 'yes') 
             {
-                return redirect()->route('engage_signup',['name'=>'engage_new_york_invite_c']);
+                return redirect()->route('engage_signup',['name'=>'engage_new_york_c']);
             }
-            return redirect()->route('engage_signup',['name'=>'engage_new_york_invite_p']);
+            return redirect()->route('engage_signup',['name'=>'engage_new_york_p']);
         }
         return redirect()->back()->with('error',"Sorry, something seems to have gone wrong with your request");
     }
