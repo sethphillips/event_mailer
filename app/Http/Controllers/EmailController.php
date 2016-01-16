@@ -78,7 +78,7 @@ class EmailController extends Controller
             if(!$contact->unsubscribe && !$contact->bounced)
             {
                 $email = Email::create([
-                    'subject' => $request->input('subject'),
+                    'subject' => $touch->subject,
                     'reply_to' => $touch->campaign->client->reply_to,
                     'from' => $touch->campaign->client->reply_to,
                     'send_on' => $date,
@@ -121,7 +121,7 @@ class EmailController extends Controller
         }  
 
         $email = Email::create([
-            'subject' => $request->input('subject'),
+            'subject' => $touch->subject,
             'reply_to' => $touch->campaign->client->reply_to,
             'from' => $touch->campaign->client->reply_to,
             'send_on' => $date,

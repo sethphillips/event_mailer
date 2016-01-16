@@ -6,7 +6,7 @@
 
 
 @section('title')
-	Send a single email for {{ $touch->campaign->name }} | {{ $touch->title }}
+	Send a single TEST email for {{ $touch->campaign->name }} | {{ $touch->title }}
 @stop
 
 
@@ -58,15 +58,6 @@
 		
 		</div>
 
-		<!-- Form Input -->
-		
-		<div class="form-group">
-			
-			{!! Form::label('subject','Subject Line') !!}
-			
-			{!! Form::text('subject','',['class' => 'form-control','placeholder'=>'example: Save The Date!'] ) !!}
-		
-		</div>
 	
 		
 		<!-- Submit Button -->

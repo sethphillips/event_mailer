@@ -6,7 +6,7 @@
 
 
 @section('title')
-	Schedule new emails from an Excel sheet for {{ $touch->campaign->name }} | {{ $touch->title }}
+	Schedule new TEST emails from an Excel sheet for {{ $touch->campaign->name }} | {{ $touch->title }}
 @stop
 
 
@@ -55,16 +55,6 @@
 		
 		</div>
 
-
-		<!-- Form Input -->
-		
-		<div class="form-group">
-			
-			{!! Form::label('subject','Subject Line') !!}
-			
-			{!! Form::text('subject','',['class' => 'form-control','placeholder'=>'example: Save The Date!'] ) !!}
-		
-		</div>
 
 			
 		<!-- Submit Button -->
