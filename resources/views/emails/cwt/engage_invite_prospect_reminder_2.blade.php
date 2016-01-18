@@ -11,7 +11,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href='{{ URL::route("emails",["title_slug"=>$campaign->title_slug]) }}?email={{ $salted_id }}' style="color:black;">Can't view this email? Click Here</a>
+				<a href='{{ URL::route("emails",["title_slug"=>$touch->title_slug]) }}?email={{ $salted_id }}' style="color:black;">Can't view this email? Click Here</a>
 			</td>
 		</tr>
 	@endif
@@ -62,8 +62,8 @@
 								<td style="text-align:center;vertical-align:middle;">
 									<img src="{!! asset('img/cwt/engage/icon_spend.png') !!}" alt="" style="margin-bottom:15px;">
 								</td>
-								<td>
-									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter">
+								<td style="padding-left:5px">
+									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;">
 										 <b>Invisible spend</b> – If you aren’t tracking key data points such as credit card spend, you’re missing where your travelers are booking out of policy.
 									</li>
 								</td>
@@ -72,8 +72,8 @@
 								<td style="text-align:center;vertical-align:middle;">
 									<img src="{!! asset('img/cwt/engage/icon_agreements.png') !!}" alt="" style="margin-bottom:15px;">
 								</td>
-								<td>
-									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter">
+								<td style="padding-left:5px">
+									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;">
 										 <b>Supplier agreements</b> – This is a no brainer for getting the biggest bang for your buck. Analyze your routes and determine where your travelers are booking direct, so you’re armed with the data you need to negotiate. 
 									</li>
 								</td>
@@ -82,8 +82,8 @@
 								<td style="text-align:center;vertical-align:middle;">
 									<img src="{!! asset('img/cwt/engage/icon_behavior.png') !!}" alt="" style="margin-bottom:15px;">
 								</td>
-								<td>
-									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter">
+								<td style="padding-left:5px">
+									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;">
 										 <b>Traveler behavior</b> – Last minute, out-of-policy, not booking air + hotel at the same time, oh my! If you don’t know what kinds of buying decisions your travelers are making, you can’t develop a way to positively influence booking behavior.
 									</li>
 								</td>
@@ -92,8 +92,8 @@
 								<td style="text-align:center;vertical-align:middle;">
 									<img src="{!! asset('img/cwt/engage/icon_technology.png') !!}" alt="" style="margin-bottom:15px;">
 								</td>
-								<td>
-									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter">
+								<td style="padding-left:5px">
+									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;">
 										  <b>Right technology</b> – A successful travel program is built on so much more than just a reporting tool. Review your technology to ensure that all the tools work together to meet your program goals. 
 									</li>
 								</td>
@@ -102,8 +102,8 @@
 								<td style="text-align:center;vertical-align:middle;">
 									<img src="{!! asset('img/cwt/engage/icon_satisfaction.png') !!}" alt="" style="margin-bottom:15px;">
 								</td>
-								<td>
-									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter">
+								<td style="padding-left:5px">
+									<li style="padding-left:25px; text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;">
 										 <b>Traveler satisfaction</b> – Unhappy frequent travelers can cost you BIG bucks. Make sure your road warriors are cared for so they remain compliant to policy and can be productive while on the road.
 									</li>
 								</td>
