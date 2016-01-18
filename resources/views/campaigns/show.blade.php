@@ -100,6 +100,7 @@
 
 
 	<h3 class="section-header reports">Reports</h3>
+	{!! link_to_route('admin.reports.contacts.campaign','Contact List',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name contact list"]) !!}
 	{!! link_to_route('admin.reports.actions.campaign','Email Metrics',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name metrics"]) !!}
 	@if ($campaign->signups->count())
 		{!! link_to_route('admin.reports.signups.campaign','Event Signups',$campaign->id,['class'=>'btn btn-success','download'=>"$campaign->name signups"]) !!}

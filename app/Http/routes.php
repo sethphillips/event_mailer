@@ -177,6 +177,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 
 	Route::get('reports/campaign/actions/{campaign_id}',['as'=>'admin.reports.actions.campaign','uses'=>'ReportController@campaignActions']);
 	Route::get('reports/campaign/signups/{campaign_id}',['as'=>'admin.reports.signups.campaign','uses'=>'ReportController@campaignSignups']);
+	Route::get('reports/campaign/contacts/{campaign_id}',['as'=>'admin.reports.contacts.campaign','uses'=>'ReportController@contactList']);
 	Route::get('reports/touch/actions/{touch_id}',['as'=>'admin.reports.actions.touch','uses'=>'ReportController@touchActions']);
 
 });

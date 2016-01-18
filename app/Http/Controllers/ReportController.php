@@ -146,5 +146,31 @@ class ReportController extends Controller
         return $metrics;
     }
 
+
+    public function contactList($id)
+    {
+        $campaign = Campaign::find($id);
+
+        $contacts = array_map(function($contact){
+            
+            unset($contact['pivot'],$contact['id'],$contact['client_id'],$contact['updated_at'],$contact['created_at']);
+            return $contact;
+        }, $campaign->contacts->toArray());
+
+        $metrics = Excel::create("$campaign->name Contacts",function($excel) use($campaign, $contacts){
+            $today = Carbon::now()->format('M jS');
+            $excel->setTitle("Event Contacts as of $today for $campaign->name");
+            $excel->setCreator("EP-Productions");
+            $excel->setCompany('Exhibit Partners');
+            $excel->setDescription("Event Contacts from an email campaign for $campaign->client->name");
+
+            $excel->sheet('Contacts',function($sheet) use($contacts){
+                $sheet->fromArray($contacts);
+            });
+
+        })->download('xlsx');
+
+        return $metrics;
+    }
     
 }
