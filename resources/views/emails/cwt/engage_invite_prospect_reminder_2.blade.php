@@ -63,7 +63,7 @@
 									<img src="{!! asset('img/cwt/engage/icon_spend.png') !!}" alt="" style="margin-bottom:15px;">
 								</td>
 								<td style="padding-left:25px; font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;">
-									<li style="text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif;list-style-type:none">
+									<li style="text-indent:-11px; margin-bottom:15px;font-weight:lighter;color:#ede6ce;font-family:Verdana, Geneva, sans-serif">
 										  <b>Invisible spend</b> – If you aren’t tracking key data points such as credit card spend, you’re missing where your travelers are booking out of policy.
 									</li>
 								</td>
