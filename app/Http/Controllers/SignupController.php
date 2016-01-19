@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Http\Requests\SignupRequest;
 use App\Signup;
+use App\Touch;
 use Illuminate\Http\Request;
 
 class SignupController extends Controller
@@ -100,9 +101,11 @@ class SignupController extends Controller
             : null;
 
             
-        $campaign = $email
+        $touch = $email
             ? $email->campaign
-            : Campaign::where('title_slug','=',$name)->first();
+            : Touch::where('title_slug','=',$name)->first();
+
+        $campaign = $touch->campaign;
 
         if($email && $email->trackable)
         {
