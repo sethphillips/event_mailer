@@ -9,6 +9,12 @@ $white: #ede6ce;
 	color:white;
 	padding-bottom:2em;
 
+	ul{
+		list-style-type: disc;
+		margin-left:3em;
+
+	}
+
 	.header{
 		text-align: right;
 		padding:1em 3em;
@@ -24,21 +30,20 @@ $white: #ede6ce;
 
 	.thank-you{
 		font-size:1.4em;
-		text-align: center;
+		text-align: left;
 		padding:0 2em;
+		margin-bottom: 1em;
+		border-bottom:1px solid white;
 		h1{
 			text-align:left;
 			font-size:1.2em;
 		}
-		a{
-			color:white;
-			text-decoration: underline;
-		}
+		
 	}
 	.form{
 		background-color: white;
 		color: $blue;
-		padding:3em;
+		padding:2em;
 		border-radius: 10px;
 		overflow: hidden;
 		padding-bottom:0;
@@ -51,6 +56,30 @@ $white: #ede6ce;
 				cursor:pointer;
 				
 			}
+		}
+	}
+	.forward-form{
+		width:100%;
+		background-color: transparent;
+		text-align: center;
+		.btn{
+			margin:1em 0;
+		}
+	}
+	.details{
+		font-size:1.4em;
+		.sub-text{
+			font-size:.7em;
+		}
+		.schedule{
+			font-size:.8em;
+		}
+		td{
+			padding:0 2px;
+		}
+		a{
+			color:white;
+			text-decoration: underline;
 		}
 	}
 }

@@ -6444,6 +6444,9 @@ button.close {
   box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.6);
   color: white;
   padding-bottom: 2em; }
+  .engage ul {
+    list-style-type: disc;
+    margin-left: 3em; }
   .engage .header {
     text-align: right;
     padding: 1em 3em;
@@ -6456,18 +6459,17 @@ button.close {
     background-position: -37% -10%; }
   .engage .thank-you {
     font-size: 1.4em;
-    text-align: center;
-    padding: 0 2em; }
+    text-align: left;
+    padding: 0 2em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid white; }
     .engage .thank-you h1 {
       text-align: left;
       font-size: 1.2em; }
-    .engage .thank-you a {
-      color: white;
-      text-decoration: underline; }
   .engage .form {
     background-color: white;
     color: #00aaad;
-    padding: 3em;
+    padding: 2em;
     border-radius: 10px;
     overflow: hidden;
     padding-bottom: 0; }
@@ -6478,6 +6480,23 @@ button.close {
       top: 5px; }
       .engage .form .submit img {
         cursor: pointer; }
+  .engage .forward-form {
+    width: 100%;
+    background-color: transparent;
+    text-align: center; }
+    .engage .forward-form .btn {
+      margin: 1em 0; }
+  .engage .details {
+    font-size: 1.4em; }
+    .engage .details .sub-text {
+      font-size: .7em; }
+    .engage .details .schedule {
+      font-size: .8em; }
+    .engage .details td {
+      padding: 0 2px; }
+    .engage .details a {
+      color: white;
+      text-decoration: underline; }
 
 .halloween {
   background-color: black;

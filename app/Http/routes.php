@@ -257,6 +257,7 @@ Route::get('engage_signup',['as'=>'engage_signup_generic','uses'=>'SignupControl
 Route::post('engage_signup',['as'=>'engage_signup_redirect','uses'=>'SignupController@engageRedirect']);
 Route::get('engage_signup/{name}',['as'=>'engage_signup','uses'=>'SignupController@engage']);
 Route::post('signup', ['as'=>'signup','uses'=>'SignupController@signup']);
+Route::post('signup/forward', ['as'=>'signup.forward','uses'=>'SignupController@signupForward']);
 
 
 
