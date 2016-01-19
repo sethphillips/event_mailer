@@ -102,7 +102,7 @@ class SignupController extends Controller
 
             
         $touch = $email
-            ? $email->campaign
+            ? $email->touch
             : Touch::where('title_slug','=',$name)->first();
 
         $campaign = $touch->campaign;
