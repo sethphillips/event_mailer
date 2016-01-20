@@ -99,7 +99,7 @@
 							</tr>
 							<tr>
 								<td>4:30 - 4:45</td>
-								<td>Supplier time</td>
+								<td>Supplier showcase</td>
 							</tr>
 							<tr>
 								<td>4:45 - 5:00</td>
@@ -107,7 +107,7 @@
 							</tr>
 							<tr>
 								<td>5:00 - 6:00</td>
-								<td>YOUR Data Works for YOU in 2016</td>
+								<td>YOUR Data Works for YOU</td>
 							</tr>
 							<tr>
 								<td>6:00 - 6:45</td>
@@ -127,7 +127,7 @@
 							</tr>
 							<tr>
 								<td>8:00 – 8:15</td>
-								<td>Supplier time</td>
+								<td>Supplier showcase</td>
 							</tr>
 							<tr>
 								<td>8:15 – 8:30</td>
@@ -135,7 +135,7 @@
 							</tr>
 							<tr>
 								<td>8:30 – 9:30</td>
-								<td>YOUR Data Works for YOU in 2016</td>
+								<td>YOUR Data Works for YOU</td>
 							</tr>
 							<tr>
 								<td>9:30 – 10:15</td>
