@@ -6472,7 +6472,8 @@ button.close {
     padding: 2em;
     border-radius: 10px;
     overflow: hidden;
-    padding-bottom: 0; }
+    padding-bottom: 0;
+    margin-bottom: 1em; }
     .engage .form .submit {
       border: none;
       background-color: transparent;
