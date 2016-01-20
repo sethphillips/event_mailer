@@ -22,7 +22,8 @@
 
 		<div class="body row">
 			<div class="col-sm-10 col-sm-offset-1 thank-you">
-				<p style="text-align:justify">
+			<h2 style="text-align:center;">Unfortunately, this event has been postponed.  Please <a href="mailto:CWTNORAMmarketingevents@carlsonwagonlit.com">contact CWT directly</a> for more information.</h2>
+				{{-- <p style="text-align:justify">
 					Thanks for your interest in ENGAGE. At this exclusive interactive event, you’ll hear from industry experts about how to make your data work for YOU. You’ll also enjoy networking and excellent food and beverage in beautiful surroundings. Key takeaways will include: 
 				<p>
 				<ul>
@@ -35,9 +36,9 @@
 				</p>
 				
 				
-					@include('includes.flash')
+					@include('includes.flash') --}}
 			</div>
-			<div class="col-sm-5 col-md-4 col-md-offset-1 col-lg-offset-2">
+			{{-- <div class="col-sm-5 col-md-4 col-md-offset-1 col-lg-offset-2">
 			
 				{!! Form::open(['route'=>'signup','class'=>'form']) !!}
 					
@@ -228,7 +229,7 @@
 				</tr>
 			</table>
 			
-		</div>
+		</div> --}}
 
 	</div>
 </body>
