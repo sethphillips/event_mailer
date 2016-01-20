@@ -5995,7 +5995,7 @@ button.close {
   background-color: #353133;
   min-height: 100vh;
   box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.6);
-  color: white;
+  color: #ede6ce;
   padding-bottom: 2em; }
   .engage ul {
     list-style-type: disc;
@@ -6036,9 +6036,8 @@ button.close {
   .engage .forward-form {
     width: 100%;
     background-color: transparent;
-    text-align: center; }
-    .engage .forward-form .btn {
-      margin: 1em 0; }
+    text-align: left;
+    padding: 0; }
   .engage .details {
     font-size: 1.4em; }
     .engage .details .sub-text {
@@ -6048,8 +6047,23 @@ button.close {
     .engage .details td {
       padding: 0 2px; }
     .engage .details a {
-      color: white;
+      color: #ed1c24;
       text-decoration: underline; }
+  .engage .presenters h2 {
+    text-align: center;
+    margin: 2em 0 1em 0; }
+  .engage .presenters .presenter {
+    text-align: center;
+    font-weight: bold; }
+  .engage .presenters .bio {
+    padding: 0 10%; }
+    @media screen and (max-width: 767px) {
+      .engage .presenters .bio {
+        padding: 0; } }
+  .engage .presenters .table {
+    font-size: .9em; }
+    .engage .presenters .table td {
+      border: none; }
 
 .halloween {
   background-color: black;

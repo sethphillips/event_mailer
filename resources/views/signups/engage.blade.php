@@ -37,7 +37,7 @@
 				
 					@include('includes.flash')
 			</div>
-			<div class="col-sm-5">
+			<div class="col-sm-5 col-md-4 col-md-offset-1 col-lg-offset-2">
 			
 				{!! Form::open(['route'=>'signup','class'=>'form']) !!}
 					
@@ -79,7 +79,7 @@
 				
 			</div>
 			
-			<div class="col-sm-7 details">
+			<div class="col-sm-7 col-md-6 col-lg-5 details">
 				<p>
 					<b>ENGAGE</b> {{ $campaign->city }}<br>
 					{!! Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!} from 
@@ -158,39 +158,75 @@
 
 				<p>
 					@if($campaign->title_slug === 'engage_boston_c')
-						<a href="{{ asset('ical/engage_boston_pm.ics') }}" download>
+						iCal: <a href="{{ asset('ical/engage_boston_pm.ics') }}" download>
 							Add to calendar
 						</a>
 					@elseif($campaign->title_slug === 'engage_boston_p')
-						<a href="{{ asset('ical/engage_boston_am.ics') }}" download>
+						iCal: <a href="{{ asset('ical/engage_boston_am.ics') }}" download>
 							Add to calendar
 						</a>
 					@elseif($campaign->title_slug === 'engage_new_york_c')
-						<a href="{{ asset('ical/engage_new_york_pm.ics') }}" download>
+						iCal: <a href="{{ asset('ical/engage_new_york_pm.ics') }}" download>
 							Add to calendar
 						</a>
 					@elseif($campaign->title_slug === 'engage_new_york_p')
-						<a href="{{ asset('ical/engage_new_york_am.ics') }}" download>
+						iCal: <a href="{{ asset('ical/engage_new_york_am.ics') }}" download>
 							Add to calendar
 						</a>
 					@endif
 				</p>
-			</div>
-		</div>
-
-		<div class="footer">
-			
-			
-			{!! Form::open(['route'=>'signup.forward','class'=>'form form-inline forward-form']) !!}
-					
-					{!! Form::text('email','',['class' => 'form-control','placeholder'=>'forward to a friend'] ) !!}
+				{!! Form::open(['route'=>'signup.forward','class'=>'form form-inline forward-form']) !!}
+						
+					{!! Form::text('email','',['class' => 'form-control','placeholder'=>"friend's email"] ) !!}
 	
 					{!! Form::hidden('campaign_id',$campaign->id,['class' => 'form-control','placeholder'=>''] ) !!}
 
 					{!! Form::submit('Forward',['class'=> 'btn btn-default form-control']) !!}
 
 				{!! Form::close() !!}
+			</div>
+		</div>
+
+		<div class="col-xs-12 presenters">
 			
+			<h2>About The Panelists</h2>
+			<table class="table">
+				<tr>
+					<td style="text-align:center;padding:0 20px 0 40px">
+						<img src="{!! asset('img/cwt/engage/headshot_fagle.jpg') !!}" alt="Michael Fagle">
+					</td>
+					<td style="text-align:center;padding:0 40px 0 20px">
+						<img src="{!! asset('img/cwt/engage/headshot_mitchell.jpg') !!}" alt="Charlie Mitchell">
+					</td>
+				</tr>
+				<tr>
+					<td >
+						<p class="presenter">
+							Michael (Mick) Fagle<br>
+							Director of Marketing<br>
+							Communications, Americas, CWT
+						</p>
+					</td>
+					<td >
+						<p class="presenter">
+							Charlie Mitchell<br>
+							Program Engineer, CWT
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td >
+						<p class="bio">
+							Mick is responsible for maintaining a clear view of where the travel industry and markets are heading to ensure CWT focuses on leading edge solutions that bring value to our customers. In addition to marketing communications, his responsibilities also include brand marketing and public relations. Prior to joining CWT Mick lead the corporate marketing function for DuPont and Carlisle Asia Pacific.  
+						</p>
+					</td>
+					<td >
+						<p class="bio">
+							Charlie started off in the hospitality industry doing hotel sourcing for meetings and events. He has since gone on to collect his Masters in Business Administration with an emphasis in Global Marketing. He now helps the product team by delivering business solutions for clients around the world. He spends his free time playing guitar and doing Ironman races. 
+						</p>
+					</td>
+				</tr>
+			</table>
 			
 		</div>
 
