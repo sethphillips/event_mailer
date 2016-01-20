@@ -11,11 +11,12 @@ class Touch extends Model
         'halloween' => 'Exhibit Partners Halloween',
         'cwt.engage'=>'Engage Save The Date',
         'cwt.engage_invite_client' => 'Engage Client Invite',
+        'cwt.engage_invite_prospect' => 'Engage Prospect Invite',
         'cwt.engage_invite_prospect_reminder' => 'Engage Prospect Invite Reminder',
         'cwt.engage_invite_client_reminder' => 'Engage Client Invite Reminder',
         'cwt.engage_invite_client_reminder_2' => 'Engage Client Invite Reminder 2',
         'cwt.engage_invite_prospect_reminder_2' => 'Engage Prospect Invite Reminder 2',
-        'cwt.engage_invite_prospect' => 'Engage Prospect Invite',
+        'cwt.engage_presenters' => 'Engage Presenters Reminder',
         'vitality.xmas-client' => 'Vitality Holiday Client',
         'vitality.xmas-broker' => 'Vitality Holiday Broker',
 
