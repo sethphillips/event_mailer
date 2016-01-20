@@ -2,6 +2,10 @@
 
 @section('content')
 
+<div style="display:none;font-size:1px;color:#333333;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+	ENGAGE is an exclusive event that will spark conversation, inspire best practices and more important, take you from a world of facts, figures and reports to a world of connections, insights and possibilities. 
+</div>
+
 <table width=100% bgcolor='white' style="text-align:center;" >
 	@if($email)
 		<tr>
