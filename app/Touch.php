@@ -19,7 +19,7 @@ class Touch extends Model
         'cwt.engage_presenters' => 'Engage Presenters Reminder',
         'vitality.xmas-client' => 'Vitality Holiday Client',
         'vitality.xmas-broker' => 'Vitality Holiday Broker',
-
+        'ep.may.email' => 'EP: Check out this video',
     ];
 
     protected $fillable = ['campaign_id','template','title_slug','title','subject','send_on'];
