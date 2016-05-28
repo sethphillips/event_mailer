@@ -104,40 +104,47 @@ class EmailController extends Controller
     {
         $date = \Carbon\Carbon::now()->toDateTimeString();
 
-        $email = $request->input('email');
-        $email = trim($email);
-        if(!$this->checkEmail($email)) return redirect()->back()->with('error','the email address you entered was not able to be parsed');
+        $emails = explode(',',$request->input('email') );
 
-        $touch = Touch::find($touch_id);
+        $count = 0;
+        foreach ($emails as $email) {
+ 
+            $email = trim($email);
+            if(!$this->checkEmail($email)) {
+                continue;
+            }
 
-        $contact = Contact::firstOrCreate([
-            'email' => $email,
-            'client_id' => $touch->campaign->client->id,
-        ]);
-        
-        if($contact->unsubscribe || $contact->bounced)
-        {
-            return redirect()->back()->with('message',"$contact->email is unreachable or has unsubscribed");
-        }  
+            $touch = Touch::find($touch_id);
 
-        $email = Email::create([
-            'subject' => $touch->subject,
-            'reply_to' => $touch->campaign->client->reply_to,
-            'from' => $touch->campaign->client->reply_to,
-            'send_on' => $date,
-            'template' => "emails.$touch->template",
-            'draft' => false,
-            'trackable' => false,
-            'campaign_id' => $touch->campaign->id,
-            'contact_id' => $contact->id,
-            'touch_id' => $touch->id,
-        ]);
+            $contact = Contact::firstOrCreate([
+                'email' => $email,
+                'client_id' => $touch->campaign->client->id,
+            ]);
+            
+            if($contact->unsubscribe || $contact->bounced)
+            {
+                return redirect()->back()->with('message',"$contact->email is unreachable or has unsubscribed");
+            }  
 
-        $email->salted_id = bcrypt($email->id);
-        $email->save();
-        
+            $email = Email::create([
+                'subject' => $touch->subject,
+                'reply_to' => $touch->campaign->client->reply_to,
+                'from' => $touch->campaign->client->reply_to,
+                'send_on' => $date,
+                'template' => "emails.$touch->template",
+                'draft' => false,
+                'trackable' => false,
+                'campaign_id' => $touch->campaign->id,
+                'contact_id' => $contact->id,
+                'touch_id' => $touch->id,
+            ]);
 
-        return redirect()->back()->with('message',"test email sent to $contact->email");
+            $email->salted_id = bcrypt($email->id);
+            $email->save();
+            $count++;
+        }
+
+        return redirect()->back()->with('message',"$count test emails sent");
     }
 
     public function destroy($id)

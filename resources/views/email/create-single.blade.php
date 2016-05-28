@@ -6,7 +6,7 @@
 
 
 @section('title')
-	Send a single TEST email for {{ $touch->campaign->name }} | {{ $touch->title }}
+	Send a set of TEST emails for {{ $touch->campaign->name }} | {{ $touch->title }}
 @stop
 
 
@@ -54,7 +54,7 @@
 			
 			{!! Form::label('email','Email Address') !!}
 			
-			{!! Form::text('email','',['class' => 'form-control','placeholder'=>''] ) !!}
+			{!! Form::text('email','',['class' => 'form-control','placeholder'=>'comma separated liste of emails'] ) !!}
 		
 		</div>
 
