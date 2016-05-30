@@ -50,7 +50,7 @@
 
             <p style="color:#0d2240;text-decoration:none;font-size:12px; line-height:1.9em;margin-bottom:10px;margin-top:25px;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;text-align:left;">
 
-              <a href="https://www.youtube.com/watch?v=X8bjvoHOSFs">Video Title Here</a>
+              <a href="https://vimeo.com/168555034">Live Brand Engagement</a>
             
             </p>
 
