@@ -64,6 +64,48 @@ class SignupController extends Controller
         return redirect()->back()->with('message',"Thanks for signing up $first_name!");
     }
 
+    public function epVikingsSignup(Request $request)
+    {
+        return view()->make('signups.ep.october-vikings')->with('salted_id',$request->input('salted_id'));
+    }
+    public function epVikingsSubmit(Request $request)
+    {
+        if($request->input('salted_id')){
+            $originalEmail = Email::where('salted_id','=',$request->input('salted_id'))->first();
+        }
+
+        if($originalEmail){
+            if($request->input('self') === 'yes'){
+                Signup::firstOrCreate([
+                    'contact_id' => $originalEmail->contact->id,
+                    'campaign_id' => $originalEmail->campaign->id,
+                ]);
+            }
+            else{
+                Signup::where('contact_id', $originalEmail->contact->id)
+                    ->where('campaign_id', $originalEmail->campaign->id)
+                    ->delete();
+            }
+            if($request->input('guest') === 'yes'){
+                Signup::create([
+                    'contact_id' => $originalEmail->contact->id,
+                    'campaign_id' => $originalEmail->campaign->id,
+                ]);
+            }
+        }
+
+        if($request->input('self') === 'no'){
+            return redirect()->back()->with('message',"Sorry you can't make it.");
+        }
+
+        return redirect()->back()->with('message',"Thanks for the RSVP, looking forward to seeing you.");
+
+    }
+
+    public function epVikingsRedirect(){
+
+    }
+
     public function engageGeneric()
     {
         return view()->make('signups.engage-generic');

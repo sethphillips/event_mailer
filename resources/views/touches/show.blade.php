@@ -103,7 +103,7 @@
 	{!! link_to_route('admin.reports.actions.touch','Email Metrics',$touch->id,['class'=>'btn btn-success','download'=>"$touch->title metrics"]) !!}
 	
 
-	<h3 class="section-header"> @if($touch->campaign->validContacts->count() - $touch->trackableEmails->count() - $touch->campaign->signups->count() <= 0) No @else {!! $touch->campaign->validContacts->count() - $touch->trackableEmails->count() - $touch->campaign->signups->count() !!}@endif UnQueued Contacts</h3>
+	<h3 class="section-header"> @if($touch->campaign->validContacts->count() - $touch->trackableEmails->count() <= 0) No @else {!! $touch->campaign->validContacts->count() - $touch->trackableEmails->count() !!}@endif UnQueued Contacts</h3>
 
 
 	

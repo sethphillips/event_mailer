@@ -252,9 +252,12 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 		]);
 }]);
 
+Route::get('ep_vikings_signup',['as'=>'ep_vikings_signup','uses'=>'SignupController@epVikingsSignup']);
+Route::post('ep_vikings_signup',['as'=>'ep_vikings_submit','uses'=>'SignupController@epVikingsSubmit']);
 
 Route::get('engage_signup',['as'=>'engage_signup_generic','uses'=>'SignupController@engageGeneric']);
 Route::post('engage_signup',['as'=>'engage_signup_redirect','uses'=>'SignupController@engageRedirect']);
+
 Route::get('engage_signup/{name}',['as'=>'engage_signup','uses'=>'SignupController@engage']);
 Route::post('signup', ['as'=>'signup','uses'=>'SignupController@signup']);
 Route::post('signup/forward', ['as'=>'signup.forward','uses'=>'SignupController@signupForward']);

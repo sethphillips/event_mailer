@@ -66,7 +66,6 @@ class TouchesController extends Controller
     public function show($id)
     {
         $touch = Touch::find($id);
-
         $actions = Action::where('touch_id','=',$touch->id)
             ->groupBy('action')
             ->select(\DB::raw('count(contact_id) as count, action'))

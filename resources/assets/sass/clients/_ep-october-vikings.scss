@@ -1,0 +1,50 @@
+.october-vikings{
+  padding:0;
+  margin:0;
+  background: url('/img/ep/october16/usbankstadium.jpg');
+  background-position:top center;
+  background-size: cover;
+  background-attachment: fixed;
+  font-size:2em;
+  .container{
+    background-color: rgba(255,255,255,.6);
+    min-height: calc(100vh - 6em);
+    color:#0d2240;
+    text-align: center;
+    font-size:1.2em;
+    padding: 1em 4em 5em 4em;;
+
+    .form-control{
+      border:2px solid #0d2240;
+      border-radius:0;
+      font-size:1.5em;
+      height:1.6em;
+      margin-bottom: 2em;
+      color:#009944;
+      text-align: center;
+      option{
+      }
+      option:disabled{
+        color:#0d2240;
+      }
+    }
+    .submit{
+      font-size: 1.5em;
+      text-decoration:none;
+      color:#0d2240;
+      background-color:white;
+      border:3px solid #009944;
+      border-radius:40px;
+      padding:3px 48px;
+
+    }
+    .hide{
+      opacity: 0;
+    }
+  }
+  .container.footer{
+    height:6em;
+    padding-bottom:1em;
+    min-height:auto;
+  }
+}

@@ -83,6 +83,19 @@
 		</div>
 	@endif
 
+	@if ($campaign->signups->count() && $campaign->trackableEmails->count())
+		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					Signups {{ $campaign->signups->count() }} / {{ $campaign->trackableEmails->count() }}
+				</div>
+				<div class="panel-body">
+					<div class="pie-chart" data-percent="{{ ($campaign->signups->count() / $campaign->trackableEmails->count())*100 }}">{{ round( ($campaign->signups->count() / $campaign->trackableEmails->count())*100,1)}}%</div>
+				</div>
+			</div>
+		</div>
+	@endif
+
 	@if ($campaign->unsubscribes->count() && $campaign->trackableEmails->count())
 		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
 			<div class="panel panel-danger">
