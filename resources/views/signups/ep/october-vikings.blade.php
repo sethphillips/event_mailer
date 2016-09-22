@@ -61,16 +61,16 @@
 
 				<div>
 					
-				  <a target="_blank" href="https://www.facebook.com/ExhibitPartners/" style="text-decoration:none;color:black;"><img src="{!! asset('img/ep/october16/facebook.png') !!}" alt="facebook"></a>
+				  <a target="_blank" href="https://www.facebook.com/ExhibitPartners/" style="text-decoration:none;color:black;margin:0 10px;"><img src="{!! asset('img/ep/october16/facebook.png') !!}" alt="facebook"></a>
 				        
 				                
-				  <a target="_blank" href="https://twitter.com/exhibitpartners" style="text-decoration:none;color:black;"><img src="{!! asset('img/ep/october16/twitter.png') !!}" alt="twitter"></a>
+				  <a target="_blank" href="https://twitter.com/exhibitpartners" style="text-decoration:none;color:black;margin:0 10px;"><img src="{!! asset('img/ep/october16/twitter.png') !!}" alt="twitter"></a>
 				                
-				  <a target="_blank" href="https://www.linkedin.com/company/exhibit-partners" style="text-decoration:none;color:black;"><img src="{!! asset('img/ep/october16/linkedin.png') !!}" alt="linkedin"></a>
+				  <a target="_blank" href="https://www.linkedin.com/company/exhibit-partners" style="text-decoration:none;color:black;margin:0 10px;"><img src="{!! asset('img/ep/october16/linkedin.png') !!}" alt="linkedin"></a>
 				                
-				  <a target="_blank" href="https://plus.google.com/110674481601065139758" style="text-decoration:none;color:black;"><img src="{!! asset('img/ep/october16/googleplus.png') !!}" alt="google plus"></a>
+				  <a target="_blank" href="https://plus.google.com/110674481601065139758" style="text-decoration:none;color:black;margin:0 10px;"><img src="{!! asset('img/ep/october16/googleplus.png') !!}" alt="google plus"></a>
 				                
-				  <a target="_blank" href="https://www.pinterest.com/exhibitpartners/" style="text-decoration:none;color:black;"><img src="{!! asset('img/ep/october16/pintrest.png') !!}" alt="pintrest"></a>
+				  <a target="_blank" href="https://www.pinterest.com/exhibitpartners/" style="text-decoration:none;color:black;margin:0 10px;"><img src="{!! asset('img/ep/october16/pintrest.png') !!}" alt="pintrest"></a>
 				</div>
         
 			</div>
