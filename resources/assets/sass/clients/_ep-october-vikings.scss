@@ -44,6 +44,12 @@
       opacity: 0;
     }
   }
+  .address{
+    font-size:1em;
+    @include media-query($phone){
+      font-size:.8em;
+    }
+  }
   .container.footer{
     height:6em;
     padding-bottom:1em;

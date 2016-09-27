@@ -5986,6 +5986,11 @@ button.close {
       padding: 3px 48px; }
     .october-vikings .container .hide {
       opacity: 0; }
+  .october-vikings .address {
+    font-size: 1em; }
+    @media screen and (max-width: 767px) {
+      .october-vikings .address {
+        font-size: .8em; } }
   .october-vikings .container.footer {
     height: 6em;
     padding-bottom: 1em;

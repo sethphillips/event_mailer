@@ -45,7 +45,7 @@
 				
 			{!! Form::close() !!}
 			
-			<p style="margin-top:4em;">Edition Apartments,<br>511 South 4th Street, Minneapolis, MN 55415</p>
+			<p style="margin-top:4em;" class="address">Edition Apartments,<br>511 South 4th Street, Minneapolis, MN 55415</p>
 
                 
 
