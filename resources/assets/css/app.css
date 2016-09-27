@@ -5963,6 +5963,9 @@ button.close {
     text-align: center;
     font-size: 1.2em;
     padding: 1em 4em 5em 4em; }
+    @media screen and (max-width: 767px) {
+      .october-vikings .container {
+        padding: 1em 1em 5em 1em; } }
     .october-vikings .container .form-control {
       border: 2px solid #0d2240;
       border-radius: 0;

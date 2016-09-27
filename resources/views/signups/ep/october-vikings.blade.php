@@ -52,10 +52,10 @@
 		</div>
 
 			<div class="container footer">
-	      <p style="font-size:15px;line-height:10px;margin-top:20px;margin-bottom:20px;">
+	      <p style="font-size:15px;margin-top:20px;margin-bottom:20px;">
 	        <a target="_blank" href="http://www.exhibitpartners.com" style="text-decoration:none;color:black">exhibitpartners.com</a>
-	        <span style="font-size:2em;vertical-align:middle;color:#009944"> | </span>
-	        10100 85th Ave. N. Maple Grove, MN 55369
+	        <span style="font-size:2em;vertical-align:middle;color:#009944" class="hidden-xs"> | </span>
+	        <span class="hidden-xs">10100 85th Ave. N. Maple Grove, MN 55369</span>
 	        <span style="font-size:2em;vertical-align:middle;color:#009944"> | </span>763.231.2080
 	      </p>
 
