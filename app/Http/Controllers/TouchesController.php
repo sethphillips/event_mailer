@@ -110,7 +110,7 @@ class TouchesController extends Controller
         $touch->update($request->all());
         $touch->send_on = $send_on;
         $touch->save();
-
+        $touch->emails()->update(['send_on'=>$touch->send_on]);
         return redirect()->route('admin.campaigns.show',$touch->campaign->id);
     }
 
