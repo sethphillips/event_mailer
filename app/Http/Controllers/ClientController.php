@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Http\Requests\ClientRequest;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -27,7 +28,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return view('clients.create');
     }
 
     /**
@@ -36,9 +37,10 @@ class ClientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ClientRequest $request)
     {
-        //
+        $client = Client::create($request->all());
+        return redirect()->route('admin.clients.index')->with('message',"$client->name created");
     }
 
     /**
@@ -60,7 +62,8 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        //
+        $client = Client::find($id);
+        return view('clients.edit')->with('client',$client);
     }
 
     /**
@@ -70,9 +73,11 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ClientRequest $request, $id)
     {
-        //
+        $client = Client::find($id);
+        $client->update($request->all());
+        return redirect()->route('admin.clients.index')->with('message',"$client->name updated");
     }
 
     /**
@@ -83,6 +88,11 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $client = Client::find($id);
+        if($client->campaigns()->count()){
+            return redirect()->back()->with('error',"$client->name has active campaigns and cannot be deleted");
+        }
+        $client->delete();
+        return redirect()->route('admin.clients.index')->with('message',"$client->name deleted.");
     }
 }

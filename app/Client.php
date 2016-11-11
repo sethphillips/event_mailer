@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+    protected static function boot() {
+        parent::boot();
+
+        static::deleting(function($client) { // before delete() method call this
+             $client->contacts()->delete();
+             $client->campaigns()->delete();
+        });
+    }
     protected $fillable = [
     	'name',
     	'address',

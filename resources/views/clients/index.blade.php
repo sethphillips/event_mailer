@@ -27,7 +27,7 @@
 
 
 @section('action')
-	
+	{!! link_to_route('admin.clients.create','New Client','',['class'=>'btn btn-success pull-right']) !!}
 @stop
 
 
@@ -58,11 +58,11 @@
 					<td>
 						{!! link_to_route('admin.clients.edit','edit',$client->id,['class'=>'btn btn-primary']) !!}
 					</td>
-					{{-- <td>
-						{!! Form::open( array( 'route'=>array('admin.client.destroy',$email->id),'method'=>'delete','onsubmit'=>'return deleteSubmit();' ) ) !!}
+					<td>
+						{!! Form::open( array( 'route'=>array('admin.clients.destroy',$client->id),'method'=>'delete','onsubmit'=>'return deleteSubmit();' ) ) !!}
 						{!! Form::submit('delete',array('class'=>'btn btn-danger'))!!}
 						{!! Form::close()!!}
-					</td> --}}
+					</td>
 				</tr>
 				
 			@endforeach
