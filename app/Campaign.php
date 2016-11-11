@@ -6,6 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {
+
+    protected static function boot() {
+        parent::boot();
+
+        static::deleting(function($campaign) { // before delete() method call this
+             $campaign->touchs()->delete();
+             $campaign->emails()->delete();
+             $campaign->contacts()->detach();
+             $campaign->signups()->delete();
+             $campaign->followUps()->delete();
+             $campaign->actions()->delete();
+        });
+    }
+
     protected $fillable = ['name','event_date','client_id','title_slug','layout','venue','address','city','state','zip'];
 
     public function client()

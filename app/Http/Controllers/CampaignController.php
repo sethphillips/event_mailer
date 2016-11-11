@@ -15,6 +15,14 @@ class CampaignController extends Controller
 {
 
     private $contacts = [];
+
+    public function __construct()
+    {
+        $clients = Client::orderBy('name')->lists('name','id');
+        view()->share([
+            'clients'=>$clients
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +41,7 @@ class CampaignController extends Controller
      */
     public function create()
     {
-        //
+        return view('campaigns.create');
     }
 
     /**
@@ -44,7 +52,8 @@ class CampaignController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campaign = Campaign::create($request->all());
+        return redirect()->route('admin.campaigns.index')->with('message',"$campaign->name created");
     }
 
     /**
@@ -77,7 +86,8 @@ class CampaignController extends Controller
      */
     public function edit($id)
     {
-        //
+        $campaign = Campaign::find($id);
+        return view()->make('campaigns.edit')->with('campaign',$campaign);
     }
 
     /**
@@ -89,7 +99,9 @@ class CampaignController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $campaign = Campaign::find($id);
+        $campaign->update($request->all());
+        return redirect()->route('admin.campaigns.index')->with('message',"$campaign->name updated");
     }
 
     /**
@@ -101,6 +113,9 @@ class CampaignController extends Controller
     public function destroy($id)
     {
         $campaign = Campaign::find($id);
+        // if($campaign->touchs()->count()){
+        //     return redirect()->back()->with('error',"$campaign->name has active touches and cannot be deleted");
+        // }
         $campaign->delete();
         return redirect()->back()->with('warning',"$campaign->name deleted");
     }

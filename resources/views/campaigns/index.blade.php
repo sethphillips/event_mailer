@@ -46,6 +46,7 @@
 				<th>Event Name</th>
 				<th>Client</th>
 				<th>Event Date</th>
+				<th>Venue</th>
 				<th></th>
 				<th></th>
 			</tr>
@@ -57,11 +58,12 @@
 					<td>{{ $campaign->name }}</td>
 					<td>{{ $campaign->client->name }}</td>
 					<td>{{ $campaign->event_date }}</td>
+					<td>{{ $campaign->venue }}</td>
 					<td>
 						{!! link_to_route('admin.campaigns.show','show',$campaign->id,['class'=>'btn btn-success']) !!}
 					</td>
 					<td>
-						{!! link_to_route('admin.campaigns.edit','edit settings',$campaign->id,['class'=>'btn btn-primary']) !!}
+						{!! link_to_route('admin.campaigns.edit','edit',$campaign->id,['class'=>'btn btn-primary']) !!}
 					</td>
 					<td>
 						{!! Form::open( array( 'route'=>array('admin.campaigns.destroy',$campaign->id),'method'=>'delete','onsubmit'=>'return deleteSubmit();' ) ) !!}

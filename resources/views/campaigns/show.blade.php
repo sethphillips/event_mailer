@@ -27,7 +27,7 @@
 
 
 @section('action')
-	
+	{!! link_to_route('admin.campaigns.index','back','',['class'=>'btn btn-primary pull-right']) !!}
 @stop
 
 

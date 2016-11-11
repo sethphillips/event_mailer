@@ -14,6 +14,7 @@ class Client extends Model
              $client->campaigns()->delete();
         });
     }
+    
     protected $fillable = [
     	'name',
     	'address',
