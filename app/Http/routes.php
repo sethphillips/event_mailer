@@ -161,6 +161,17 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	
 	Route::resource('users','UserController');
 	Route::resource('clients','ClientController');
+
+	Route::get('campaigns/{id}/select_contacts',[
+		'as'=>'admin.campaigns.select_contacts',
+		'uses'=>'CampaignController@selectContacts'
+	]);
+
+	Route::post('campaigns/{id}/select_contacts',[
+		'as'=>'admin.campaigns.select_contacts_add',
+		'uses'=>'CampaignController@addSelectedContacts'
+	]);
+
 	Route::resource('campaigns','CampaignController');
 	Route::resource('touches','TouchesController');
 	Route::get('media_assets/images',[

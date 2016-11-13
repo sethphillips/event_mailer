@@ -169,7 +169,7 @@
 				<th>Name</th>
 				<th>Email Address</th>
 				<th>Company</th>
-				<th></th>
+				<th>{!! link_to_route('admin.campaigns.select_contacts','Add Contacts From List',$campaign->id,['class'=>'btn btn-success']) !!}</th>
 			</tr>
 		</thead>
 		<tbody>

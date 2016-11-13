@@ -231,6 +231,32 @@ class CampaignController extends Controller
         return redirect()->back()->with('message',"$contact->email has been removed from the Campaign");
     }
 
+    public function selectContacts($id)
+    {
+        $campaign = Campaign::find($id);
+
+        $campaignContacts = $campaign->validContacts;
+        $contacts = $campaign->client->validContacts->diff($campaignContacts);
+
+        return view()->make('campaigns.select-contacts')->with([
+            'contacts'=>$contacts,
+            'campaign'=>$campaign
+        ]);
+    }
+
+    public function addSelectedContacts($id,Request $request)
+    {
+        $contacts = $request->contacts;
+        if(!$contacts){
+            return redirect()->back()->with('error', "So... you uh, didnt select any contacts.");
+        }
+        $campaign = Campaign::find($id)->contacts()->attach($contacts);
+
+        $count = count($contacts);
+
+        return redirect()->route('admin.campaigns.show',$id)->with('message',"added $count contacts to the campaign.");
+    }
+
 
     
 }

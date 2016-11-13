@@ -25,4 +25,11 @@ class Client extends Model
     {
     	return $this->hasMany('App\Campaign');
     }
+
+    public function getValidContactsAttribute()
+    {
+        return $this->contacts->filter(function($contact){
+            return !$contact->unsubscribe && !$contact->bounced;
+        });
+    }
 }
