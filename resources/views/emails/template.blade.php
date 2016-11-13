@@ -40,7 +40,7 @@
 			</td>
 		</tr>
 	<tr>
-		<td style="font-size:12px;"><a href="{!! URL::route('unsubscribe.form') !!}">Unsubscribe</a>?</td>
+		<td style="font-size:12px;"><a href="{!! URL::route('unsubscribe.form') !!}?email={{ $salted_id }}">Unsubscribe</a>?</td>
 	</tr>
 </table>
 

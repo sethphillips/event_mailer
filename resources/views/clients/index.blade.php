@@ -45,6 +45,7 @@
 			<tr>
 				<th>Client Name</th>
 				<th>Reply To</th>
+				<th>Phone</th>
 				<th>Address</th>
 			</tr>
 		</thead>
@@ -52,6 +53,7 @@
 			@foreach ($clients as $client)
 					<td>{{ $client->name }}</td>
 					<td>{{ $client->reply_to }}</td>
+					<td>{{ $client->phone }}</td>
 					<td>{{ $client->address }}<br>{{ $client->city }} {{ $client->state }} {{ $client->zip }}</td>
 					<td></td>
 					<td></td>

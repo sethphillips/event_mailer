@@ -46,7 +46,6 @@
 				<th>Event Name</th>
 				<th>Client</th>
 				<th>Event Date</th>
-				<th>Venue</th>
 				<th></th>
 				<th></th>
 			</tr>
@@ -58,7 +57,6 @@
 					<td>{{ $campaign->name }}</td>
 					<td>{{ $campaign->client->name }}</td>
 					<td>{{ $campaign->event_date }}</td>
-					<td>{{ $campaign->venue }}</td>
 					<td>
 						{!! link_to_route('admin.campaigns.show','show',$campaign->id,['class'=>'btn btn-success']) !!}
 					</td>

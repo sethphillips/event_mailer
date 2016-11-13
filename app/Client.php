@@ -14,15 +14,7 @@ class Client extends Model
              $client->campaigns()->delete();
         });
     }
-    
-    protected $fillable = [
-    	'name',
-    	'address',
-        'city',
-        'state',
-        'zip',
-        'reply_to',
-    ];
+    protected $guarded = ['id'];
 
     public function contacts()
     {
