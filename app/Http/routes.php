@@ -271,7 +271,8 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 		'template_html'=>$touch->template_html,
 		'salted_id' => $salted_id,
 		'campaign' => $touch->campaign,
-		'email' => false
+		'email' => false,
+		'preview_text'=>$touch->preview_text
 		]);
 }]);
 
