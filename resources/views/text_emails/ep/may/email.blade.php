@@ -13,5 +13,3 @@ Sincerely,
 Matt & the Exhibit Partners Team 
 
 								
-{{ $campaign->client->name }}
-{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}

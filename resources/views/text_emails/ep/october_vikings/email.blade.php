@@ -11,6 +11,3 @@ at Edition Apartments,
 511 South 4th Street, Minneapolis, MN 55415
 
 {!! URL::route('ep_vikings_signup') !!}
-					
-{{ $campaign->client->name }}
-{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}

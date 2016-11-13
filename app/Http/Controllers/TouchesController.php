@@ -14,6 +14,20 @@ use Illuminate\Http\Request;
 
 class TouchesController extends Controller
 {
+
+    public function __construct()
+    {
+        $templates = Touch::all()->each(function($touch){
+            $client = $touch->campaign->client->name;
+            $campaign = $touch->campaign->name;
+            $title = $touch->title;
+            $touch->myValue = "$client | $campaign | $title";
+        })->lists('myValue','id')->sort();
+
+        view()->share([
+            'templates'=>$templates,
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +47,10 @@ class TouchesController extends Controller
     {
         if(!$request->input('campaign')) return redirect()->back();
         $campaign = Campaign::find($request->input('campaign'));
-        return view()->make('touches.create')->with('campaign',$campaign);
+        return view()->make('touches.create')->with([
+                'campaign'=>$campaign,
+                'client'=>$campaign->client,
+            ]);
     }
 
     /**
@@ -52,9 +69,10 @@ class TouchesController extends Controller
 
         $touch = Touch::create($request->all());
         $touch->send_on = $send_on;
+        $touch->title_slug = md5($touch->id);
         $touch->save();
 
-        return redirect()->route('admin.campaigns.show',$touch->campaign->id)->with('message',"Touch $touch->title created");
+        return redirect()->route('admin.touches.show',$touch->id)->with('message',"Touch $touch->title created");
     }
 
     /**
@@ -87,8 +105,11 @@ class TouchesController extends Controller
     public function edit($id)
     {
         $touch = Touch::find($id);
-
-        return view()->make('touches.edit')->with('touch',$touch);
+        return view()->make('touches.edit')
+            ->with([
+                'touch'=>$touch,
+                'client'=>$touch->campaign->client,
+            ]);
     }
 
     /**
@@ -111,7 +132,7 @@ class TouchesController extends Controller
         $touch->send_on = $send_on;
         $touch->save();
         $touch->emails()->update(['send_on'=>$touch->send_on]);
-        return redirect()->route('admin.campaigns.show',$touch->campaign->id);
+        return redirect()->route('admin.touches.show',$touch->id);
     }
 
     /**
@@ -167,5 +188,11 @@ class TouchesController extends Controller
 
         return redirect()->back()->with('message',"$queuedEmails emails queued");
 
+    }
+
+    public function getTemplate($id)
+    {
+        $touch = Touch::find($id);
+        return $touch->template_html;
     }
 }

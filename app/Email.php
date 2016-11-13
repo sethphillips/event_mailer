@@ -59,12 +59,25 @@ class Email extends Model
     public function send()
     {
     	$email = $this;
-    	Mail::send([$email->template,"text_$email->template"],['email'=>true,'salted_id'=>$email->salted_id,'campaign'=>$email->campaign,'touch'=>$email->touch],function($mail) use ($email){
-			$mail->to($email->contact->email,$email->contact->first_name)->subject($email->subject)->from($email->campaign->client->reply_to,$email->campaign->client->name);
+    	Mail::send([
+            'emails.template',
+            "emails.text_template"
+        ],[
+            'email'=>true,
+            'salted_id'=>$email->salted_id,
+            'campaign'=>$email->campaign,
+            'touch'=>$email->touch,
+            'template_html'=>$email->touch->template_html,
+            'text'=>$email->touch->template_text,
+            'preview_text'=>$email->touch->preview_text,
+        ],function($mail) use ($email){
+			$mail->to($email->contact->email,$email->contact->first_name)
+                ->subject($email->subject)
+                ->from($email->campaign->client->reply_to,$email->campaign->client->name);
 		});
 
 		$this->sent = true;
-		$this->save();
+		$this->save();   
     }
 
 }

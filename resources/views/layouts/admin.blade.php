@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-    <title>TRMS Admin Panel</title>
+    <title>EP Productions Admin</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ elixir('dist/admin.css') }}">
     <script src="{{ elixir('dist/admin.js') }}"></script>
+    <script src="{{ elixir('dist/redactor.js') }}"></script>
 </head>
 <body>
     

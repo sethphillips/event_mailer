@@ -8,19 +8,13 @@ Join us at ENGAGE, an exclusive interactive event designed to spark conversation
 4:00 - 7:30 p.m.
 Complimentary cocktails and hors d'oeuvres will be provided
 
-Visit the signup page at {{ URL::route('engage_signup',['name'=>$campaign->title_slug]) }}?email={{ $salted_id }}
+Visit the signup page at {{ URL::route('engage_signup',['name'=>$campaign->title_slug]) }}
 {!!  Carbon\Carbon::parse($campaign->event_date)->format('F j, Y') !!}
 {!! $campaign->venue !!}
 {!! $campaign->address !!}
 {!! $campaign->city !!} {!! $campaign->state !!},  {!! $campaign->zip !!}
-								
-
-{{ $campaign->client->name }}
-{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}
 
 
 With offices in more than 150 countries and territories, Carlson Wagonlit Travel deploys the right people, processes, technologies and skills to consistently deliver effective travel management and bottom-line results.
-Carlson Wagonlit Travel
-{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}
 				
 

@@ -6,6 +6,7 @@
 
 
 @section('title')
+	{!! link_to_route('admin.touches.edit','edit',$touch->id,['class'=>'btn btn-primary']) !!}
 	{{ $touch->campaign->name }} | {{ $touch->title }} 
 @stop
 
@@ -16,7 +17,6 @@
 
 
 @section('search')
-
 @stop
 
 
@@ -27,7 +27,7 @@
 
 
 @section('action')
-	{!! link_to_route('admin.campaigns.show','Back',$touch->campaign->id,['class'=>'btn btn-primary']) !!}
+	{!! link_to_route('admin.campaigns.show','Back',$touch->campaign->id,['class'=>'btn btn-default']) !!}
 @stop
 
 

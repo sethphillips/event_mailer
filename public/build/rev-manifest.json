@@ -1,6 +1,7 @@
 {
   "dist/app.js": "dist/app-facf2376.js",
   "dist/app.css": "dist/app-92554e68.css",
-  "dist/admin.js": "dist/admin-9c151a3a.js",
-  "dist/admin.css": "dist/admin-3c59534f.css"
+  "dist/admin.js": "dist/admin-f4ebdd2a.js",
+  "dist/admin.css": "dist/admin-ae42c685.css",
+  "dist/redactor.js": "dist/redactor-4a88473a.js"
 }

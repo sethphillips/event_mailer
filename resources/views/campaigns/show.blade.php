@@ -126,10 +126,8 @@
 			<tr>
 				<th>Title</th>
 				<th>Subject Line</th>
-				<th>Template</th>
 				<th>Emails/Contacts</th>
 				<th>Send On</th>
-				<th>Title Slug</th>
 				<th></th>
 				<th>{!! link_to_route('admin.touches.create','Create New Touch',['campaign'=>$campaign->id],['class'=>'btn btn-success']) !!}</th>
 			</tr>
@@ -139,10 +137,8 @@
 				<tr>
 					<td>{!! link_to_route('admin.touches.show',$touch->title,$touch->id) !!}</td>
 					<td>{{ $touch->subject }}</td>
-					<td>{{ App\Touch::TEMPLATES[$touch->template] }}</td>
 					<td>{{ $touch->trackableEmails->count() }}/{{ $campaign->validContacts->count() }}</td>
 					<td>{!! Carbon\Carbon::parse($touch->send_on)->format('F jS Y h:i a') !!}</td>
-					<td>{{ $touch->title_slug }}</td>
 					<td>
 						{!! link_to_route('admin.touches.edit','edit',$touch->id,['class'=>'btn btn-primary']) !!}
 					</td>

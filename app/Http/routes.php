@@ -124,9 +124,7 @@ Route::post('action',function(Request $request){
 
 
 Route::get('unsubscribe',['as'=>'unsubscribe.form',function(Request $request){
-
 	return view()->make('unsubscribe.form');
-
 }]);
 
 Route::post('unsubscribe',['as'=>'unsubscribe.submit',function(Request $request){
@@ -152,13 +150,37 @@ Route::post('unsubscribe',['as'=>'unsubscribe.submit',function(Request $request)
 
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function(){
 	Route::get('/',['as'=>'admin.index','uses'=>'AdminController@index']);
-	Route::get('dashboard/{id}',['as'=>'admin.dashboard','uses'=>'DashboardController@index']);
-	Route::get('report/{id}',['as'=>'admin.report','uses'=>'DashboardController@report']);
+	Route::get('dashboard/{id}',[
+		'as'=>'admin.dashboard',
+		'uses'=>'DashboardController@index'
+	]);
+	Route::get('report/{id}',[
+		'as'=>'admin.report',
+		'uses'=>'DashboardController@report'
+	]);
 	
 	Route::resource('users','UserController');
 	Route::resource('clients','ClientController');
 	Route::resource('campaigns','CampaignController');
 	Route::resource('touches','TouchesController');
+	Route::get('media_assets/images',[
+		'uses'=>'MediaAssetController@getImages'
+	]);
+	Route::post('media_assets/upload',[
+		'uses'=>'MediaAssetController@upload'
+	]);
+
+	Route::post('media_assets/uploadFiles',[
+		'uses'=>'MediaAssetController@uploadFile'
+	]);
+
+	Route::delete('media_assets/image/{id}',[
+		'uses'=>'MediaAssetController@softDelete'
+	]);
+	Route::resource('media_assets','MediaAssetController');
+
+
+	Route::get('touches/getTemplate/{id}',['uses'=>'TouchesController@getTemplate']);
 
 	Route::post('touches/{touch_id}/queueEmails',['as'=>'admin.touch.queueEmails','uses'=>'TouchesController@queueEmails']);
 
@@ -245,7 +267,8 @@ Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $r
 		$salted_id = $request->session()->get('salted_id',null);
 	}
 
-	return view("emails.$touch->template")->with([
+	return view('emails.template')->with([
+		'template_html'=>$touch->template_html,
 		'salted_id' => $salted_id,
 		'campaign' => $touch->campaign,
 		'email' => false

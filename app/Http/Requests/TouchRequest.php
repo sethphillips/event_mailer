@@ -28,8 +28,7 @@ class TouchRequest extends Request
                 'title'=>'required',
                 'subject'=>'required',
                 'send_on'=>'required',
-                'title_slug'=>'required|unique:touches,title_slug,'.$this->route('touches'),
-                'template'=>'required',
+                'template_html'=>'required',
             ];
   
     }

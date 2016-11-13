@@ -1,5 +1,7 @@
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "bower_components/font-awesome/scss/font-awesome.scss";
+@import "redactor/redactor";
+
 
 .fa{
 	font-size:2em;
@@ -35,7 +37,9 @@
 	margin-top:2em;
 }
 
-
+.redactor-editor{
+	min-height:300px !important;
+}
 
 
 iframe{

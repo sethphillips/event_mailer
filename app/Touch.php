@@ -23,8 +23,7 @@ class Touch extends Model
         'ep.october_vikings.email' => 'October Vikings Invite',
     ];
 
-    protected $fillable = ['campaign_id','template','title_slug','title','subject','send_on'];
-
+    protected $guarded = ['id','none'];
     protected $table = 'touches';
 
     public function campaign()

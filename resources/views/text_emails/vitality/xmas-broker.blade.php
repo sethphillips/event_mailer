@@ -3,8 +3,6 @@ In the spirit of the season, and in support of our mission to create real change
 
 We look forward to even more healthy results in making people healthier and enhancing their lives in 2016.
 View the video here.
-{{ URL::route("vitalityXmasBroker") }}?email={{ $salted_id }}
+{{ URL::route("vitalityXmasBroker") }}
 
-{{ $campaign->client->name }}<br>
-{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}
 			

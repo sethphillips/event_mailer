@@ -1,7 +1,7 @@
 					
 
 
-Visit the signup page at {{ URL::route('engage_signup',['name'=>$campaign->title_slug]) }}?email={{ $salted_id }}
+Visit the signup page at {{ URL::route('engage_signup',['name'=>$campaign->title_slug]) }}
 
 
 {!! $campaign->venue !!}
@@ -42,6 +42,5 @@ Charlie started off in the hospitality industry doing hotel sourcing for meeting
 With offices in more than 150 countries and territories, Carlson Wagonlit Travel deploys the right people, processes, technologies and skills to consistently deliver effective travel management and bottom-line results.
 
 
-Carlson Wagonlit Travel
-{{ $campaign->client->address }}, {{ $campaign->client->city }}, {{ $campaign->client->state }} {{ $campaign->client->zip }}
+
 				
