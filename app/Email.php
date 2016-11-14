@@ -59,6 +59,23 @@ class Email extends Model
     public function send()
     {
     	$email = $this;
+
+        $html = preg_replace_callback('/{{[^}]*}}/', 
+            function($matches) use ($email){
+               
+               return collect($matches)
+                ->map(function($match) use ($email){
+                    $match = str_replace('{{','',$match);
+                    $match = str_replace('}}','',$match);
+                    $match = trim($match);
+                    if($match === 'tracking'){
+                        return $email->salted_id;
+                    }
+                    return $email->contact->{$match};
+                })->first();
+
+            }, $email->touch->template_html);
+
     	Mail::send([
             'emails.template',
             "emails.text_template"
@@ -67,7 +84,7 @@ class Email extends Model
             'salted_id'=>$email->salted_id,
             'campaign'=>$email->campaign,
             'touch'=>$email->touch,
-            'template_html'=>$email->touch->template_html,
+            'template_html'=>$html,
             'text'=>$email->touch->template_text,
             'preview_text'=>$email->touch->preview_text,
         ],function($mail) use ($email){
@@ -77,7 +94,10 @@ class Email extends Model
 		});
 
 		$this->sent = true;
-		$this->save();   
+		$this->save();  
+
+        
     }
+
 
 }

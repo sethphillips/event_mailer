@@ -24,8 +24,11 @@ class TouchesController extends Controller
             $touch->myValue = "$client | $campaign | $title";
         })->lists('myValue','id')->sort();
 
+        $contactFields = array_keys(Contact::all()->first()->toArray());
+        
         view()->share([
             'templates'=>$templates,
+            'contactFields' => $contactFields,
         ]);
     }
     /**

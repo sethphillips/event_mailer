@@ -20,6 +20,51 @@ class EmailController extends Controller
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+
+    public function renderEmail($title_slug, Request $request){
+    
+        $touch = Touch::where('title_slug','=',$title_slug)->first();
+        
+        if(!$touch) abort(404);
+
+        if($request->input('email')){
+            $salted_id = $request->input('email');
+        }
+        else{
+            $salted_id = null;
+        }
+
+        if($salted_id){
+            $email = Email::where('salted_id',$salted_id)->first();
+            $html = preg_replace_callback('/{{[^}]*}}/', 
+            function($matches) use ($email){
+               
+               return collect($matches)
+                ->map(function($match) use ($email){
+                    $match = str_replace('{{','',$match);
+                    $match = str_replace('}}','',$match);
+                    $match = trim($match);
+                    if($match === 'tracking'){
+                        return $email->salted_id;
+                    }
+                    return $email->contact->{$match};
+                })->first();
+
+            }, $email->touch->template_html);
+        }
+        else{
+            $html = $touch->template_html;
+        }
+
+        return view('emails.template')->with([
+            'template_html'=>$html,
+            'salted_id' => $salted_id,
+            'campaign' => $touch->campaign,
+            'email' => false,
+            'preview_text'=>$touch->preview_text
+            ]);
+    }
+
     public function createList($touch_id)
     {
         $touch = Touch::find($touch_id);

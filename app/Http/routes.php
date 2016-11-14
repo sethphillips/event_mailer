@@ -244,13 +244,11 @@ Route::get('halloween_email',['as'=>'halloween',function(Request $request){
 }]);
 
 Route::get('tracking',['as'=>'tracking',function(Request $request){
-	if($request->input('email'))
-	{
+	if($request->input('email')){
 		$salted_id = $request->input('email');
 		$email = Email::where('salted_id','=',$salted_id)->first();
 
-		if($email && $email->trackable)
-		{
+		if($email && $email->trackable){
 			$action = Action::firstOrCreate([
 				'action' => 'opened',
 				'contact_id' => $email->contact->id,
@@ -262,30 +260,10 @@ Route::get('tracking',['as'=>'tracking',function(Request $request){
 	return \Image::canvas(10,10)->encode('gif');
 }]);
 
-Route::get('emails/{title_slug}',['as'=>'emails',function($title_slug,Request $request){
-	
-	$touch = Touch::where('title_slug','=',$title_slug)->first();
-	
-	if(!$touch) abort(404);
-
-	if($request->input('email'))
-	{
-		$salted_id = $request->input('email');
-		$request->session()->put('salted_id',$salted_id);
-	}
-	else
-	{
-		$salted_id = $request->session()->get('salted_id',null);
-	}
-
-	return view('emails.template')->with([
-		'template_html'=>$touch->template_html,
-		'salted_id' => $salted_id,
-		'campaign' => $touch->campaign,
-		'email' => false,
-		'preview_text'=>$touch->preview_text
-		]);
-}]);
+Route::get('emails/{title_slug}',[
+	'as'=>'emails',
+	'uses'=>'EmailController@renderEmail'
+]);
 
 Route::get('ep_vikings_signup',['as'=>'ep_vikings_signup','uses'=>'SignupController@epVikingsSignup']);
 Route::post('ep_vikings_signup',['as'=>'ep_vikings_submit','uses'=>'SignupController@epVikingsSubmit']);

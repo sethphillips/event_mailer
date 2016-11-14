@@ -56,6 +56,13 @@
     </div>
     
     <div class="form-group">
+      <label>Available dynamic fields from the contact</label>
+      @foreach ($contactFields as $key)
+        {{ <?php echo $key ?> }}&nbsp;|&nbsp; 
+      @endforeach
+    </div>
+
+    <div class="form-group">
       
       {!! Form::label('template_html','HTML Template') !!}
       
