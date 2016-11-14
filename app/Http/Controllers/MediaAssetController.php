@@ -15,7 +15,7 @@ class MediaAssetController extends Controller
         if($request->hasFile('file') === false){
             throw new \Exception('no image uploaded');
         }
-        $filename = microtime().'.png';
+        $filename = time().'.png';
         $path = "/img/media/$filename";
         $image = \Image::make($request->file('file'))
             ->widen(1000, function ($constraint){
@@ -67,9 +67,10 @@ class MediaAssetController extends Controller
     {
         if($request->hasFile('file')){
             $file = $request->file('file');
-            $filename = microtime().'.'.$file->getClientOriginalExtension();
+            $filename = time().'.'.$file->getClientOriginalExtension();
             $path = "/files/$filename";
-            \Storage::disk('public')->put($path, $file);
+            $request->file('file')->move(public_path()."/files", $filename);
+            // \Storage::disk('public')->put($path, $file);
         }
         return [
             'url'=>\URL::to('/').$path,
