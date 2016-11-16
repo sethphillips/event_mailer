@@ -88,9 +88,22 @@ class Email extends Model
             'text'=>$email->touch->template_text,
             'preview_text'=>$email->touch->preview_text,
         ],function($mail) use ($email){
+            $replyToAddress = $email->touch->reply_to_email;
+            if(!$replyToAddress){
+                $replyToAddress =$email->campaign->client->reply_to;
+            }
+
+            $replyToName = $email->touch->reply_to_name; 
+            if(!$replyToName){
+                $replyToName = $email->campaign->client->name;
+            } 
+            
+            $from = config('mail.from.address');
+
 			$mail->to($email->contact->email,$email->contact->first_name)
                 ->subject($email->subject)
-                ->from($email->campaign->client->reply_to,$email->campaign->client->name);
+                ->from($from,$email->campaign->client->name)
+                ->replyTo($replyToAddress, $replyToName);
 		});
 
 		$this->sent = true;

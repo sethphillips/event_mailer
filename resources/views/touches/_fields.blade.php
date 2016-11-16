@@ -6,6 +6,21 @@
     
     </div>
     
+    <div class="form-group">
+      
+      {!! Form::label('reply_to_email') !!}
+      
+      {!! Form::text('reply_to_email',null,['class' => 'form-control'] ) !!}
+    
+    </div>
+
+    <div class="form-group">
+      
+      {!! Form::label('reply_to_name') !!}
+      
+      {!! Form::text('reply_to_name',null,['class' => 'form-control'] ) !!}
+    
+    </div>
     
     
     <!-- Form Input -->
