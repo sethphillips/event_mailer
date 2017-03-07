@@ -15,14 +15,23 @@ class MediaAssetController extends Controller
         if($request->hasFile('file') === false){
             throw new \Exception('no image uploaded');
         }
-        $filename = time().'.png';
+        $file = $request->file('file');
+        $ext = $file->guessExtension();
+        $filename = time().".$ext";
         $path = "/img/media/$filename";
-        $image = \Image::make($request->file('file'))
+
+        if($ext === 'gif'){
+          $file->move(public_path()."/img/media", $filename);
+        }
+        else{
+
+        $image = \Image::make($file)
             ->widen(1000, function ($constraint){
                 $constraint->upsize();
             })
-            ->encode('png')
+            ->encode($ext)
             ->save(public_path().$path);
+        }
 
         $media->image = $path;
     }
@@ -53,7 +62,7 @@ class MediaAssetController extends Controller
             return $this->formatForRedactor($m);
         });
     }
-    
+
     public function upload(Request $request)
     {
         $media = new MediaAsset();
@@ -80,7 +89,7 @@ class MediaAssetController extends Controller
 
     public function softDelete($id)
     {
-        
+
     }
     /**
      * Display a listing of the resource.
@@ -89,7 +98,7 @@ class MediaAssetController extends Controller
      */
     public function index()
     {
-        
+
     }
 
 
@@ -159,5 +168,5 @@ class MediaAssetController extends Controller
         //
     }
 
-    
+
 }
