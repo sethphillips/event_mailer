@@ -5,8 +5,8 @@
 
 <div class="form-group">
   {!! Form::label('client_id', 'Client') !!}
-  {!! Form::select('client_id',$clients,0,['class'=>'form-control']) !!}
-</div> 
+  {!! Form::select('client_id',$clients,null,['class'=>'form-control']) !!}
+</div>
 
 <div class="form-group">
   {!! Form::label('event_date') !!}

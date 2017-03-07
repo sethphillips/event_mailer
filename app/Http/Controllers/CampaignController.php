@@ -53,6 +53,8 @@ class CampaignController extends Controller
     public function store(Request $request)
     {
         $campaign = Campaign::create($request->all());
+        $campaign->event_date = \Carbon\Carbon::parse($request->event_date);
+        $campaign->save();
         return redirect()->route('admin.campaigns.index')->with('message',"$campaign->name created");
     }
 
@@ -65,7 +67,7 @@ class CampaignController extends Controller
     public function show($id)
     {
         $campaign = Campaign::find($id);
-        
+
         $actions = Action::where('campaign_id','=',$campaign->id)
             ->groupBy('action')
             ->select(\DB::raw('count(contact_id) as count, action'))
@@ -101,6 +103,8 @@ class CampaignController extends Controller
     {
         $campaign = Campaign::find($id);
         $campaign->update($request->all());
+        $campaign->event_date = \Carbon\Carbon::parse($request->event_date);
+        $campaign->save();
         return redirect()->route('admin.campaigns.index')->with('message',"$campaign->name updated");
     }
 
@@ -149,7 +153,7 @@ class CampaignController extends Controller
             'email' => $email,
             'client_id' => $campaign->client->id,
         ]);
-        
+
         if($contact->unsubscribe || $contact->bounced)
         {
             return redirect()->back()->with('message',"$contact->email is unreachable or has unsubscribed");
@@ -170,7 +174,7 @@ class CampaignController extends Controller
 
         $file = $request->file('file');
 
-        
+
         $campaign = Campaign::find($campaign_id);
 
         $contacts = [];
@@ -184,7 +188,7 @@ class CampaignController extends Controller
                 {
                     $email = $row['email'];
                     $email = trim($email);
-                    
+
                     if(!$this->checkEmail($email)) return false;
 
                     $contact = Contact::firstOrCreate([
@@ -219,7 +223,7 @@ class CampaignController extends Controller
                 $contactCount++;
             }
         }
-        
+
         return redirect()->route('admin.campaigns.show',$campaign->id)->with('message',"$contactCount contacts added to Campaign");
     }
 
@@ -258,5 +262,5 @@ class CampaignController extends Controller
     }
 
 
-    
+
 }

@@ -24,8 +24,12 @@ class TouchesController extends Controller
             $touch->myValue = "$client | $campaign | $title";
         })->lists('myValue','id')->sort();
 
-        $contactFields = array_keys(Contact::all()->first()->toArray());
-        
+        $contactFields = [];
+        $aContact = Contact::all()->first();
+        if($aContact){
+          $contactFields = array_keys(Contact::all()->first()->toArray());
+        }
+
         view()->share([
             'templates'=>$templates,
             'contactFields' => $contactFields,
@@ -66,7 +70,7 @@ class TouchesController extends Controller
     {
         if(!strtotime($request->input('send_on')))
         {
-            return redirect()->back()->withInput()->with('error','The send on date was not parseable'); 
+            return redirect()->back()->withInput()->with('error','The send on date was not parseable');
         }
         $send_on = \Carbon\Carbon::parse($request->input('send_on'))->toDateTimeString();
 
@@ -126,7 +130,7 @@ class TouchesController extends Controller
     {
         if(!strtotime($request->input('send_on')))
         {
-            return redirect()->back()->withInput()->with('error','The send on date was not parseable'); 
+            return redirect()->back()->withInput()->with('error','The send on date was not parseable');
         }
         $send_on = \Carbon\Carbon::parse($request->input('send_on'))->toDateTimeString();
 
@@ -164,7 +168,7 @@ class TouchesController extends Controller
         $queuedEmails = 0;
 
         foreach ($unsentContactIds as $contact_id) {
-            
+
             $contact = Contact::find($contact_id);
 
             if(!$contact->unsubscribe && !$contact->bounced)
@@ -181,13 +185,13 @@ class TouchesController extends Controller
                     'contact_id' => $contact->id,
                     'touch_id' => $touch->id,
                 ]);
-                
+
                 $email->salted_id = bcrypt($email->id);
                 $email->save();
                 $queuedEmails++;
             }
         }
-        
+
 
         return redirect()->back()->with('message',"$queuedEmails emails queued");
 

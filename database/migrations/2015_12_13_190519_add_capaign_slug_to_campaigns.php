@@ -13,7 +13,7 @@ class AddCapaignSlugToCampaigns extends Migration
     public function up()
     {
         Schema::table('campaigns', function($table) {
-            $table->string('title_slug')->unique();
+            $table->string('title_slug');
             $table->string('template');
         });
 

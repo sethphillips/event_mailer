@@ -38,15 +38,15 @@
 
 
 @section('content')
-  
+
   {!! Form::open([
     'route'=>'admin.campaigns.store',
     'method'=>'POST',
     'class'=>'form'
   ])!!}
-    
+
     @include('campaigns._fields')
-    
+
   {!! Form::close() !!}
 @stop
 

@@ -38,15 +38,15 @@
 
 
 @section('content')
-  
+
   {!! Form::model($campaign,[
     'route'=>['admin.campaigns.update',$campaign->id],
     'method'=>'PUT',
-    'class'=>'form']) 
+    'class'=>'form'])
   !!}
-    
+
     @include('campaigns._fields')
-    
+
   {!! Form::close() !!}
 @stop
 
