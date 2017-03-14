@@ -41,7 +41,7 @@
 
 	@include('includes.campaign-sub-nav',['campaign'=>$campaign])
 
-	
+
 	<h3 class="section-header">Email Metrics</h3>
 
 	@if ($campaign->trackableEmails->count())
@@ -145,13 +145,13 @@
 					<td>
 
 						{!! Form::open(['route'=>['admin.touches.destroy',$touch->id],'method'=>'DELETE','class'=>'form','onsubmit'=>'return deleteSubmit()']) !!}
-	
+
 							<div class="form-group">
-							
+
 								{!! Form::submit('Delete',['class'=> 'btn btn-danger form-control']) !!}
-							
+
 							</div>
-							
+
 						{!! Form::close() !!}
 
 					</td>
@@ -162,7 +162,7 @@
 
 
 
-	<h3 class="section-header">Contacts</h3>
+	<h3 class="section-header">{{$campaign->validContacts->count()}} Contacts</h3>
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -190,7 +190,7 @@
 						</td>
 					</tr>
 				@endif
-				
+
 			@endforeach
 		</tbody>
 	</table>
